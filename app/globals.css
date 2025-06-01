@@ -14,7 +14,11 @@
 
 @theme {
   --color-primary: #11c891;
-  --font-display: "Pretendard", sans-serif;
+  --color-gray-100: #f8f9fb;
+  --color-gray-300: #eeeff2;
+  --color-gray-400: #dddfe5;
+  --color-gray-900: #717377;
+  --font-display: "Pretendard";
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,8 +48,6 @@ body {
 
 * {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 a {
@@ -54,5 +56,5 @@ a {
 }
 
 .font-pretendard {
-  font-family: var(--font-pretendard), sans-serif;
+  font-family: var(--font-pretendard);
 }
