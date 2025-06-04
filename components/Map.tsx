@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client";
+import { positions } from "@/mock/markerPositions";
+import { clusterStyle } from "@/styles/mapClusterStyle";
 import { useEffect, useRef } from "react";
 
 declare global {
@@ -22,55 +24,11 @@ export default function Map() {
         level: 9,
       });
 
-      // 마커 위치 및 지역 임시 데이터
-      const positions = [
-        // 나주시
-        {
-          latlng: new window.kakao.maps.LatLng(34.8161, 126.5),
-          region: "나주시",
-        },
-        {
-          latlng: new window.kakao.maps.LatLng(34.818, 126.505),
-          region: "나주시",
-        },
-        {
-          latlng: new window.kakao.maps.LatLng(34.82, 126.495),
-          region: "나주시",
-        },
-        {
-          latlng: new window.kakao.maps.LatLng(34.815, 126.49),
-          region: "나주시",
-        },
-        {
-          latlng: new window.kakao.maps.LatLng(34.812, 126.498),
-          region: "나주시",
-        },
-        // 목포시
-        {
-          latlng: new window.kakao.maps.LatLng(34.7922, 126.718),
-          region: "목포시",
-        },
-        {
-          latlng: new window.kakao.maps.LatLng(34.79, 126.72),
-          region: "목포시",
-        },
-        {
-          latlng: new window.kakao.maps.LatLng(34.788, 126.715),
-          region: "목포시",
-        },
-        // 무안군
-        {
-          latlng: new window.kakao.maps.LatLng(34.8061, 126.92),
-          region: "무안군",
-        },
-        {
-          latlng: new window.kakao.maps.LatLng(34.804, 126.922),
-          region: "무안군",
-        },
-      ];
-
       const allMarkers = positions.map(
-        ({ latlng }) => new window.kakao.maps.Marker({ position: latlng }),
+        ({ lat, lng }) =>
+          new window.kakao.maps.Marker({
+            position: new window.kakao.maps.LatLng(lat, lng),
+          }),
       );
 
       // 지역별로 마커를 그룹핑하기 위한 객체
@@ -79,70 +37,6 @@ export default function Map() {
         if (!groupMarkers[region]) groupMarkers[region] = [];
         groupMarkers[region].push(allMarkers[i]);
       });
-
-      // 클러스터 스타일
-      const clusterStyle = {
-        region: [
-          {
-            display: "inline-flex",
-            padding: "12px 34px",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "10px",
-            borderRadius: "119px",
-            border: "2px solid #00DD9B",
-            background: "#F8F9FB",
-            boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)",
-          },
-        ],
-        number: [
-          {
-            display: "flex",
-            width: "108px",
-            height: "108px",
-            padding: "33.987px 45.316px",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: "54.521px",
-            background: "rgba(17, 200, 145, 0.78)",
-            color: "#FFF",
-            textAlign: "center",
-            fontSize: "24px",
-            fontWeight: "700",
-          },
-          {
-            display: "flex",
-            width: "130px",
-            height: "130px",
-            padding: "41.872px 55.83px",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: "67.17px",
-            background: "rgba(17, 200, 145, 0.78)",
-            color: "#FFF",
-            textAlign: "center",
-            fontSize: "24px",
-            fontWeight: "700",
-          },
-          {
-            display: "flex",
-            width: "156px",
-            height: "156px",
-            padding: "51.117px 68.156px",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: "82px",
-            background: "rgba(17, 200, 145, 0.78)",
-            color: "#FFF",
-            textAlign: "center",
-            fontSize: "24px",
-            fontWeight: "700",
-          },
-        ],
-      };
 
       let regionClusterers: any[] = [];
       let numberClusterer: any = null;
@@ -200,7 +94,7 @@ export default function Map() {
             const clusterer = new window.kakao.maps.MarkerClusterer({
               map,
               averageCenter: true,
-              minLevel: 4,
+              minLevel: 5,
               disableClickZoom: true,
               texts: [region],
               styles: clusterStyle.region,
@@ -231,7 +125,7 @@ export default function Map() {
         numberClusterer = new window.kakao.maps.MarkerClusterer({
           map,
           averageCenter: true,
-          minLevel: 4,
+          minLevel: 5,
           disableClickZoom: true,
           calculator: [2, 4, 8],
           styles: clusterStyle.number,
