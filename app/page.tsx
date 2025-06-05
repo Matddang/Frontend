@@ -19,7 +19,7 @@ export default function Home() {
           </div>
         </SideBar>
         {/* 우측: 네브바 + 맵 */}
-        <div>
+        <div className="flex flex-col flex-1">
           <div className="h-[50px] border-b border-[#F3F3F3]">네브바</div>
           <Map />
         </div>
