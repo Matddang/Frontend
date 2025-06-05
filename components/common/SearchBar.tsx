@@ -37,7 +37,7 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
   return (
     <form className="relative w-full" onSubmit={handleSubmit} role="search">
       <input
-        className="w-full border border-[#DDDFE5] rounded-lg bg-[#F8F9FB] pl-4 pr-12 py-[14px] outline-none"
+        className="w-full border border-[#DDDFE5] rounded-lg bg-[#F8F9FB] pl-4 pr-12 py-3 outline-none max-h-[48px]"
         placeholder="지역, 지번으로 검색"
         value={input}
         onChange={(e) => setInput(e.target.value)}
