@@ -200,12 +200,12 @@ export default function Map() {
   };
 
   return (
-    <div className="relative w-screen h-[calc(100vh-65px)]">
+    <div className="relative w-full h-[calc(100vh-65px)]">
       {/* 지도 */}
       <div ref={mapRef} className="w-full h-full" />
 
       {/* 지도 타입 버튼 */}
-      <div className="absolute top-[50%] -translate-y-full right-4 z-10 flex flex-col gap-2">
+      <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-2">
         <button
           onClick={() => changeMapType("ROADMAP")}
           className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-[#00DD9B]
