@@ -1,0 +1,28 @@
+import Header from "@/components/common/Header";
+
+export default function HomeLayout({
+  sidebar,
+  map,
+}: Readonly<{
+  children: React.ReactNode;
+  sidebar: React.ReactNode;
+  map: React.ReactNode;
+}>) {
+  return (
+    <main className="flex flex-col h-screen">
+      {/* 헤더 */}
+      <Header />
+      <div className="flex flex-1">
+        {/* 좌측 사이드바 */}
+        {sidebar}
+        {/* 우측: 네브바 + 맵 */}
+        <div className="flex flex-col flex-1 relative">
+          <div className="absolute bg-white w-full z-10 h-[50px] border-b border-[#F3F3F3]">
+            NavBar
+          </div>
+          {map}
+        </div>
+      </div>
+    </main>
+  );
+}

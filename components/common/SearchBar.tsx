@@ -3,6 +3,7 @@
 import clearIcon from "@/assets/images/clear.svg";
 import searchIcon from "@/assets/images/search.svg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 interface SearchBarProps {
@@ -12,6 +13,8 @@ interface SearchBarProps {
 export default function SearchBar({ onSubmit }: SearchBarProps) {
   const [input, setInput] = useState("");
   const [showClear, setShowClear] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (input) {
@@ -28,6 +31,7 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
     e.preventDefault();
     if (!input.trim()) return;
     onSubmit(input);
+    router.push("/items");
   };
 
   return (
