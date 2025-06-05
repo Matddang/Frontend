@@ -3,7 +3,7 @@
 "use client";
 import { positions } from "@/mock/markerPositions";
 import { clusterStyle } from "@/styles/mapClusterStyle";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -12,7 +12,13 @@ declare global {
 }
 
 export default function Map() {
-  const mapRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null); // 지도를 표시할 HTML DOM 요소 참조
+  const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스 저장
+
+  // 현재 선택된 지도 타입 상태
+  const [activeMapType, setActiveMapType] = useState<"ROADMAP" | "HYBRID">(
+    "ROADMAP",
+  );
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.kakao || !mapRef.current)
@@ -24,6 +30,9 @@ export default function Map() {
         level: 9,
       });
 
+      kakaoMapRef.current = map;
+
+      // 마커 생성
       const allMarkers = positions.map(
         ({ lat, lng }) =>
           new window.kakao.maps.Marker({
@@ -42,6 +51,7 @@ export default function Map() {
       let numberClusterer: any = null;
       let currentMode: "region" | "number" = "region";
 
+      // 클러스터 제거
       const clearAllClusters = () => {
         regionClusterers.forEach((c) => c.clear());
         if (numberClusterer) numberClusterer.clear();
@@ -138,8 +148,20 @@ export default function Map() {
           { background: "rgba(17, 200, 145, 0.78)" },
         );
         currentMode = "number";
+
+        window.kakao.maps.event.addListener(
+          numberClusterer,
+          "clusterclick",
+          function (numberClusterer: any) {
+            const markers = numberClusterer.getMarkers();
+            markers.forEach((m: any) => {
+              console.log(m.getPosition());
+            });
+          },
+        );
       };
 
+      // 줌 레벨 제어
       const handleZoomChanged = () => {
         const level = map.getLevel();
         if (level <= 8 && currentMode !== "number") setupNumberCluster();
@@ -172,5 +194,33 @@ export default function Map() {
     }
   }, []);
 
-  return <div ref={mapRef} className="w-screen h-[calc(100vh-65px)]" />;
+  const changeMapType = (type: "ROADMAP" | "HYBRID") => {
+    setActiveMapType(type);
+    kakaoMapRef.current?.setMapTypeId(window.kakao.maps.MapTypeId[type]);
+  };
+
+  return (
+    <div className="relative w-screen h-[calc(100vh-65px)]">
+      {/* 지도 */}
+      <div ref={mapRef} className="w-full h-full" />
+
+      {/* 지도 타입 버튼 */}
+      <div className="absolute top-[50%] -translate-y-full right-4 z-10 flex flex-col gap-2">
+        <button
+          onClick={() => changeMapType("ROADMAP")}
+          className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-[#00DD9B]
+            ${activeMapType === "ROADMAP" ? "bg-[#00DD9B]" : "bg-gray-500"}`}
+        >
+          일반지도
+        </button>
+        <button
+          onClick={() => changeMapType("HYBRID")}
+          className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-[#00DD9B]
+            ${activeMapType === "HYBRID" ? "bg-[#00DD9B]" : "bg-gray-500"}`}
+        >
+          스카이뷰
+        </button>
+      </div>
+    </div>
+  );
 }
