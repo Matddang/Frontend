@@ -1,4 +1,5 @@
 import Header from "@/components/common/Header";
+import NavBar from "@/components/common/NavBar";
 
 export default function HomeLayout({
   sidebar,
@@ -17,9 +18,7 @@ export default function HomeLayout({
         {sidebar}
         {/* 우측: 네브바 + 맵 */}
         <div className="flex flex-col flex-1 relative">
-          <div className="absolute bg-white w-full z-10 h-[50px] border-b border-[#F3F3F3]">
-            NavBar
-          </div>
+          <NavBar />
           {map}
         </div>
       </div>
