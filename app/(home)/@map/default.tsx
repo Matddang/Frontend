@@ -1,5 +1,5 @@
-import Map from "@/app/(home)/_component/Map";
 import React from "react";
+import Map from "./_components/Map";
 
 export default function Default() {
   return <Map />;
