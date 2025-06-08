@@ -26,7 +26,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
       <div className="mb-3">{renderFilterContent()}</div>
       <div className="flex justify-end gap-2 text-sm">
         <button
-          className="bg-[#11C891] text-white px-[14px] py-[7px] rounded-lg hover:bg-[#0fb585] cursor-pointer"
+          className="bg-primary text-white px-[14px] py-[7px] rounded-lg cursor-pointer"
           onClick={onApply}
         >
           적용

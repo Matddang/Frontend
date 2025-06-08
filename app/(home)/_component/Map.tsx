@@ -114,7 +114,7 @@ export default function Map() {
             addClusterMouseEvents(
               clusterer,
               {
-                background: "#00DD9B",
+                background: "#39b94c",
                 color: "#fff",
               },
               {
@@ -144,8 +144,8 @@ export default function Map() {
 
         addClusterMouseEvents(
           numberClusterer,
-          { background: "#00DD9B" },
-          { background: "rgba(17, 200, 145, 0.78)" },
+          { background: "#39b94c" },
+          { background: "rgba(57, 185, 76, 0.78)" },
         );
         currentMode = "number";
 
@@ -205,22 +205,22 @@ export default function Map() {
       <div ref={mapRef} className="w-full h-full" />
 
       {/* 지도 타입 버튼 */}
-      <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-2">
+      {/* <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-2">
         <button
           onClick={() => changeMapType("ROADMAP")}
-          className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-[#00DD9B]
-            ${activeMapType === "ROADMAP" ? "bg-[#00DD9B]" : "bg-gray-500"}`}
+          className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
+            ${activeMapType === "ROADMAP" ? "bg-primary" : "bg-gray-500"}`}
         >
           일반지도
         </button>
         <button
           onClick={() => changeMapType("HYBRID")}
-          className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-[#00DD9B]
+          className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
             ${activeMapType === "HYBRID" ? "bg-[#00DD9B]" : "bg-gray-500"}`}
         >
           스카이뷰
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }
