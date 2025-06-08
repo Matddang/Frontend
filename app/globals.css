@@ -13,10 +13,12 @@
 }
 
 @theme {
-  --color-primary: #11c891;
+  --color-primary: #39b94c;
+  --color-primary-light: #f6ffe8;
   --color-gray-100: #f8f9fb;
   --color-gray-300: #eeeff2;
   --color-gray-400: #dddfe5;
+  --color-gray-700: #9c9ea5;
   --color-gray-900: #717377;
   --font-display: "Pretendard";
 }
@@ -57,4 +59,9 @@ a {
 
 .font-pretendard {
   font-family: var(--font-pretendard);
+}
+
+button {
+  outline: none;
+  cursor: pointer;
 }
