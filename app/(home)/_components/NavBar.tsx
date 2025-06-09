@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import FilterButton from "./FilterButton";
-import FilterModal from "./FilterModal";
+import FilterButton from "./filter/FilterButton";
+import FilterModal from "./filter/FilterModal";
 
 const filters = [
   { key: "type", label: "임대/매매" },

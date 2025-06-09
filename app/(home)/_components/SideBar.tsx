@@ -1,7 +1,7 @@
 "use client";
 
+import SearchBar from "@/components/common/SearchBar";
 import { ReactNode } from "react";
-import SearchBar from "./SearchBar";
 
 export default function SideBar({ children }: { children: ReactNode }) {
   return (
