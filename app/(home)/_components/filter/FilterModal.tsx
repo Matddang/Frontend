@@ -28,7 +28,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
   return (
     <div className="bg-white rounded-[20px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)] p-5 min-w-[380px]">
       <div className="mb-3">{renderFilterContent()}</div>
-      <div className="flex justify-between items-center gap-2 text-sm">
+      <div className="flex justify-between items-center gap-2 text-sm border-t border-gray-400 pt-[10px]">
         <button
           type="button"
           className="flex items-center gap-[4px]"
