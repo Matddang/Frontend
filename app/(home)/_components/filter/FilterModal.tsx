@@ -1,3 +1,7 @@
+import Image from "next/image";
+import TypeFilter from "./TypeFilter";
+import ResetIcon from "@/assets/images/reset.svg";
+
 interface FilterModalProps {
   filter: { key: string; label: string };
   onApply: () => void;
@@ -8,7 +12,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
   const renderFilterContent = () => {
     switch (filter.key) {
       case "type":
-        return <div>{filter.label}</div>;
+        return <TypeFilter label={filter.label} />;
       case "price":
         return <div>{filter.label}</div>;
       case "area":
@@ -24,7 +28,15 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
   return (
     <div className="bg-white rounded-[20px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)] p-5 min-w-[380px]">
       <div className="mb-3">{renderFilterContent()}</div>
-      <div className="flex justify-end gap-2 text-sm">
+      <div className="flex justify-between items-center gap-2 text-sm">
+        <button
+          type="button"
+          className="flex items-center gap-[4px]"
+          onClick={() => alert("초기화")}
+        >
+          <span className="text-gray-700">초기화</span>
+          <Image src={ResetIcon} alt="초기화" />
+        </button>
         <button
           className="bg-primary text-white px-[14px] py-[7px] rounded-lg cursor-pointer"
           onClick={onApply}
