@@ -13,11 +13,18 @@
 }
 
 @theme {
-  --color-primary: #11c891;
+  --color-primary: #39b94c;
+  --color-primary-light: #f6ffe8;
   --color-gray-100: #f8f9fb;
   --color-gray-300: #eeeff2;
   --color-gray-400: #dddfe5;
+  --color-gray-500: #cacdd4;
+  --color-gray-700: #9c9ea5;
+  --color-gray-800: #7e8085;
   --color-gray-900: #717377;
+  --color-gray-1000: #5e6064;
+  --color-gray-1100: #505154;
+  --color-gray-1300: #2c2d30;
   --font-display: "Pretendard";
 }
 
@@ -57,4 +64,15 @@ a {
 
 .font-pretendard {
   font-family: var(--font-pretendard);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox  */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
