@@ -1,3 +1,4 @@
+import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
 import { create } from "zustand";
 
 interface FiltersState {
@@ -18,8 +19,14 @@ interface FilterStore extends FiltersState {
 
 export const useFilterStore = create<FilterStore>((set) => ({
   type: null,
-  price: { min: null, max: null },
-  area: { min: null, max: null },
+  price: {
+    min: PRICE_FILTER[0].value,
+    max: PRICE_FILTER[PRICE_FILTER.length - 1].value,
+  },
+  area: {
+    min: AREA_FILTER[0].value,
+    max: AREA_FILTER[AREA_FILTER.length - 1].value,
+  },
   kind: null,
   crop: {},
 
