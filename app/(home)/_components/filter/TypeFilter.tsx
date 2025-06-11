@@ -1,11 +1,10 @@
 import Button from "@/components/common/Button";
-import { useFilterStore } from "@/store/FilterStore";
-import { useState } from "react";
 
-export default function TypeFilter() {
-  const type = useFilterStore((state) => state.type);
-  const [tempType, setTempType] = useState<typeof type>(type);
-
+interface TypeFilterProps {
+  tempType: "lease" | "sale" | null;
+  setTempType: (value: "lease" | "sale" | null) => void;
+}
+export default function TypeFilter({ tempType, setTempType }: TypeFilterProps) {
   return (
     <div className="flex gap-[21px]">
       <Button

@@ -1,18 +1,45 @@
 import Image from "next/image";
 import TypeFilter from "./TypeFilter";
 import ResetIcon from "@/assets/images/reset.svg";
+import { useFilterStore } from "@/store/FilterStore";
+import { useEffect, useState } from "react";
+// import MultiRangeSlider from "@/components/common/MultiRangeSlider";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
-  onApply: () => void;
-  onClose: () => void;
+  onApply: (value: string | null) => void;
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
+  const { type, setType } = useFilterStore();
+  const [tempFilters, setTempFilters] = useState({
+    type,
+  });
+
+  useEffect(() => {
+    setTempFilters({ type });
+  }, [type]);
+
+  const handleApply = () => {
+    setType(tempFilters.type);
+    onApply(tempFilters.type);
+  };
+
+  const handleReset = () => {
+    setType(null);
+  };
+
   const renderFilterContent = () => {
     switch (filter.key) {
       case "type":
-        return <TypeFilter />;
+        return (
+          <TypeFilter
+            tempType={tempFilters.type}
+            setTempType={(value) =>
+              setTempFilters((prev) => ({ ...prev, type: value }))
+            }
+          />
+        );
       case "price":
         return <div></div>;
       case "area":
@@ -33,14 +60,14 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
         <button
           type="button"
           className="flex items-center gap-[4px]"
-          onClick={() => alert("초기화")}
+          onClick={handleReset}
         >
           <span className="text-gray-700">초기화</span>
           <Image src={ResetIcon} alt="초기화" />
         </button>
         <button
           className="bg-primary text-white px-[14px] py-[7px] rounded-lg cursor-pointer"
-          onClick={onApply}
+          onClick={handleApply}
         >
           적용
         </button>
