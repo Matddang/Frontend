@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface LabelItem {
   value: number;
   label: string;
@@ -8,33 +6,30 @@ interface LabelItem {
 interface MultiRangeSliderProps {
   labels: LabelItem[];
   step: number;
+  minVal: number;
+  maxVal: number;
   onChange: (min: number, max: number) => void;
 }
 
 export default function MultiRangeSlider({
   labels,
   step,
+  minVal,
+  maxVal,
   onChange,
 }: MultiRangeSliderProps) {
-  const minValue = labels[0].value;
-  const maxValue = labels[labels.length - 1].value;
-
-  const [minVal, setMinVal] = useState(minValue);
-  const [maxVal, setMaxVal] = useState(maxValue);
+  const min = labels[0].value;
+  const max = labels[labels.length - 1].value;
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.min(Number(e.target.value), maxVal - step);
-    setMinVal(value);
     onChange(value, maxVal);
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.max(Number(e.target.value), minVal + step);
-    setMaxVal(value);
     onChange(minVal, value);
   };
-
-  const rangeWidth = maxValue - minValue;
 
   return (
     <div className="py-2">
@@ -42,8 +37,8 @@ export default function MultiRangeSlider({
       <div className="relative h-6">
         <input
           type="range"
-          min={minValue}
-          max={maxValue}
+          min={min}
+          max={max}
           step={step}
           value={minVal}
           onChange={handleMinChange}
@@ -51,8 +46,8 @@ export default function MultiRangeSlider({
         />
         <input
           type="range"
-          min={minValue}
-          max={maxValue}
+          min={min}
+          max={max}
           step={step}
           value={maxVal}
           onChange={handleMaxChange}
@@ -64,8 +59,8 @@ export default function MultiRangeSlider({
           <div
             className="absolute h-1 bg-primary rounded"
             style={{
-              left: `${((minVal - minValue) / rangeWidth) * 100}%`,
-              width: `${((maxVal - minVal) / rangeWidth) * 100}%`,
+              left: `${((minVal - min) / max - min) * 100}%`,
+              width: `${((maxVal - minVal) / max - min) * 100}%`,
             }}
           />
         </div>
