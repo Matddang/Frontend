@@ -19,6 +19,7 @@
   --color-gray-300: #eeeff2;
   --color-gray-400: #dddfe5;
   --color-gray-700: #9c9ea5;
+  --color-gray-800: #7e8085;
   --color-gray-900: #717377;
   --font-display: "Pretendard";
 }
@@ -64,4 +65,14 @@ a {
 button {
   outline: none;
   cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
+  border: 1px solid #dddfe5;
+  border-radius: 50%;
+  background-color: white;
 }

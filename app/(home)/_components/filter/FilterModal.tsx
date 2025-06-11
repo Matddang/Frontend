@@ -3,7 +3,8 @@ import TypeFilter from "./TypeFilter";
 import ResetIcon from "@/assets/images/reset.svg";
 import { useFilterStore } from "@/store/FilterStore";
 import { useEffect, useState } from "react";
-// import MultiRangeSlider from "@/components/common/MultiRangeSlider";
+import MultiRangeSlider from "@/components/common/MultiRangeSlider";
+import { PRICE_FILTER } from "@/constants/filterOptions";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
@@ -41,7 +42,15 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
           />
         );
       case "price":
-        return <div></div>;
+        return (
+          <MultiRangeSlider
+            labels={PRICE_FILTER}
+            step={1000000}
+            onChange={(min, max) => {
+              console.log("선택된 범위:", min, "-", max);
+            }}
+          />
+        );
       case "area":
         return <div></div>;
       case "kind":
