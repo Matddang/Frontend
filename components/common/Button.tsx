@@ -8,7 +8,7 @@ export default function Button({ text, onClick, isActive }: ButtonProps) {
     <button
       type="button"
       onClick={onClick}
-      className={`w-full px-[34px] py-3 rounded-[10px] border-[2px] transition-colors duration-200 text-lg
+      className={`w-full py-3 rounded-[10px] border-[2px] transition-colors duration-200 text-lg
         ${
           isActive
             ? "border-primary text-primary"

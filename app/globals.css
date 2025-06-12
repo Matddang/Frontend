@@ -159,6 +159,7 @@ a {
 button {
   outline: none;
   cursor: pointer;
+  text-align: center;
 }
 
 input[type="range"]::-webkit-slider-thumb {
