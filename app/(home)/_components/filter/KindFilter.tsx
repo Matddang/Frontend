@@ -2,20 +2,19 @@ import Button from "@/components/common/Button";
 import Image from "next/image";
 import UnCheckedIcon from "@/assets/images/check-off.svg";
 import CheckedIcon from "@/assets/images/check-on.svg";
+import { KIND_FILTER } from "@/constants/filterOptions";
+
+type KindKey = keyof typeof KIND_FILTER;
 
 interface TypeFilterProps {
   tempKind: ("paddy" | "field" | "orchard")[];
   setTempKind: (value: ("paddy" | "field" | "orchard")[]) => void;
 }
 
-const ALL_KINDS: ("paddy" | "field" | "orchard")[] = [
-  "paddy",
-  "field",
-  "orchard",
-];
+const ALL_KINDS: KindKey[] = ["paddy", "field", "orchard"];
 
 export default function KindFilter({ tempKind, setTempKind }: TypeFilterProps) {
-  const toggleKind = (kind: "paddy" | "field" | "orchard") => {
+  const toggleKind = (kind: KindKey) => {
     if (tempKind.includes(kind)) {
       setTempKind(tempKind.filter((k) => k !== kind));
     } else {
@@ -36,21 +35,14 @@ export default function KindFilter({ tempKind, setTempKind }: TypeFilterProps) {
   return (
     <div className="flex flex-col">
       <div className="flex gap-[13px]">
-        <Button
-          text="답(논)"
-          onClick={() => toggleKind("paddy")}
-          isActive={tempKind.includes("paddy")}
-        />
-        <Button
-          text="전(밭)"
-          onClick={() => toggleKind("field")}
-          isActive={tempKind.includes("field")}
-        />
-        <Button
-          text="과수원"
-          onClick={() => toggleKind("orchard")}
-          isActive={tempKind.includes("orchard")}
-        />
+        {Object.entries(KIND_FILTER).map(([key, label]) => (
+          <Button
+            key={key}
+            text={label}
+            onClick={() => toggleKind(key as KindKey)}
+            isActive={tempKind.includes(key as KindKey)}
+          />
+        ))}
       </div>
       <button className="flex items-align gap-[6px] mt-6" onClick={toggleAll}>
         <Image

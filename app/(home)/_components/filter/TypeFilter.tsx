@@ -1,22 +1,23 @@
 import Button from "@/components/common/Button";
+import { TYPE_FILTER } from "@/constants/filterOptions";
+
+type TypeKey = keyof typeof TYPE_FILTER | null;
 
 interface TypeFilterProps {
-  tempType: "lease" | "sale" | null;
-  setTempType: (value: "lease" | "sale" | null) => void;
+  tempType: TypeKey;
+  setTempType: (value: TypeKey) => void;
 }
 export default function TypeFilter({ tempType, setTempType }: TypeFilterProps) {
   return (
     <div className="flex gap-[21px]">
-      <Button
-        text="임대"
-        onClick={() => setTempType("lease")}
-        isActive={tempType === "lease"}
-      />
-      <Button
-        text="매매"
-        onClick={() => setTempType("sale")}
-        isActive={tempType === "sale"}
-      />
+      {Object.entries(TYPE_FILTER).map(([key, label]) => (
+        <Button
+          key={key}
+          text={label}
+          onClick={() => setTempType(key as TypeKey)}
+          isActive={tempType === key}
+        />
+      ))}
     </div>
   );
 }
