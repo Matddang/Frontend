@@ -7,6 +7,7 @@ import PriceFilter from "./PriceFilter";
 import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
 import AreaFilter from "./AreaFilter";
 import KindFilter from "./KindFilter";
+import CropFilter from "./CropFilter";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
@@ -32,20 +33,52 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     setPrice(tempFilters.price);
     setArea(tempFilters.area);
     setKind(tempFilters.kind);
-    onApply(tempFilters.area.min);
+    onApply(
+      `임대/매매: ${tempFilters.type ?? "전체"}, ` +
+        `희망가: 최소-${tempFilters.price.min ?? "없음"}/최대-${
+          tempFilters.price.max ?? "없음"
+        }, ` +
+        `면적: 최소-${tempFilters.area.min ?? "없음"}/최대-${
+          tempFilters.area.max ?? "없음"
+        }, ` +
+        `종류: ${
+          tempFilters.kind.length > 0 ? tempFilters.kind.join(", ") : "전체"
+        }`,
+    );
   };
 
   const handleReset = () => {
-    setType(null);
-    setPrice({
-      min: PRICE_FILTER[0].value,
-      max: PRICE_FILTER[PRICE_FILTER.length - 1].value,
-    });
-    setArea({
-      min: AREA_FILTER[0].value,
-      max: AREA_FILTER[AREA_FILTER.length - 1].value,
-    });
-    setKind([]);
+    switch (filter.key) {
+      case "type":
+        setTempFilters((prev) => ({ ...prev, type: null }));
+        break;
+      case "price":
+        setTempFilters((prev) => ({
+          ...prev,
+          price: {
+            min: PRICE_FILTER[0].value,
+            max: PRICE_FILTER[PRICE_FILTER.length - 1].value,
+          },
+        }));
+        break;
+      case "area":
+        setTempFilters((prev) => ({
+          ...prev,
+          area: {
+            min: AREA_FILTER[0].value,
+            max: AREA_FILTER[AREA_FILTER.length - 1].value,
+          },
+        }));
+        break;
+      case "kind":
+        setTempFilters((prev) => ({ ...prev, kind: [] }));
+        break;
+      // case "crop":
+      //   setTempFilters((prev) => ({ ...prev, crop: {} }));
+      //   break;
+      default:
+        break;
+    }
   };
 
   const renderFilterContent = () => {
@@ -87,7 +120,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
           />
         );
       case "crop":
-        return <div></div>;
+        return <CropFilter />;
       default:
         return <div>잘못된 필터입니다.</div>;
     }
