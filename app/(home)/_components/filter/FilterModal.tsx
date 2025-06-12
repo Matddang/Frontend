@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import PriceFilter from "./PriceFilter";
 import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
 import AreaFilter from "./AreaFilter";
+import KindFilter from "./KindFilter";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
@@ -13,21 +14,24 @@ interface FilterModalProps {
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
-  const { type, price, area, setType, setPrice, setArea } = useFilterStore();
+  const { type, price, area, kind, setType, setPrice, setArea, setKind } =
+    useFilterStore();
   const [tempFilters, setTempFilters] = useState({
     type,
     price,
     area,
+    kind,
   });
 
   useEffect(() => {
-    setTempFilters({ type, price, area });
-  }, [type, price, area]);
+    setTempFilters({ type, price, area, kind });
+  }, [type, price, area, kind]);
 
   const handleApply = () => {
     setType(tempFilters.type);
     setPrice(tempFilters.price);
     setArea(tempFilters.area);
+    setKind(tempFilters.kind);
     onApply(tempFilters.area.min);
   };
 
@@ -41,6 +45,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
       min: AREA_FILTER[0].value,
       max: AREA_FILTER[AREA_FILTER.length - 1].value,
     });
+    setKind([]);
   };
 
   const renderFilterContent = () => {
@@ -73,7 +78,14 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
           />
         );
       case "kind":
-        return <div></div>;
+        return (
+          <KindFilter
+            tempKind={tempFilters.kind}
+            setTempKind={(value) =>
+              setTempFilters((prev) => ({ ...prev, kind: value }))
+            }
+          />
+        );
       case "crop":
         return <div></div>;
       default:
