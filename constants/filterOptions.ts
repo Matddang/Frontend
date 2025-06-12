@@ -5,7 +5,7 @@ export const TYPE_FILTER = {
 
 export const PRICE_FILTER = [
   { value: 0, label: "0" },
-  { value: 5000000, label: "500만원" },
+  { value: 100000000, label: "1억" },
   { value: 200000000, label: "2억" },
   { value: 300000000, label: "3억 이상" },
 ];
@@ -13,8 +13,8 @@ export const PRICE_FILTER = [
 export const AREA_FILTER = [
   { value: 0, label: "0" },
   { value: 1000, label: "1000" },
-  { value: 3000, label: "2000" },
-  { value: 5000, label: "3000평 이상" },
+  { value: 2000, label: "2000" },
+  { value: 3000, label: "3000평 이상" },
 ];
 
 export const KIND_FILTER = {
