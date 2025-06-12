@@ -24,6 +24,100 @@
   --font-display: "Pretendard";
 }
 
+@layer utilities {
+  .typo-head-1 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 150%;
+  }
+  .typo-head-2 {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: normal;
+  }
+  .typo-head-3 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 150%;
+  }
+  .typo-sub-head-bold {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 150%;
+  }
+  .typo-sub-head-sb {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 150%;
+  }
+  .typo-sub-head-m {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-body-1-b {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-body-1-m {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-14-b {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-14-r {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-sub-title-m {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-body-2-b {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-body-2-sb {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-body-2-m {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-body-2-r {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -0.1%;
+  }
+  .typo-caption-small-m {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 140%;
+    letter-spacing: -0.1%;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
