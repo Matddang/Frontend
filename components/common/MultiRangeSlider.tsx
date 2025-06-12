@@ -36,7 +36,7 @@ export default function MultiRangeSlider({
   const getPercent = (value: number) => ((value - min) / (max - min)) * 100;
 
   return (
-    <div className="py-4 relative">
+    <div className="pt-1 relative">
       {/* 슬라이더 */}
       <div className="relative h-6">
         <input

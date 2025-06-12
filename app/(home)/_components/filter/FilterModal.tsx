@@ -3,31 +3,37 @@ import TypeFilter from "./TypeFilter";
 import ResetIcon from "@/assets/images/reset.svg";
 import { useFilterStore } from "@/store/FilterStore";
 import { useEffect, useState } from "react";
-import MultiRangeSlider from "@/components/common/MultiRangeSlider";
+import PriceFilter from "./PriceFilter";
 import { PRICE_FILTER } from "@/constants/filterOptions";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
-  onApply: (value: string | null) => void;
+  onApply: (value: string | number | null) => void;
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
-  const { type, setType } = useFilterStore();
+  const { type, price, setType, setPrice } = useFilterStore();
   const [tempFilters, setTempFilters] = useState({
     type,
+    price,
   });
 
   useEffect(() => {
-    setTempFilters({ type });
-  }, [type]);
+    setTempFilters({ type, price });
+  }, [type, price]);
 
   const handleApply = () => {
     setType(tempFilters.type);
-    onApply(tempFilters.type);
+    setPrice(tempFilters.price);
+    onApply(tempFilters.price.min);
   };
 
   const handleReset = () => {
     setType(null);
+    setPrice({
+      min: PRICE_FILTER[0].value,
+      max: PRICE_FILTER[PRICE_FILTER.length - 1].value,
+    });
   };
 
   const renderFilterContent = () => {
@@ -43,12 +49,11 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
         );
       case "price":
         return (
-          <MultiRangeSlider
-            labels={PRICE_FILTER}
-            step={1000000}
-            onChange={(min, max) => {
-              console.log("선택된 범위:", min, "-", max);
-            }}
+          <PriceFilter
+            tempPrice={tempFilters.price}
+            setTempPrice={(value) =>
+              setTempFilters((prev) => ({ ...prev, price: value }))
+            }
           />
         );
       case "area":
