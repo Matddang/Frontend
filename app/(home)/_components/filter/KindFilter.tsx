@@ -35,7 +35,7 @@ export default function KindFilter({ tempKind, setTempKind }: TypeFilterProps) {
 
   return (
     <div className="flex flex-col">
-      <div className="flex gap-[21px]">
+      <div className="flex gap-[13px]">
         <Button
           text="답(논)"
           onClick={() => toggleKind("paddy")}
