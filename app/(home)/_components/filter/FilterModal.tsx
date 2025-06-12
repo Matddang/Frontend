@@ -4,7 +4,8 @@ import ResetIcon from "@/assets/images/reset.svg";
 import { useFilterStore } from "@/store/FilterStore";
 import { useEffect, useState } from "react";
 import PriceFilter from "./PriceFilter";
-import { PRICE_FILTER } from "@/constants/filterOptions";
+import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
+import AreaFilter from "./AreaFilter";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
@@ -12,20 +13,22 @@ interface FilterModalProps {
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
-  const { type, price, setType, setPrice } = useFilterStore();
+  const { type, price, area, setType, setPrice, setArea } = useFilterStore();
   const [tempFilters, setTempFilters] = useState({
     type,
     price,
+    area,
   });
 
   useEffect(() => {
-    setTempFilters({ type, price });
-  }, [type, price]);
+    setTempFilters({ type, price, area });
+  }, [type, price, area]);
 
   const handleApply = () => {
     setType(tempFilters.type);
     setPrice(tempFilters.price);
-    onApply(tempFilters.price.min);
+    setArea(tempFilters.area);
+    onApply(tempFilters.area.min);
   };
 
   const handleReset = () => {
@@ -33,6 +36,10 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     setPrice({
       min: PRICE_FILTER[0].value,
       max: PRICE_FILTER[PRICE_FILTER.length - 1].value,
+    });
+    setArea({
+      min: AREA_FILTER[0].value,
+      max: AREA_FILTER[AREA_FILTER.length - 1].value,
     });
   };
 
@@ -57,7 +64,14 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
           />
         );
       case "area":
-        return <div></div>;
+        return (
+          <AreaFilter
+            tempArea={tempFilters.area}
+            setTempArea={(value) =>
+              setTempFilters((prev) => ({ ...prev, area: value }))
+            }
+          />
+        );
       case "kind":
         return <div></div>;
       case "crop":
