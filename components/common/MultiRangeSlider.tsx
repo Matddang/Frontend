@@ -1,10 +1,12 @@
-interface LabelItem {
+import React from "react";
+
+interface FilterItem {
   value: number;
   label: string;
 }
 
 interface MultiRangeSliderProps {
-  labels: LabelItem[];
+  filters: FilterItem[];
   step: number;
   minVal: number;
   maxVal: number;
@@ -12,14 +14,14 @@ interface MultiRangeSliderProps {
 }
 
 export default function MultiRangeSlider({
-  labels,
+  filters,
   step,
   minVal,
   maxVal,
   onChange,
 }: MultiRangeSliderProps) {
-  const min = labels[0].value;
-  const max = labels[labels.length - 1].value;
+  const min = filters[0].value;
+  const max = filters[filters.length - 1].value;
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.min(Number(e.target.value), maxVal - step);
@@ -31,8 +33,10 @@ export default function MultiRangeSlider({
     onChange(minVal, value);
   };
 
+  const getPercent = (value: number) => ((value - min) / (max - min)) * 100;
+
   return (
-    <div className="py-2">
+    <div className="py-4 relative">
       {/* 슬라이더 */}
       <div className="relative h-6">
         <input
@@ -59,18 +63,34 @@ export default function MultiRangeSlider({
           <div
             className="absolute h-1 bg-primary rounded"
             style={{
-              left: `${((minVal - min) / max - min) * 100}%`,
-              width: `${((maxVal - minVal) / max - min) * 100}%`,
+              left: `${getPercent(minVal)}%`,
+              width: `${getPercent(maxVal) - getPercent(minVal)}%`,
             }}
           />
         </div>
       </div>
 
       {/* 라벨 */}
-      <div className="flex justify-between text-sm text-gray-800">
-        {labels.map((item) => (
-          <div key={item.value}>{item.label}</div>
-        ))}
+      <div className="relative h-4">
+        {filters.map((item, index) => {
+          const percent = getPercent(item.value);
+
+          let positionClass = "-translate-x-1/2";
+          if (index === 0) positionClass = "translate-x-1/2";
+          if (index === filters.length - 1) positionClass = "-translate-x-full";
+
+          return (
+            <div
+              key={item.value}
+              className={`absolute text-sm text-gray-800 ${positionClass}`}
+              style={{
+                left: `${percent}%`,
+              }}
+            >
+              {item.label}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
