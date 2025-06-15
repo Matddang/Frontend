@@ -9,7 +9,7 @@ interface TypeFilterProps {
 }
 export default function TypeFilter({ tempType, setTempType }: TypeFilterProps) {
   return (
-    <div className="flex gap-[21px]">
+    <div className="flex gap-[21px] mt-6">
       {Object.entries(TYPE_FILTER).map(([key, label]) => (
         <Button
           key={key}

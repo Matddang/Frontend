@@ -33,7 +33,7 @@ export default function KindFilter({ tempKind, setTempKind }: TypeFilterProps) {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mt-6">
       <div className="flex gap-[13px]">
         {Object.entries(KIND_FILTER).map(([key, label]) => (
           <Button

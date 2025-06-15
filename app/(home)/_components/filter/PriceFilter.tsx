@@ -12,7 +12,7 @@ export default function PriceFilter({
   setTempPrice,
 }: PriceFilterProps) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 mt-6">
       <MultiRangeSlider
         filters={PRICE_FILTER}
         step={10000000}

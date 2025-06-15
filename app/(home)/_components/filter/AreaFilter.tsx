@@ -9,7 +9,7 @@ interface AreaFilterProps {
 
 export default function AreaFilter({ tempArea, setTempArea }: AreaFilterProps) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 mt-6">
       <MultiRangeSlider
         filters={AREA_FILTER}
         step={100}
