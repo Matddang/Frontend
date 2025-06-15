@@ -63,6 +63,7 @@ export default function ProcessForm({
           <button
             className="w-full h-[51px] rounded-lg bg-white text-primary font-semibold text-[18px] cursor-pointer border-[1px] border-primary"
             style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
+            onClick={nextStep}
           >
             다음에 할래요
           </button>
