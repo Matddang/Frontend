@@ -15,24 +15,36 @@ interface FilterModalProps {
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
-  const { type, price, area, kind, setType, setPrice, setArea, setKind } =
-    useFilterStore();
+  const {
+    type,
+    price,
+    area,
+    kind,
+    crop,
+    setType,
+    setPrice,
+    setArea,
+    setKind,
+    setCrop,
+  } = useFilterStore();
   const [tempFilters, setTempFilters] = useState({
     type,
     price,
     area,
     kind,
+    crop,
   });
 
   useEffect(() => {
-    setTempFilters({ type, price, area, kind });
-  }, [type, price, area, kind]);
+    setTempFilters({ type, price, area, kind, crop });
+  }, [type, price, area, kind, crop]);
 
   const handleApply = () => {
     setType(tempFilters.type);
     setPrice(tempFilters.price);
     setArea(tempFilters.area);
     setKind(tempFilters.kind);
+    setCrop(tempFilters.crop);
     onApply(
       `임대/매매: ${tempFilters.type ?? "전체"}, ` +
         `희망가: 최소-${tempFilters.price.min ?? "없음"}/최대-${
@@ -43,7 +55,8 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
         }, ` +
         `종류: ${
           tempFilters.kind.length > 0 ? tempFilters.kind.join(", ") : "전체"
-        }`,
+        }` +
+        ` 작물: ${Object.keys(tempFilters.crop).length.toString() ?? "없음"}`,
     );
   };
 
@@ -73,9 +86,9 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
       case "kind":
         setTempFilters((prev) => ({ ...prev, kind: [] }));
         break;
-      // case "crop":
-      //   setTempFilters((prev) => ({ ...prev, crop: {} }));
-      //   break;
+      case "crop":
+        setTempFilters((prev) => ({ ...prev, crop: {} }));
+        break;
       default:
         break;
     }
@@ -120,7 +133,14 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
           />
         );
       case "crop":
-        return <CropFilter />;
+        return (
+          <CropFilter
+            tempCrop={tempFilters.crop}
+            setTempCrop={(value) =>
+              setTempFilters((prev) => ({ ...prev, crop: value }))
+            }
+          />
+        );
       default:
         return <div>잘못된 필터입니다.</div>;
     }
@@ -128,7 +148,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
   return (
     <div className="bg-white rounded-[20px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)] p-5 min-w-[380px]">
       <h2 className="text-lg font-extrabold">{filter.label}</h2>
-      <div className="flex flex-col my-6">{renderFilterContent()}</div>
+      <div className="flex flex-col mb-6">{renderFilterContent()}</div>
       <div className="flex justify-between items-center gap-2 text-sm border-t border-gray-400 pt-[10px]">
         <button
           type="button"
