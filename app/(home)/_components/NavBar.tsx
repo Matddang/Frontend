@@ -4,15 +4,7 @@ import { useState } from "react";
 import FilterButton from "./filter/FilterButton";
 import FilterModal from "./filter/FilterModal";
 import { useFilterStore } from "@/store/FilterStore";
-import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
-
-const filters = [
-  { key: "type", label: "임대/매매" },
-  { key: "price", label: "희망가" },
-  { key: "area", label: "농지면적" },
-  { key: "kind", label: "농지유형" },
-  { key: "crop", label: "희망작물" },
-];
+import { AREA_FILTER, FILTERS, PRICE_FILTER } from "@/constants/filterOptions";
 
 export default function NavBar() {
   const { type, price, area, kind, crop } = useFilterStore();
@@ -50,7 +42,7 @@ export default function NavBar() {
   return (
     <div className="absolute bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center px-[50px] py-4 gap-[12px]">
       <div className="flex gap-[12px] whitespace-nowrap">
-        {filters.map((filter) => {
+        {FILTERS.map((filter) => {
           const isActive = openFilter === filter.key;
           const hasValue = hasFilterValue(filter.key);
 
