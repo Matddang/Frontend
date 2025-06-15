@@ -3,6 +3,8 @@
 import { useState } from "react";
 import FilterButton from "./filter/FilterButton";
 import FilterModal from "./filter/FilterModal";
+import { useFilterStore } from "@/store/FilterStore";
+import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
 
 const filters = [
   { key: "type", label: "임대/매매" },
@@ -13,35 +15,67 @@ const filters = [
 ];
 
 export default function NavBar() {
+  const { type, price, area, kind, crop } = useFilterStore();
+
   const [openFilter, setOpenFilter] = useState<string | null>(null);
 
   const handleClick = (key: string) => {
     setOpenFilter((prev) => (prev === key ? null : key));
   };
 
+  // key별로 값이 있는지 확인하는 함수
+  const hasFilterValue = (key: string) => {
+    switch (key) {
+      case "type":
+        return type !== null;
+      case "price":
+        return (
+          price.min !== PRICE_FILTER[0].value ||
+          price.max !== PRICE_FILTER[PRICE_FILTER.length - 1].value
+        );
+      case "area":
+        return (
+          area.min !== AREA_FILTER[0].value ||
+          area.max !== AREA_FILTER[AREA_FILTER.length - 1].value
+        );
+      case "kind":
+        return kind.length > 0;
+      case "crop":
+        return Object.keys(crop).length > 0;
+      default:
+        return false;
+    }
+  };
+
   return (
     <div className="absolute bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center px-[50px] py-4 gap-[12px]">
       <div className="flex gap-[12px] whitespace-nowrap">
-        {filters.map((filter) => (
-          <div key={filter.key} className="relative">
-            <FilterButton
-              text={filter.label}
-              isActive={openFilter === filter.key}
-              onClick={() => handleClick(filter.key)}
-            />
-            {openFilter === filter.key && (
-              <div className="absolute top-full left-0 z-50 mt-5">
-                <FilterModal
-                  filter={filter}
-                  onApply={(value) => {
-                    alert(value);
-                    setOpenFilter(null);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        ))}
+        {filters.map((filter) => {
+          const isActive = openFilter === filter.key;
+          const hasValue = hasFilterValue(filter.key);
+
+          return (
+            <div key={filter.key} className="relative">
+              <FilterButton
+                text={filter.label}
+                isActive={isActive}
+                hasValue={hasValue}
+                onClick={() => handleClick(filter.key)}
+              />
+              {isActive && (
+                <div className="absolute top-full left-0 z-50 mt-5">
+                  <FilterModal
+                    filter={filter}
+                    onApply={(value) => {
+                      alert(value);
+                      setOpenFilter(null);
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <button className="opacity-0 flex gap-[10px] flex-shrink-0 items-center px-4 py-2 rounded-full border border-[#DDDFE5] transition-colors duration-200 outline-none text-[18px] text-[#9C9EA5] cursor-pointer">
