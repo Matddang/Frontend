@@ -12,8 +12,8 @@ export default function LoggedOutView() {
   const slides = Array.from({ length: 5 });
 
   return (
-    <div>
-      <section className="my-[14px]">
+    <div className="px-4 py-[14px]">
+      <section>
         <button
           className="rounded-[8px] relative w-full"
           style={{ aspectRatio: "361 / 60" }}
@@ -28,7 +28,7 @@ export default function LoggedOutView() {
         </button>
       </section>
 
-      <section className="flex flex-col gap-5">
+      <section className="flex flex-col gap-5 mt-4">
         <h2 className="typo-sub-head-sb">가장 인기 많은 농지 매물🌾</h2>
         <CustomSwiper slidesPerView={2.5} spaceBetween={16}>
           {slides.map((_, i) => (
@@ -82,6 +82,7 @@ export default function LoggedOutView() {
             src={GuideImg}
             alt="맞땅 가이드"
             fill
+            priority
             className="object-contain"
           />
         </button>
