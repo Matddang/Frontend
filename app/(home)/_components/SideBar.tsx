@@ -9,7 +9,7 @@ export default function SideBar({ children }: { children: ReactNode }) {
       <div className="px-4 py-[13px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] max-h-[65px] flex items-center">
         <SearchBar onSubmit={(value) => alert("검색어: " + value)} />
       </div>
-      <div className="px-4 flex-1 overflow-y-auto">{children}</div>
+      <div className="flex-1 overflow-y-auto">{children}</div>
     </aside>
   );
 }
