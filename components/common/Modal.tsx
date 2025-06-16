@@ -9,9 +9,15 @@ interface ModalProps {
   height?: number;
   children: React.ReactNode;
   onClose: () => void;
+  bgColor?: string;
 }
 
-export default function Modal({ width, children, onClose }: ModalProps) {
+export default function Modal({
+  width,
+  children,
+  onClose,
+  bgColor,
+}: ModalProps) {
   useEffect(() => {
     document.body.style.cssText = `
       position: fixed; 
@@ -34,7 +40,9 @@ export default function Modal({ width, children, onClose }: ModalProps) {
     >
       <div className="flex items-center justify-center min-h-[100vh] px-[20px] py-[40px] w-full">
         <div
-          className="bg-white rounded-[20px] pt-[31px] pb-[30px] px-[20px] relative"
+          className={`rounded-[20px] pt-[31px] pb-[30px] px-[20px] relative ${
+            bgColor || "bg-white"
+          }`}
           style={{
             width: `${width}px`,
             maxHeight: "calc(100vh - 80px)",
