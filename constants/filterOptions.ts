@@ -124,7 +124,4 @@ export const CROP_CHILD_FILTER = {
   beans: {
     26: "콩",
   },
-  ginseng: {
-    30: "인삼",
-  },
 } as const;
