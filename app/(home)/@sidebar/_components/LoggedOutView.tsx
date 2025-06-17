@@ -7,9 +7,15 @@ import AgriPolicyImg from "@/assets/images/agri-policy.svg";
 import LandListingImg from "@/assets/images/land-listing.svg";
 import Card from "@/components/common/Card";
 import CustomSwiper from "@/components/common/CustomSwiper";
+import { useRef, useState } from "react";
+import type { Swiper as SwiperClass } from "swiper";
+import SwiperIndicator from "@/components/common/SwiperIndicatior";
 
 export default function LoggedOutView() {
   const slides = Array.from({ length: 5 });
+
+  const swiperRef = useRef<SwiperClass | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   return (
     <div className="px-4 py-[14px]">
@@ -30,7 +36,25 @@ export default function LoggedOutView() {
 
       <section className="flex flex-col gap-5 mt-4">
         <h2 className="typo-sub-head-sb">가장 인기 많은 농지 매물🌾</h2>
-        <CustomSwiper slidesPerView={2.5} spaceBetween={16}>
+        {/* <CustomSwiper slidesPerView={2.5} spaceBetween={16}>
+          {slides.map((_, i) => (
+            <Card
+              key={i}
+              imageSrc={LandListingImg}
+              type="매매"
+              price={150000000}
+              area={351}
+              address="전라남도 여수시 청산면 12-1"
+              tag="과수원"
+            />
+          ))}
+        </CustomSwiper> */}
+        <CustomSwiper
+          slidesPerView={2.5}
+          spaceBetween={16}
+          setCurrentIndex={setCurrentIndex}
+          swiperRef={swiperRef}
+        >
           {slides.map((_, i) => (
             <Card
               key={i}
@@ -43,6 +67,12 @@ export default function LoggedOutView() {
             />
           ))}
         </CustomSwiper>
+
+        <SwiperIndicator
+          currentIndex={currentIndex}
+          slidesCount={slides.length}
+          swiperRef={swiperRef}
+        />
       </section>
       <section className="my-6 flex flex-col gap-[10px]">
         <h2 className="typo-sub-head-sb">농지 구하기 전 중요한 정보🍎</h2>
