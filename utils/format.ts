@@ -4,6 +4,7 @@ export const formatKoreanUnit = (value: number): string => {
   const units = [
     { unit: 100000000, label: "억" },
     { unit: 10000000, label: "천" },
+    { unit: 10000, label: "만원" },
   ];
 
   let result = "";
