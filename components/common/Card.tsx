@@ -34,11 +34,16 @@ export default function Card({
   time,
 }: CardProps) {
   const [addWish, setAddWish] = useState(isWished); // 전역 상태 관리 필요
+  const [showMessage, setShowMessage] = useState(false);
 
   const handleWishClick = () => {
     const newValue = !addWish;
     setAddWish(newValue);
     onWishToggle?.(newValue);
+
+    // 문구 보여주기
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 2000);
   };
 
   const isHorizontal = variant === "horizontal";
@@ -101,6 +106,15 @@ export default function Card({
           </div>
         )}
       </div>
+
+      {/* 찜 메시지 */}
+      {showMessage && (
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#575757] opacity-80 text-white px-4 py-[10px] rounded-[3px] z-50">
+          {addWish
+            ? "찜 목록에 추가되었습니다."
+            : "찜 목록에서 제거되었습니다."}
+        </div>
+      )}
     </div>
   );
 }
