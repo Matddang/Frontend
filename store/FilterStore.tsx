@@ -7,6 +7,7 @@ interface FiltersState {
   area: { min: number | null; max: number | null };
   kind: ("paddy" | "field" | "orchard")[];
   crop: { [parent: string]: string[] };
+  placeId: number | null;
 }
 
 interface FilterStore extends FiltersState {
@@ -15,6 +16,7 @@ interface FilterStore extends FiltersState {
   setArea: (area: { min: number | null; max: number | null }) => void;
   setKind: (kind: ("paddy" | "field" | "orchard")[]) => void;
   setCrop: (crop: { [parent: string]: string[] }) => void;
+  setPlaceId: (placeId: number | null) => void;
 }
 
 export const useFilterStore = create<FilterStore>((set) => ({
@@ -29,10 +31,12 @@ export const useFilterStore = create<FilterStore>((set) => ({
   },
   kind: [],
   crop: {},
+  placeId: null,
 
   setType: (type) => set({ type }),
   setPrice: (price) => set({ price }),
   setArea: (area) => set({ area }),
   setKind: (kind) => set({ kind }),
   setCrop: (crop) => set({ crop }),
+  setPlaceId: (placeId) => set({ placeId }),
 }));

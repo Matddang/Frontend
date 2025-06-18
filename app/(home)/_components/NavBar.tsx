@@ -9,10 +9,10 @@ import Image from "next/image";
 import CloseIcon from "@/assets/images/close.svg";
 
 export default function NavBar() {
-  const { type, price, area, kind, crop } = useFilterStore();
+  const { type, price, area, kind, crop, placeId } = useFilterStore();
 
   const [openFilter, setOpenFilter] = useState<string | null>(null);
-  const [showTooltip, setShowTooltip] = useState(true); // 1. 상태 추가
+  const [showTooltip, setShowTooltip] = useState(true);
 
   const isLoggedIn = true; // 임시
 
@@ -39,6 +39,8 @@ export default function NavBar() {
         return kind.length > 0;
       case "crop":
         return Object.keys(crop).length > 0;
+      case "place":
+        return placeId != null;
       default:
         return false;
     }
