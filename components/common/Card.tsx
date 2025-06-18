@@ -1,3 +1,5 @@
+"use client";
+
 import { formatKoreanUnit } from "@/utils/format";
 import Image from "next/image";
 import { useState } from "react";
@@ -8,9 +10,13 @@ interface CardProps {
   price: number;
   address: string;
   area: number;
-  tag: string;
+  kind: string;
   isWished?: boolean;
   onWishToggle?: (newValue: boolean) => void;
+  variant?: "vertical" | "horizontal";
+  crop?: string;
+  place?: string;
+  time?: string;
 }
 
 export default function Card({
@@ -19,9 +25,13 @@ export default function Card({
   price,
   address,
   area,
-  tag,
+  kind,
   isWished = false,
   onWishToggle,
+  variant = "vertical",
+  crop,
+  place,
+  time,
 }: CardProps) {
   const [addWish, setAddWish] = useState(isWished); // 전역 상태 관리 필요
 
@@ -31,11 +41,28 @@ export default function Card({
     onWishToggle?.(newValue);
   };
 
+  const isHorizontal = variant === "horizontal";
+
   return (
-    <div>
-      <Image src={imageSrc} alt="농지 이미지" />
-      <div className="mt-3">
-        <div className="mb-2">
+    <div
+      className={
+        isHorizontal ? "flex gap-[11px] py-4 border-b border-gray-300" : ""
+      }
+    >
+      <div
+        className={`relative aspect-square w-full h-full flex-1 ${
+          isHorizontal ? "max-w-[115px]" : ""
+        }`}
+      >
+        <Image
+          src={imageSrc}
+          alt="농지 이미지"
+          fill
+          className="object-cover rounded-[8px]"
+        />
+      </div>
+      <div className={`${isHorizontal ? "flex-2" : "mt-3"}`}>
+        <div className={`${isHorizontal ? "mb-[13px]" : "mb-2"}`}>
           <div className="flex justify-between">
             <div className="typo-body-1-b">
               {type} {formatKoreanUnit(price)}
@@ -65,9 +92,14 @@ export default function Card({
             {area}평 / {address}
           </div>
         </div>
-        <div className="inline-block px-[10px] py-[6px] bg-primary-light text-primary border border-primary rounded-[4px]">
-          {tag}
+        <div className="inline-block px-[10px] py-[6px] typo-body-2-b bg-primary-light text-primary border border-primary rounded-[4px]">
+          {kind}
         </div>
+        {isHorizontal && (
+          <div className="typo-sub-title-m text-gray-800 mt-[6px]">
+            {crop} / {place}에서 {time} 거리
+          </div>
+        )}
       </div>
     </div>
   );
