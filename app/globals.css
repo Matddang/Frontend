@@ -192,3 +192,66 @@ input[type="range"]::-webkit-slider-thumb {
 .crop-swiper .swiper-pagination-bullet-active {
   background-color: var(--color-primary);
 }
+
+.custom-overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 80px;
+  min-height: 88px;
+  border-radius: 6px;
+  padding: 2px;
+}
+
+/* Map Custom Overay 관련 CSS */
+.custom-overlay dl {
+  width: 100%;
+  height: 100%;
+  padding: 0 10px;
+  flex: 1;
+  text-align: center;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-overlay .area-kind > dt {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 150%;
+  letter-spacing: -0.012px;
+}
+
+.custom-overlay .area-kind > dd {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 140%;
+  letter-spacing: -0.01px;
+  margin-top: 5px;
+}
+
+.custom-overlay .type-price {
+  background-color: var(--color-white);
+  gap: 2px;
+}
+
+.custom-overlay .type-price > dt {
+  color: var(--color-gray-900);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.012px;
+}
+
+.custom-overlay .type-price > dd {
+  color: black;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 150%;
+  letter-spacing: -0.014px;
+}

@@ -3,6 +3,7 @@
 "use client";
 import { positions } from "@/mock/markerPositions";
 import { clusterStyle } from "@/styles/mapClusterStyle";
+import { createOverlayContent } from "@/utils/mapOverlay";
 import { useEffect, useRef, useState } from "react";
 
 declare global {
@@ -32,12 +33,24 @@ export default function Map() {
 
       kakaoMapRef.current = map;
 
-      // 마커 생성
+      // 커스텀 오버레이 마커 생성
       const allMarkers = positions.map(
-        ({ lat, lng }) =>
-          new window.kakao.maps.Marker({
+        ({ lat, lng, region, type, price, area, kind }) => {
+          const content = createOverlayContent(type, price, area, kind);
+
+          content.addEventListener("click", () => {
+            alert(`클릭한 위치: ${region} (${lat}, ${lng})`);
+          });
+
+          const overlay = new window.kakao.maps.CustomOverlay({
             position: new window.kakao.maps.LatLng(lat, lng),
-          }),
+            content: content,
+            xAnchor: 0.5,
+            yAnchor: 1.1,
+          });
+
+          return overlay;
+        },
       );
 
       // 지역별로 마커를 그룹핑하기 위한 객체
@@ -105,7 +118,7 @@ export default function Map() {
               map,
               averageCenter: true,
               minLevel: 5,
-              disableClickZoom: true,
+              disableClickZoom: false,
               texts: [region],
               styles: clusterStyle.region,
             });
@@ -136,7 +149,7 @@ export default function Map() {
           map,
           averageCenter: true,
           minLevel: 5,
-          disableClickZoom: true,
+          disableClickZoom: false,
           calculator: [2, 4, 8],
           styles: clusterStyle.number,
         });
