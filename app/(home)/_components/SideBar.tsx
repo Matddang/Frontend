@@ -9,10 +9,10 @@ export default function SideBar({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="relative flex h-full">
+    <>
       {/* 사이드바 */}
       <aside
-        className="flex flex-col max-w-[390px] h-full shrink-0 border-r border-[#F3F3F3] transition-opacity duration-300 ease-in-out"
+        className={`relative flex flex-col h-full max-w-[390px] shrink-0 border-r border-[#F3F3F3] transition-opacity duration-300 ease-in-out`}
         style={{
           width: isOpen ? "100%" : "0",
           opacity: isOpen ? 1 : 0,
@@ -47,6 +47,6 @@ export default function SideBar({ children }: { children: ReactNode }) {
           />
         </button>
       )}
-    </div>
+    </>
   );
 }

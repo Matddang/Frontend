@@ -13,7 +13,7 @@ export default function HomeLayout({
     <main className="flex flex-col h-screen">
       {/* 헤더 */}
       <Header />
-      <div className="flex flex-1 overflow-y-scroll">
+      <div className="flex flex-1 overflow-y-scroll relative">
         {/* 좌측 사이드바 */}
         {sidebar}
         {/* 우측: 네브바 + 맵 */}
