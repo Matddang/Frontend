@@ -12,7 +12,8 @@ export default function NavBar() {
   const { type, price, area, kind, crop, placeId } = useFilterStore();
 
   const [openFilter, setOpenFilter] = useState<string | null>(null);
-  const [showTooltip, setShowTooltip] = useState(true);
+  const [isTooltipEnabled, setIsTooltipEnabled] = useState(true); // 툴팁을 한 번만 보여줄지 여부
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false); // 툴팁이 현재 보여지고 있는지 여부
 
   const isLoggedIn = true; // 임시
 
@@ -57,15 +58,24 @@ export default function NavBar() {
 
           return (
             <div key={filter.key} className="relative">
-              <div className="relative group">
+              <div
+                className="relative"
+                onMouseEnter={() => {
+                  if (filter.key === "place" && isTooltipEnabled) {
+                    setIsTooltipVisible(true);
+                  }
+                }}
+              >
                 <FilterButton
                   text={filter.label}
                   isActive={isActive}
                   hasValue={hasValue}
                   onClick={() => handleClick(filter.key)}
                 />
-                {filter.key === "place" && showTooltip && (
-                  <div className="absolute left-0 gap-2 flex items-start mt-6 w-[323px] px-4 py-[14px] bg-primary-light rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
+                {filter.key === "place" && isTooltipVisible && (
+                  <div
+                    className={`absolute left-0 gap-2 flex items-start mt-6 w-[323px] px-4 py-[14px] bg-primary-light rounded-[16px] z-50`}
+                  >
                     <div className="flex-1 w-full flex flex-col gap-[6px] whitespace-normal">
                       <p className="typo-body-1-b">
                         내 장소 기반 필터는 무엇인가요?
@@ -77,7 +87,12 @@ export default function NavBar() {
                         등록하신 장소 중에 하나만 선택해 주세요!
                       </p>
                     </div>
-                    <button onClick={() => setShowTooltip(false)}>
+                    <button
+                      onClick={() => {
+                        setIsTooltipEnabled(false);
+                        setIsTooltipVisible(false);
+                      }}
+                    >
                       <Image
                         src={CloseIcon}
                         alt="닫기"
