@@ -74,7 +74,7 @@ export default function NavBar() {
                 />
                 {filter.key === "place" && isTooltipVisible && (
                   <div
-                    className={`absolute left-0 gap-2 flex items-start mt-6 w-[323px] px-4 py-[14px] bg-primary-light rounded-[16px] z-50`}
+                    className={`absolute left-0 gap-2 flex items-start mt-6 w-[323px] px-4 py-[14px] bg-primary-light rounded-[16px] z-100`}
                   >
                     <div className="flex-1 w-full flex flex-col gap-[6px] whitespace-normal">
                       <p className="typo-body-1-b">
