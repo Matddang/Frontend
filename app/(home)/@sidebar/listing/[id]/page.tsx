@@ -14,6 +14,11 @@ export default async function DetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
+  if (typeof id !== "string" || !/^\d+$/.test(id)) {
+    return null;
+  }
+
   console.log(id);
 
   return (
