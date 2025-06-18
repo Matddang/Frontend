@@ -3,7 +3,7 @@ import ProcessForm from "@/components/process/ProcessForm";
 import { StepProps, STEPS_LABEL } from "@/types/typetest";
 import { useState } from "react";
 
-export default function Purpose({ nextStep }: StepProps) {
+export default function Purpose({ nextStep, prevStep }: StepProps) {
   const [purpose, setPurpose] = useState<string[] | string>([]);
 
   const title = {
@@ -24,6 +24,8 @@ export default function Purpose({ nextStep }: StepProps) {
       stepCount={8}
       title={title}
       nextStep={() => nextStep(STEPS_LABEL.PURPOSE, purpose)}
+      disable={purpose.length === 0}
+      prevStep={prevStep}
     >
       <ListSelector
         list={purpose_types}

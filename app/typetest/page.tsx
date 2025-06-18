@@ -31,11 +31,16 @@ export default function Page() {
     setStep((prev) => prev + 1);
   };
 
-  console.log(formData);
+  const prevStep = () => {
+    setStep((prev) => prev - 1);
+  };
 
   return (
     <Frame>
-      <CurrentComponent nextStep={(field, value) => nextStep(field, value)} />
+      <CurrentComponent
+        nextStep={(field, value) => nextStep(field, value)}
+        prevStep={prevStep}
+      />
     </Frame>
   );
 }

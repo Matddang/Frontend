@@ -5,7 +5,7 @@ import Image from "next/image";
 import HomeIcon from "@/assets/images/home.svg";
 import PlantIcon from "@/assets/images/plant.svg";
 
-export default function AddLoaction({ nextStep }: StepProps) {
+export default function AddLoaction({ nextStep, prevStep }: StepProps) {
   const title = {
     title: "내 장소를 등록하고, 가까운 농지를 추천받아보세요.",
     subTitle: "해당 장소와 가까운 농지를 추천해 드릴게요.",
@@ -36,6 +36,8 @@ export default function AddLoaction({ nextStep }: StepProps) {
       title={title}
       nextStep={() => nextStep(STEPS_LABEL.LOCATION, "")}
       isLocation
+      disable={locations.length === 0}
+      prevStep={prevStep}
     >
       {locations.length ? (
         <div className="flex flex-col gap-[10px]">

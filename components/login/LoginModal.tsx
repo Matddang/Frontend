@@ -8,9 +8,11 @@ import LoginTooltip from "@/assets/images/login-tooltip.svg";
 import KakaoIcon from "@/assets/images/kakao-icon.svg";
 import GoogleIcon from "@/assets/images/google-icon.svg";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginModal({ onClose }: { onClose: () => void }) {
   const [isLogin, setIsLogin] = useState(true);
+  const router = useRouter();
 
   return (
     <Modal
@@ -68,7 +70,10 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
               </div>
               <Image src={LoginImg2} alt="img" />
             </div>
-            <button className="font-semibold text-[18px] text-white bg-primary py-[12px] rounded-[8px] cursor-pointer">
+            <button
+              className="font-semibold text-[18px] text-white bg-primary py-[12px] rounded-[8px] cursor-pointer"
+              onClick={() => router.push("/typetest")}
+            >
               시작하기
             </button>
           </div>

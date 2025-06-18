@@ -3,7 +3,7 @@ import ProcessForm from "@/components/process/ProcessForm";
 import { StepProps, STEPS_LABEL } from "@/types/typetest";
 import { useState } from "react";
 
-export default function Crops({ nextStep }: StepProps) {
+export default function Crops({ nextStep, prevStep }: StepProps) {
   const [crops, setCrops] = useState<string | string[]>("");
 
   const title = {
@@ -33,6 +33,8 @@ export default function Crops({ nextStep }: StepProps) {
       stepCount={8}
       title={title}
       nextStep={() => nextStep(STEPS_LABEL.CROPS, crops)}
+      disable={crops.length === 0}
+      prevStep={prevStep}
     >
       <ListSelector
         list={crops_types}

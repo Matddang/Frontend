@@ -3,7 +3,7 @@ import ProcessForm from "@/components/process/ProcessForm";
 import { StepProps, STEPS_LABEL } from "@/types/typetest";
 import { useState } from "react";
 
-export default function Revenue({ nextStep }: StepProps) {
+export default function Revenue({ nextStep, prevStep }: StepProps) {
   const [revenue, setRevenue] = useState<string | string[]>("");
 
   const title = {
@@ -33,6 +33,8 @@ export default function Revenue({ nextStep }: StepProps) {
       stepCount={8}
       title={title}
       nextStep={() => nextStep(STEPS_LABEL.REVENUE, revenue)}
+      disable={revenue === ""}
+      prevStep={prevStep}
     >
       <ListSelector
         list={revenue_types}

@@ -5,7 +5,7 @@ import CheckDefaultIcon from "@/assets/images/check-gray.svg";
 import CheckIcon from "@/assets/images/check-primary.svg";
 import Image from "next/image";
 
-export default function Agreement({ nextStep }: StepProps) {
+export default function Agreement({ nextStep, prevStep }: StepProps) {
   const [agree, setAgree] = useState(false);
 
   const title = {
@@ -20,6 +20,8 @@ export default function Agreement({ nextStep }: StepProps) {
       title={title}
       nextStep={() => nextStep(STEPS_LABEL.AGREEMENT, agree)}
       isAgreement
+      disable={!agree}
+      prevStep={prevStep}
     >
       <div className="flex flex-col gap-[31.67px]">
         <div className="p-[10px] bg-gray-100 flex flex-col gap-[25px]">
@@ -59,7 +61,9 @@ export default function Agreement({ nextStep }: StepProps) {
               className="cursor-pointer"
             />
           )}
-          <span className="font-[14px] text-black">
+          <span
+            className={`font-[14px] text-black ${agree ? "font-bold" : ""}`}
+          >
             위 내용을 확인하였으며, 위치정보 제공에 동의합니다.
           </span>
         </div>

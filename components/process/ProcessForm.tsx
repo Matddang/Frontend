@@ -11,6 +11,8 @@ interface ProcessFormProps {
   nextStep: () => void;
   isLocation?: boolean;
   isAgreement?: boolean;
+  disable?: boolean;
+  prevStep?: () => void;
 }
 
 export default function ProcessForm({
@@ -21,6 +23,8 @@ export default function ProcessForm({
   nextStep,
   isLocation,
   isAgreement,
+  disable,
+  prevStep,
 }: ProcessFormProps) {
   return (
     <div
@@ -46,7 +50,12 @@ export default function ProcessForm({
       `}
       >
         <div className="flex flex-col gap-[40px] justify-between">
-          <StepIndicator currentStep={currentStep} stepCount={stepCount} />
+          <StepIndicator
+            currentStep={currentStep}
+            stepCount={stepCount}
+            nextStep={nextStep}
+            prevStep={prevStep}
+          />
 
           <div className="flex flex-col gap-[4px]">
             <span className="text-[16px] text-gray-900">{title.subTitle}</span>
@@ -72,6 +81,7 @@ export default function ProcessForm({
           className="w-full h-[51px] rounded-lg bg-primary text-white font-semibold text-[18px] cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
           style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
           onClick={nextStep}
+          disabled={disable}
         >
           {isAgreement ? "유형 결과 확인하기" : "다음"}
         </button>

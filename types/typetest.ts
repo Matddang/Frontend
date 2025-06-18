@@ -27,6 +27,7 @@ export interface StepProps {
     field: StepLabel,
     value: string | string[] | number | object | boolean,
   ) => void;
+  prevStep: () => void;
 }
 
 export const TYPETEST_STEPS: {

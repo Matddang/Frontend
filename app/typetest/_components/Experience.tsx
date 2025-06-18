@@ -24,6 +24,7 @@ export default function Experience({ nextStep }: StepProps) {
       stepCount={8}
       title={title}
       nextStep={() => nextStep(STEPS_LABEL.EXPERIENCE, experience)}
+      disable={experience === ""}
     >
       <ListSelector
         list={experience_types}

@@ -10,7 +10,7 @@ import Important5 from "@/assets/images/important-5.svg";
 import Important6 from "@/assets/images/important-6.svg";
 import CheckIcon from "@/assets/images/check-primary.svg";
 
-export default function Important({ nextStep }: StepProps) {
+export default function Important({ nextStep, prevStep }: StepProps) {
   const [selected, setSelected] = useState<string[]>([]);
 
   const title = {
@@ -43,6 +43,8 @@ export default function Important({ nextStep }: StepProps) {
       stepCount={8}
       title={title}
       nextStep={() => nextStep(STEPS_LABEL.PURPOSE, selected)}
+      disable={selected.length === 0}
+      prevStep={prevStep}
     >
       <div className="flex flex-col gap-[8px]">
         <span className="text-[12px] text-gray-700">
