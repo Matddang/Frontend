@@ -5,11 +5,16 @@ import FilterButton from "./filter/FilterButton";
 import FilterModal from "./filter/FilterModal";
 import { useFilterStore } from "@/store/FilterStore";
 import { AREA_FILTER, FILTERS, PRICE_FILTER } from "@/constants/filterOptions";
+import Image from "next/image";
+import CloseIcon from "@/assets/images/close.svg";
 
 export default function NavBar() {
   const { type, price, area, kind, crop } = useFilterStore();
 
   const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const [showTooltip, setShowTooltip] = useState(true); // 1. 상태 추가
+
+  const isLoggedIn = true; // 임시
 
   const handleClick = (key: string) => {
     setOpenFilter((prev) => (prev === key ? null : key));
@@ -43,17 +48,44 @@ export default function NavBar() {
     <div className="absolute bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center px-[50px] py-4 gap-[12px]">
       <div className="flex gap-[12px] whitespace-nowrap">
         {FILTERS.map((filter) => {
+          if (filter.key === "place" && !isLoggedIn) return null;
+
           const isActive = openFilter === filter.key;
           const hasValue = hasFilterValue(filter.key);
 
           return (
             <div key={filter.key} className="relative">
-              <FilterButton
-                text={filter.label}
-                isActive={isActive}
-                hasValue={hasValue}
-                onClick={() => handleClick(filter.key)}
-              />
+              <div className="relative group">
+                <FilterButton
+                  text={filter.label}
+                  isActive={isActive}
+                  hasValue={hasValue}
+                  onClick={() => handleClick(filter.key)}
+                />
+                {filter.key === "place" && showTooltip && (
+                  <div className="absolute left-0 gap-2 flex items-start mt-6 w-[323px] px-4 py-[14px] bg-primary-light rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
+                    <div className="flex-1 w-full flex flex-col gap-[6px] whitespace-normal">
+                      <p className="typo-body-1-b">
+                        내 장소 기반 필터는 무엇인가요?
+                      </p>
+                      <p className="typo-14-r">
+                        내가 기존에 살고 있는 거주지, 농사 짓고 있는 농지와
+                        가까운 거리 순으로 매물을 추천해 드리는 필터입니다.
+                        <br />
+                        등록하신 장소 중에 하나만 선택해 주세요!
+                      </p>
+                    </div>
+                    <button onClick={() => setShowTooltip(false)}>
+                      <Image
+                        src={CloseIcon}
+                        alt="닫기"
+                        width={24}
+                        height={24}
+                      />
+                    </button>
+                  </div>
+                )}
+              </div>
               {isActive && (
                 <div className="absolute top-full left-0 z-50 mt-5">
                   <FilterModal

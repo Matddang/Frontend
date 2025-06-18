@@ -4,6 +4,7 @@ export const FILTERS = [
   { key: "area", label: "농지면적" },
   { key: "kind", label: "농지유형" },
   { key: "crop", label: "희망작물" },
+  { key: "place", label: "내 장소 기반" },
 ];
 
 export const TYPE_FILTER = {
