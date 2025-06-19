@@ -1,5 +1,15 @@
+type PositionData = {
+  lat: number;
+  lng: number;
+  region: string;
+  type: "sale" | "lease";
+  price: number;
+  area: number;
+  kind: "field" | "paddy" | "orchard";
+};
+
 // 매물 임시 데이터
-export const positions = [
+export const positions: PositionData[] = [
   // 나주시
   {
     lat: 35.0189,
