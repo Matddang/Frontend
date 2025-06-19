@@ -329,7 +329,7 @@ export default function Map() {
   };
 
   return (
-    <div className="relative w-full border h-full">
+    <div className="relative w-full h-full">
       {/* 지도 */}
       <div ref={mapRef} className="w-full h-full" />
 
@@ -378,7 +378,7 @@ export default function Map() {
             <Image src={MinusIcon} alt="축소" />
           </button>
         </div>
-        <div className="flex flex-col gap-2">
+        {/* <div className="flex flex-col gap-2">
           <button
             onClick={() => changeMapType("ROADMAP")}
             className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
@@ -393,26 +393,8 @@ export default function Map() {
           >
             스카이뷰
           </button>
-        </div>
+        </div> */}
       </div>
-
-      {/* 지도 타입 버튼 */}
-      {/* <div className="flex flex-col gap-2">
-        <button
-          onClick={() => changeMapType("ROADMAP")}
-          className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
-            ${activeMapType === "ROADMAP" ? "bg-primary" : "bg-gray-500"}`}
-        >
-          일반지도
-        </button>
-        <button
-          onClick={() => changeMapType("HYBRID")}
-          className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
-            ${activeMapType === "HYBRID" ? "bg-[#00DD9B]" : "bg-gray-500"}`}
-        >
-          스카이뷰
-        </button>
-      </div> */}
     </div>
   );
 }
