@@ -7,12 +7,37 @@ import LoginImg2 from "@/assets/images/login-img2.svg";
 import LoginTooltip from "@/assets/images/login-tooltip.svg";
 import KakaoIcon from "@/assets/images/kakao-icon.svg";
 import GoogleIcon from "@/assets/images/google-icon.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginModal({ onClose }: { onClose: () => void }) {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const router = useRouter();
+
+  const kakaoLoginHandler = () => {
+    window.Kakao.Auth.authorize({
+      redirectUri: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI,
+    });
+  };
+
+  useEffect(() => {
+    console.log("window.Kakao: ", window.Kakao);
+    if (window.Kakao) {
+      if (!window.Kakao.isInitialized()) {
+        window.Kakao.init(process.env.KAKAO_API_KEY);
+        console.log("after Init: ", window.Kakao.isInitialized());
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (window.Kakao) {
+      if (!window.Kakao.isInitialized()) {
+        window.Kakao.init(process.env.KAKAO_API_KEY);
+        console.log("after Init: ", window.Kakao.isInitialized());
+      }
+    }
+  }, [window.Kakao]);
 
   return (
     <Modal
@@ -35,18 +60,37 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
                 농지 매물 비교 서비스를 이용하실 수 있습니다.
               </span>
             </div>
-            <Image src={LoginImg} alt="img" />
+            <Image src={LoginImg} alt="img" className="w-[142px] h-[116px]" />
           </div>
 
           <div className="flex flex-col gap-[10px] items-center">
-            <Image src={LoginTooltip} alt="tooltip" />
+            <Image
+              src={LoginTooltip}
+              alt="tooltip"
+              className="w-[145px] h-[42px]"
+              width={145}
+              height={42}
+            />
             <div className="w-full flex flex-col gap-[18px]">
-              <button className="flex gap-[52px] font-semibold text-[18px] text-black bg-[#FCDC40] rounded-[8px] py-[12px] pl-[51.5px] cursor-pointer">
-                <Image src={KakaoIcon} alt="kakao" />
+              <button
+                className="flex gap-[52px] font-semibold text-[18px] text-black bg-[#FCDC40] rounded-[8px] py-[12px] pl-[51.5px] cursor-pointer"
+                onClick={kakaoLoginHandler}
+              >
+                <Image
+                  src={KakaoIcon}
+                  alt="kakao"
+                  className="w-[23px] h-[23px]"
+                  width={23}
+                  height={23}
+                />
                 카카오로 로그인
               </button>
               <button className="flex gap-[52px] font-semibold text-[18px] text-black rounded-[8px] border-[1px] border-gray-500 py-[12px] pl-[51.5px] cursor-pointer">
-                <Image src={GoogleIcon} alt="google" />
+                <Image
+                  src={GoogleIcon}
+                  alt="google"
+                  className="w-[24px] h-[24px]"
+                />
                 Google로 로그인
               </button>
             </div>
