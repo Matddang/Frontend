@@ -4,7 +4,10 @@
 import { positions } from "@/mock/markerPositions";
 import { clusterStyle } from "@/styles/mapClusterStyle";
 import { createOverlayContent } from "@/utils/mapOverlay";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import PlusIcon from "@/assets/images/plus.svg";
+import MinusIcon from "@/assets/images/minus.svg";
 
 declare global {
   interface Window {
@@ -216,6 +219,34 @@ export default function Map() {
     <div className="relative w-full h-[calc(100vh-65px)]">
       {/* 지도 */}
       <div ref={mapRef} className="w-full h-full" />
+
+      <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-[11.5px] px-3 py-[15px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white rounded-[8px]">
+        <button
+          onClick={() => {
+            const map = kakaoMapRef.current;
+            if (!map) return;
+            const level = map.getLevel();
+            map.setLevel(level - 1);
+          }}
+          className=""
+          aria-label="지도 확대"
+        >
+          <Image src={PlusIcon} alt="확대" />
+        </button>
+        <hr className="w-full h-[1px] text-gray-500" />
+        <button
+          onClick={() => {
+            const map = kakaoMapRef.current;
+            if (!map) return;
+            const level = map.getLevel();
+            map.setLevel(level + 1);
+          }}
+          className=""
+          aria-label="지도 축소"
+        >
+          <Image src={MinusIcon} alt="축소" />
+        </button>
+      </div>
 
       {/* 지도 타입 버튼 */}
       {/* <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-2">
