@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import PlusIcon from "@/assets/images/plus.svg";
 import MinusIcon from "@/assets/images/minus.svg";
+import CurrentLocationIcon from "@/assets/images/current-location.svg";
 
 declare global {
   interface Window {
@@ -18,6 +19,7 @@ declare global {
 export default function Map() {
   const mapRef = useRef<HTMLDivElement>(null); // 지도를 표시할 HTML DOM 요소 참조
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스 저장
+  const myLocationOverlayRef = useRef<any>(null);
 
   // 현재 선택된 지도 타입 상태
   const [activeMapType, setActiveMapType] = useState<"ROADMAP" | "HYBRID">(
@@ -210,6 +212,57 @@ export default function Map() {
     }
   }, []);
 
+  const moveToMyLocation = () => {
+    if (!navigator.geolocation || !kakaoMapRef.current) {
+      alert("위치 정보를 사용할 수 없습니다.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const loc = new window.kakao.maps.LatLng(latitude, longitude);
+
+        // 지도 이동 + 확대
+        kakaoMapRef.current.setLevel(4);
+        kakaoMapRef.current.panTo(loc);
+
+        // 기존 커스텀 오버레이 제거
+        if (myLocationOverlayRef.current) {
+          myLocationOverlayRef.current.setMap(null);
+        }
+
+        // 커스텀 오버레이 콘텐츠 생성
+        const content = document.createElement("div");
+        content.innerHTML = `
+        <div style="
+          background: #39B94C70;
+          width: 150px;
+          height: 150px;
+          border-radius: 50%;
+          border: 1px solid #39B94C;
+        ">
+        </div>
+      `;
+
+        // 오버레이 생성 및 표시
+        const overlay = new window.kakao.maps.CustomOverlay({
+          position: loc,
+          content: content,
+          xAnchor: 0.5,
+          yAnchor: 1.1,
+          map: kakaoMapRef.current,
+        });
+
+        myLocationOverlayRef.current = overlay;
+      },
+      (error) => {
+        alert("위치 정보를 가져올 수 없습니다.");
+        console.error(error);
+      },
+    );
+  };
+
   const changeMapType = (type: "ROADMAP" | "HYBRID") => {
     setActiveMapType(type);
     kakaoMapRef.current?.setMapTypeId(window.kakao.maps.MapTypeId[type]);
@@ -220,32 +273,43 @@ export default function Map() {
       {/* 지도 */}
       <div ref={mapRef} className="w-full h-full" />
 
-      <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-[11.5px] px-3 py-[15px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white rounded-[8px]">
+      <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-[23px]">
         <button
-          onClick={() => {
-            const map = kakaoMapRef.current;
-            if (!map) return;
-            const level = map.getLevel();
-            map.setLevel(level - 1);
-          }}
-          className=""
-          aria-label="지도 확대"
+          onClick={moveToMyLocation}
+          className="px-[6px] py-2 rounded-[8px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white flex flex-col gap-1 items-center justify-center"
+          aria-label="현위치로 이동"
+          title="현위치로 이동"
         >
-          <Image src={PlusIcon} alt="확대" />
+          <Image src={CurrentLocationIcon} alt="현위치" />
+          <span className="typo-sub-title-m text-primary">현위치</span>
         </button>
-        <hr className="w-full h-[1px] text-gray-500" />
-        <button
-          onClick={() => {
-            const map = kakaoMapRef.current;
-            if (!map) return;
-            const level = map.getLevel();
-            map.setLevel(level + 1);
-          }}
-          className=""
-          aria-label="지도 축소"
-        >
-          <Image src={MinusIcon} alt="축소" />
-        </button>
+        <div className=" flex flex-col gap-[11.5px] px-3 py-[15px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white rounded-[8px]">
+          <button
+            onClick={() => {
+              const map = kakaoMapRef.current;
+              if (!map) return;
+              const level = map.getLevel();
+              map.setLevel(level - 1);
+            }}
+            className=""
+            aria-label="지도 확대"
+          >
+            <Image src={PlusIcon} alt="확대" />
+          </button>
+          <hr className="w-full h-[1px] text-gray-500" />
+          <button
+            onClick={() => {
+              const map = kakaoMapRef.current;
+              if (!map) return;
+              const level = map.getLevel();
+              map.setLevel(level + 1);
+            }}
+            className=""
+            aria-label="지도 축소"
+          >
+            <Image src={MinusIcon} alt="축소" />
+          </button>
+        </div>
       </div>
 
       {/* 지도 타입 버튼 */}
