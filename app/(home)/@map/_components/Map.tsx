@@ -21,7 +21,30 @@ declare global {
 export default function Map() {
   const mapRef = useRef<HTMLDivElement>(null); // 지도를 표시할 HTML DOM 요소 참조
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스 저장
-  const myLocationOverlayRef = useRef<any>(null);
+  const overlays = useRef<{
+    myLocation: any | null;
+    circle: any | null;
+    infoOverlay: any | null;
+  }>({
+    myLocation: null,
+    circle: null,
+    infoOverlay: null,
+  });
+
+  const clearAllOverlays = () => {
+    if (overlays.current.myLocation) {
+      overlays.current.myLocation.setMap(null);
+      overlays.current.myLocation = null;
+    }
+    if (overlays.current.circle) {
+      overlays.current.circle.setMap(null);
+      overlays.current.circle = null;
+    }
+    if (overlays.current.infoOverlay) {
+      overlays.current.infoOverlay.setMap(null);
+      overlays.current.infoOverlay = null;
+    }
+  };
 
   // 현재 선택된 지도 타입 상태
   const [activeMapType, setActiveMapType] = useState<"ROADMAP" | "HYBRID">(
@@ -46,14 +69,64 @@ export default function Map() {
           const content = createOverlayContent(type, price, area, kind);
 
           content.addEventListener("click", () => {
-            alert(`클릭한 위치: ${region} (${lat}, ${lng})`);
+            const latLng = new window.kakao.maps.LatLng(lat, lng);
+
+            clearAllOverlays();
+
+            // 지도 중심 이동 및 줌인
+            kakaoMapRef.current.setLevel(0); // 더 낮을수록 더 줌인
+            kakaoMapRef.current.panTo(latLng);
+
+            // 새 원 그리기 (예: 반경 500m)
+            const circle = new window.kakao.maps.Circle({
+              center: latLng,
+              radius: 50, // 미터 단위
+              strokeWeight: 2,
+              strokeColor: "#39B94C",
+              strokeOpacity: 0.8,
+              fillColor: "rgba(57, 185, 76, 0.44)",
+              fillOpacity: 0.44,
+              map: kakaoMapRef.current,
+            });
+
+            overlays.current.circle = circle;
+
+            // 정보 표시할 HTML 콘텐츠
+            const infoContent = document.createElement("div");
+            infoContent.style.position = "relative";
+            infoContent.style.padding = "8px 12px";
+            infoContent.style.background = "#F6FFE8";
+            infoContent.style.borderRadius = "40px";
+            infoContent.innerHTML = `<h4 style="font-size:16px; font-weight:700;">${region}</h4>`;
+
+            const pointer = document.createElement("div");
+            pointer.style.position = "absolute";
+            pointer.style.bottom = "-10px";
+            pointer.style.left = "50%";
+            pointer.style.transform = "translateX(-50%)";
+            pointer.style.width = "0";
+            pointer.style.height = "0";
+            pointer.style.borderLeft = "10px solid transparent";
+            pointer.style.borderRight = "10px solid transparent";
+            pointer.style.borderTop = "10px solid #F6FFE8"; // 말풍선 배경색과 동일하게
+
+            infoContent.appendChild(pointer);
+
+            const infoOverlay = new window.kakao.maps.CustomOverlay({
+              content: infoContent,
+              position: latLng,
+              yAnchor: 0.5 + 2.3,
+              map: kakaoMapRef.current,
+            });
+
+            overlays.current.infoOverlay = infoOverlay;
           });
 
           const overlay = new window.kakao.maps.CustomOverlay({
             position: new window.kakao.maps.LatLng(lat, lng),
             content: content,
             xAnchor: 0.5,
-            yAnchor: 1.1,
+            yAnchor: 0.5,
           });
 
           return overlay;
@@ -225,38 +298,23 @@ export default function Map() {
         const { latitude, longitude } = position.coords;
         const loc = new window.kakao.maps.LatLng(latitude, longitude);
 
-        // 지도 이동 + 확대
+        clearAllOverlays();
+
         kakaoMapRef.current.setLevel(4);
         kakaoMapRef.current.panTo(loc);
 
-        // 기존 커스텀 오버레이 제거
-        if (myLocationOverlayRef.current) {
-          myLocationOverlayRef.current.setMap(null);
-        }
-
-        // 커스텀 오버레이 콘텐츠 생성
-        const content = document.createElement("div");
-        content.innerHTML = `
-        <div style="
-          background: #39B94C70;
-          width: 150px;
-          height: 150px;
-          border-radius: 50%;
-          border: 1px solid #39B94C;
-        ">
-        </div>
-      `;
-
-        // 오버레이 생성 및 표시
-        const overlay = new window.kakao.maps.CustomOverlay({
-          position: loc,
-          content: content,
-          xAnchor: 0.5,
-          yAnchor: 1.1,
+        const circle = new window.kakao.maps.Circle({
+          center: loc,
+          radius: 75,
+          strokeWeight: 3,
+          strokeColor: "#39B94C",
+          strokeOpacity: 0.8,
+          fillColor: "rgba(57, 185, 76, 0.4)",
+          fillOpacity: 0.4,
           map: kakaoMapRef.current,
         });
 
-        myLocationOverlayRef.current = overlay;
+        overlays.current.myLocation = circle;
       },
       (error) => {
         alert("위치 정보를 가져올 수 없습니다.");
@@ -320,10 +378,26 @@ export default function Map() {
             <Image src={MinusIcon} alt="축소" />
           </button>
         </div>
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => changeMapType("ROADMAP")}
+            className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
+            ${activeMapType === "ROADMAP" ? "bg-primary" : "bg-gray-500"}`}
+          >
+            일반지도
+          </button>
+          <button
+            onClick={() => changeMapType("HYBRID")}
+            className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
+            ${activeMapType === "HYBRID" ? "bg-[#00DD9B]" : "bg-gray-500"}`}
+          >
+            스카이뷰
+          </button>
+        </div>
       </div>
 
       {/* 지도 타입 버튼 */}
-      {/* <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-2">
+      {/* <div className="flex flex-col gap-2">
         <button
           onClick={() => changeMapType("ROADMAP")}
           className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
