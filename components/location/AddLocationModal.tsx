@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Modal from "../common/Modal";
-import HomeIcon from "@/assets/images/home.svg";
+import HomeIcon from "@/assets/images/home-white.svg";
 import { useEffect, useState } from "react";
 import SearchIcon from "@/assets/images/search.svg";
 import { useDebounce } from "@/hooks/useDebounce";

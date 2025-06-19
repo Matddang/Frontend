@@ -112,7 +112,9 @@ function ResultItem() {
               {detail.title}
               {(detail.key === "revenue" ||
                 detail.key === "infra" ||
-                detail.key === "crops") && <Image src={InfoIcon} alt="info" />}
+                detail.key === "crops") && (
+                <Image src={InfoIcon} alt="info" width={15} height={15} />
+              )}
             </div>
             <span
               className={`font-bold text-[14px] ${

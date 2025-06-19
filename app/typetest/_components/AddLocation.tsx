@@ -2,7 +2,7 @@ import AddLoctaionButton from "@/components/location/AddLocationButton";
 import ProcessForm from "@/components/process/ProcessForm";
 import { StepProps, STEPS_LABEL } from "@/types/typetest";
 import Image from "next/image";
-import HomeIcon from "@/assets/images/home.svg";
+import HomeIcon from "@/assets/images/home-white.svg";
 import PlantIcon from "@/assets/images/plant.svg";
 
 export default function AddLoaction({ nextStep, prevStep }: StepProps) {

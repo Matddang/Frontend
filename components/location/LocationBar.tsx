@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import HomeIcon from "@/assets/images/home.svg";
+import HomeIcon from "@/assets/images/home-white.svg";
 import PlantIcon from "@/assets/images/plant.svg";
 import EditIcon from "@/assets/images/edit.svg";
 import { useState } from "react";
