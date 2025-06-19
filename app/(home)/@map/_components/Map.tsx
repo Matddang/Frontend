@@ -5,7 +5,7 @@ import { positions } from "@/mock/markerPositions";
 import { clusterStyle } from "@/styles/mapClusterStyle";
 import { createOverlayContent } from "@/utils/mapOverlay";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import PlusIcon from "@/assets/images/plus.svg";
 import MinusIcon from "@/assets/images/minus.svg";
 import CurrentLocationIcon from "@/assets/images/current-location.svg";
@@ -47,9 +47,9 @@ export default function Map() {
   };
 
   // 현재 선택된 지도 타입 상태
-  const [activeMapType, setActiveMapType] = useState<"ROADMAP" | "HYBRID">(
-    "ROADMAP",
-  );
+  // const [activeMapType, setActiveMapType] = useState<"ROADMAP" | "HYBRID">(
+  //   "ROADMAP",
+  // );
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.kakao || !mapRef.current)
@@ -323,10 +323,10 @@ export default function Map() {
     );
   };
 
-  const changeMapType = (type: "ROADMAP" | "HYBRID") => {
-    setActiveMapType(type);
-    kakaoMapRef.current?.setMapTypeId(window.kakao.maps.MapTypeId[type]);
-  };
+  // const changeMapType = (type: "ROADMAP" | "HYBRID") => {
+  //   setActiveMapType(type);
+  //   kakaoMapRef.current?.setMapTypeId(window.kakao.maps.MapTypeId[type]);
+  // };
 
   return (
     <div className="relative w-full h-full">
