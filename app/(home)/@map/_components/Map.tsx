@@ -9,6 +9,8 @@ import { useEffect, useRef, useState } from "react";
 import PlusIcon from "@/assets/images/plus.svg";
 import MinusIcon from "@/assets/images/minus.svg";
 import CurrentLocationIcon from "@/assets/images/current-location.svg";
+import AgroDistributionActiveIcon from "@/assets/images/agro-distribution-active.svg";
+import MachineryRentalActiveIcon from "@/assets/images/machinery-rental-active.svg";
 
 declare global {
   interface Window {
@@ -33,7 +35,7 @@ export default function Map() {
     const onLoad = () => {
       const map = new window.kakao.maps.Map(mapRef.current, {
         center: new window.kakao.maps.LatLng(34.9, 126.7),
-        level: 9,
+        level: 10,
       });
 
       kakaoMapRef.current = map;
@@ -269,11 +271,19 @@ export default function Map() {
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-65px)]">
+    <div className="relative w-full border h-full">
       {/* 지도 */}
       <div ref={mapRef} className="w-full h-full" />
 
-      <div className="absolute top-1/2 -translate-y-full right-4 z-10 flex flex-col gap-[23px]">
+      <div className="absolute top-10 right-10 z-10 flex flex-col gap-[23px]">
+        <div className="flex flex-col gap-3">
+          <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-primary">
+            <Image src={MachineryRentalActiveIcon} alt="농기계 임대 사업소" />
+          </button>
+          <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-[#FF822F]">
+            <Image src={AgroDistributionActiveIcon} alt="농수산물 유통 센터" />
+          </button>
+        </div>
         <button
           onClick={moveToMyLocation}
           className="px-[6px] py-2 rounded-[8px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white flex flex-col gap-1 items-center justify-center"
