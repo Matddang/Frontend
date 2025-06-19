@@ -17,7 +17,7 @@ export default function HomeLayout({
         {/* 좌측 사이드바 */}
         {sidebar}
         {/* 우측: 네브바 + 맵 */}
-        <div className="flex flex-col flex-1 relative">
+        <div className="flex flex-col flex-1 ">
           <NavBar />
           {map}
         </div>

@@ -48,7 +48,7 @@ export default function NavBar() {
   };
 
   return (
-    <div className="absolute bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center px-[50px] py-4 gap-[12px]">
+    <div className="bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center px-[50px] py-4 gap-[12px]">
       <div className="flex gap-[12px] whitespace-nowrap">
         {FILTERS.map((filter) => {
           if (filter.key === "place" && !isLoggedIn) return null;
@@ -119,7 +119,7 @@ export default function NavBar() {
         })}
       </div>
 
-      <button className="opacity-0 flex gap-[10px] flex-shrink-0 items-center px-4 py-2 rounded-full border border-[#DDDFE5] transition-colors duration-200 outline-none text-[18px] text-[#9C9EA5] cursor-pointer">
+      <button className="flex gap-[10px] flex-shrink-0 items-center px-4 py-2 rounded-full border border-[#DDDFE5] transition-colors duration-200 outline-none text-[18px] text-[#9C9EA5] cursor-pointer">
         <span>초기화</span>
         <svg
           width="16"
