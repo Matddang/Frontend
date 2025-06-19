@@ -9,7 +9,20 @@ import Image from "next/image";
 import CloseIcon from "@/assets/images/close.svg";
 
 export default function NavBar() {
-  const { type, price, area, kind, crop, placeId } = useFilterStore();
+  const {
+    type,
+    price,
+    area,
+    kind,
+    crop,
+    placeId,
+    setType,
+    setPrice,
+    setArea,
+    setKind,
+    setCrop,
+    setPlaceId,
+  } = useFilterStore();
 
   const [openFilter, setOpenFilter] = useState<string | null>(null);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState(true); // 툴팁을 한 번만 보여줄지 여부
@@ -45,6 +58,21 @@ export default function NavBar() {
       default:
         return false;
     }
+  };
+
+  const handleAllReset = () => {
+    setType(null);
+    setPrice({
+      min: PRICE_FILTER[0].value,
+      max: PRICE_FILTER[PRICE_FILTER.length - 1].value,
+    });
+    setArea({
+      min: AREA_FILTER[0].value,
+      max: AREA_FILTER[AREA_FILTER.length - 1].value,
+    });
+    setKind([]);
+    setCrop({});
+    setPlaceId(null);
   };
 
   return (
@@ -119,7 +147,10 @@ export default function NavBar() {
         })}
       </div>
 
-      <button className="flex gap-[10px] flex-shrink-0 items-center px-4 py-2 rounded-full border border-[#DDDFE5] transition-colors duration-200 outline-none text-[18px] text-[#9C9EA5] cursor-pointer">
+      <button
+        onClick={handleAllReset}
+        className="flex gap-[10px] flex-shrink-0 items-center px-4 py-2 rounded-full border border-[#DDDFE5] transition-colors duration-200 outline-none text-[18px] text-[#9C9EA5] cursor-pointer"
+      >
         <span>초기화</span>
         <svg
           width="16"
