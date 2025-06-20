@@ -11,6 +11,7 @@ import MinusIcon from "@/assets/images/minus.svg";
 import CurrentLocationIcon from "@/assets/images/current-location.svg";
 import AgroDistributionActiveIcon from "@/assets/images/agro-distribution-active.svg";
 import MachineryRentalActiveIcon from "@/assets/images/machinery-rental-active.svg";
+import { useSidebarStore } from "@/store/useFilterStore";
 
 declare global {
   interface Window {
@@ -30,6 +31,9 @@ export default function Map() {
     circle: null,
     infoOverlay: null,
   });
+
+  const { isSidebarOpen } = useSidebarStore();
+  const centerRef = useRef<any>(null);
 
   const clearAllOverlays = () => {
     if (overlays.current.myLocation) {
@@ -52,12 +56,21 @@ export default function Map() {
   // );
 
   useEffect(() => {
+    if (!kakaoMapRef.current) return;
+
+    const currentCenter = kakaoMapRef.current.getCenter();
+    kakaoMapRef.current.relayout(); // 지도 크기 재계산
+    kakaoMapRef.current.setCenter(currentCenter);
+  }, [isSidebarOpen]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || !window.kakao || !mapRef.current)
       return;
 
     const onLoad = () => {
+      centerRef.current = new window.kakao.maps.LatLng(34.9, 126.7);
       const map = new window.kakao.maps.Map(mapRef.current, {
-        center: new window.kakao.maps.LatLng(34.9, 126.7),
+        center: centerRef.current,
         level: 10,
       });
 

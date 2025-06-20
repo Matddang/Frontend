@@ -1,12 +1,13 @@
 "use client";
 
 import SearchBar from "@/components/common/SearchBar";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import ChevronLeftIcon from "@/assets/images/chevron-left.svg";
 import Image from "next/image";
+import { useSidebarStore } from "@/store/useFilterStore";
 
 export default function SideBar({ children }: { children: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const { isSidebarOpen, closeSidebar, openSidebar } = useSidebarStore();
 
   return (
     <>
@@ -14,8 +15,8 @@ export default function SideBar({ children }: { children: ReactNode }) {
       <aside
         className={`relative flex flex-col h-full max-w-[390px] shrink-0 border-r border-[#F3F3F3] transition-opacity duration-300 ease-in-out`}
         style={{
-          width: isOpen ? "100%" : "0",
-          opacity: isOpen ? 1 : 0,
+          width: isSidebarOpen ? "100%" : "0",
+          opacity: isSidebarOpen ? 1 : 0,
         }}
       >
         <div className="px-4 py-[13px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] max-h-[65px] flex items-center">
@@ -25,7 +26,7 @@ export default function SideBar({ children }: { children: ReactNode }) {
 
         {/* 닫기 버튼 */}
         <button
-          onClick={() => setIsOpen(false)}
+          onClick={closeSidebar}
           className="z-10 absolute top-1/2 right-0 transform translate-x-full -translate-y-1/2 w-[38px] h-[85px] flex items-center justify-center bg-white border border-gray-400 rounded-r-[4px]"
           aria-label="사이드바 닫기"
         >
@@ -34,9 +35,9 @@ export default function SideBar({ children }: { children: ReactNode }) {
       </aside>
 
       {/* 열기 버튼 */}
-      {!isOpen && (
+      {!isSidebarOpen && (
         <button
-          onClick={() => setIsOpen(true)}
+          onClick={openSidebar}
           className="z-10 absolute top-1/2 left-0 transform -translate-y-1/2 w-[38px] h-[85px] flex items-center justify-center bg-white border border-gray-400 rounded-r-[4px]"
           aria-label="사이드바 열기"
         >
