@@ -50,11 +50,6 @@ export default function Map() {
     }
   };
 
-  // 현재 선택된 지도 타입 상태
-  // const [activeMapType, setActiveMapType] = useState<"ROADMAP" | "HYBRID">(
-  //   "ROADMAP",
-  // );
-
   useEffect(() => {
     if (!kakaoMapRef.current) return;
 
@@ -72,6 +67,7 @@ export default function Map() {
       const map = new window.kakao.maps.Map(mapRef.current, {
         center: centerRef.current,
         level: 10,
+        mapTypeId: window.kakao.maps.MapTypeId.HYBRID,
       });
 
       kakaoMapRef.current = map;
@@ -391,22 +387,6 @@ export default function Map() {
             <Image src={MinusIcon} alt="축소" />
           </button>
         </div>
-        {/* <div className="flex flex-col gap-2">
-          <button
-            onClick={() => changeMapType("ROADMAP")}
-            className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
-            ${activeMapType === "ROADMAP" ? "bg-primary" : "bg-gray-500"}`}
-          >
-            일반지도
-          </button>
-          <button
-            onClick={() => changeMapType("HYBRID")}
-            className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
-            ${activeMapType === "HYBRID" ? "bg-[#00DD9B]" : "bg-gray-500"}`}
-          >
-            스카이뷰
-          </button>
-        </div> */}
       </div>
     </div>
   );
