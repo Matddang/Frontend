@@ -24,11 +24,9 @@ export default function Map() {
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스 저장
   const overlays = useRef<{
     myLocation: any | null;
-    circle: any | null;
     infoOverlay: any | null;
   }>({
     myLocation: null,
-    circle: null,
     infoOverlay: null,
   });
 
@@ -39,10 +37,6 @@ export default function Map() {
     if (overlays.current.myLocation) {
       overlays.current.myLocation.setMap(null);
       overlays.current.myLocation = null;
-    }
-    if (overlays.current.circle) {
-      overlays.current.circle.setMap(null);
-      overlays.current.circle = null;
     }
     if (overlays.current.infoOverlay) {
       overlays.current.infoOverlay.setMap(null);
@@ -85,20 +79,6 @@ export default function Map() {
             // 지도 중심 이동 및 줌인
             kakaoMapRef.current.setLevel(0); // 더 낮을수록 더 줌인
             kakaoMapRef.current.panTo(latLng);
-
-            // 새 원 그리기 (예: 반경 500m)
-            const circle = new window.kakao.maps.Circle({
-              center: latLng,
-              radius: 50, // 미터 단위
-              strokeWeight: 2,
-              strokeColor: "#39B94C",
-              strokeOpacity: 0.8,
-              fillColor: "rgba(57, 185, 76, 0.44)",
-              fillOpacity: 0.44,
-              map: kakaoMapRef.current,
-            });
-
-            overlays.current.circle = circle;
 
             // 정보 표시할 HTML 콘텐츠
             const infoContent = document.createElement("div");
