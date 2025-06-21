@@ -102,7 +102,7 @@ export default function NavBar() {
   };
 
   return (
-    <div className="bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center px-[50px] py-4 gap-[12px]">
+    <div className="bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center pl-5 pr-[36px] py-4 gap-[12px]">
       <div className="flex gap-[12px] whitespace-nowrap">
         {FILTERS.map((filter) => {
           if (filter.key === "place" && !isLoggedIn) return null;
