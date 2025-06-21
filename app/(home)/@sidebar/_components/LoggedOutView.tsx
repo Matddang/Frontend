@@ -10,12 +10,14 @@ import CustomSwiper from "@/components/common/CustomSwiper";
 import { useRef, useState } from "react";
 import type { Swiper as SwiperClass } from "swiper";
 import SwiperIndicator from "@/components/common/SwiperIndicatior";
+import { useRouter } from "next/navigation";
 
 export default function LoggedOutView() {
   const slides = Array.from({ length: 5 });
 
   const swiperRef = useRef<SwiperClass | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
 
   return (
     <div className="px-4 py-[14px]">
@@ -106,7 +108,7 @@ export default function LoggedOutView() {
         <button
           className="rounded-[8px] relative w-full "
           style={{ aspectRatio: "358 / 108" }}
-          onClick={() => alert("맞땅 가이드")}
+          onClick={() => router.push("/guide")}
         >
           <Image
             src={GuideImg}

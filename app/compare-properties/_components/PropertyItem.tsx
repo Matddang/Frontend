@@ -41,24 +41,24 @@ export default function PropertyItem({
         <div className="min-h-[115px] w-full flex flex-col justify-between">
           <div className="flex flex-col">
             <div className="flex justify-between">
-              <span className="text-[16px] font-bold text-black">
+              <span className="typo-body-1-b text-black">
                 매매 {property.price}억
               </span>
               {!compare && <Image src={HeartIcon} alt="heart" />}
             </div>
-            <span className="text-[14px] text-black">
+            <span className="typo-sub-title-m text-black">
               {property.area}평 / {property.address}
             </span>
           </div>
 
           <div className="flex flex-col gap-[6px]">
             <div
-              className="w-fit bg-primary-light py-[6px] px-[10px] rounded-[4px] text-[12px] font-bold text-primary"
+              className="w-fit bg-primary-light py-[6px] px-[10px] rounded-[4px] typo-body-2-sb text-primary"
               style={{ border: "1px solid rgba(0, 221, 155, 0.23)" }}
             >
               {property.type === "ORCHARD" ? "과수원" : "밭"}
             </div>
-            <span className="text-[14px] text-gray-800">
+            <span className="typo-sub-title-m text-gray-800">
               {property.distance}
             </span>
           </div>

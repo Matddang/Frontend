@@ -9,7 +9,7 @@ export default function MyPageBanner() {
 
   return (
     <div className="bg-primary-light flex justify-between items-center py-[14px] px-[6px]">
-      <span className="text-[16px] text-gray-1200">
+      <span className="typo-body-1-m text-gray-1200">
         {name}님은 ‘수익형’ 농부입니다☺️
       </span>
       <button
@@ -19,7 +19,7 @@ export default function MyPageBanner() {
             "linear-gradient(247deg, #D6FF95 -11.27%, #39B94C 44.64%)",
         }}
       >
-        <span className="text-white font-bold text-[16px]">수익형</span>
+        <span className="text-white typo-body-1-b">수익형</span>
         <Image src={ArrowIcon} alt="right" />
       </button>
     </div>

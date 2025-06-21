@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="flex justify-between w-full max-w-[1440px]">
         <div className="flex flex-col w-[670px] gap-[14px]">
           <Image src={Logo} alt="logo" />
-          <span className="text-[16px] text-gray-900">
+          <span className="typo-body-1-m text-gray-900">
             Copyright ⓒ Maddang ALL RIGHTS RESERVED.
           </span>
         </div>

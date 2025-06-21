@@ -36,7 +36,7 @@ export default function ListSelector({
   return (
     <div className="flex flex-col gap-[8px]">
       {limit && (
-        <span className="text-[12px] text-gray-700">
+        <span className="typo-body-2-m text-gray-700">
           최대 2개까지 선택할 수 있습니다.
         </span>
       )}

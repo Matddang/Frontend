@@ -27,7 +27,7 @@ export default function AddLoaction({ nextStep, prevStep }: StepProps) {
     >
       {locations.length ? (
         <div className="flex flex-col gap-[10px]">
-          <span className="text-[14px] text-gray-900">
+          <span className="typo-sub-title-m text-gray-900">
             내 장소 관리는 마이페이지에서 가능합니다.
           </span>
           {locations.map((location, i) => (
@@ -42,10 +42,10 @@ export default function AddLoaction({ nextStep, prevStep }: StepProps) {
                 />
               </div>
               <div className="flex flex-col gap-[2px]">
-                <span className="font-semibold text-[18px]">
+                <span className="font-semibold typo-sub-head-sb">
                   {location.name}
                 </span>
-                <span className="text-[12px]">{location.address}</span>
+                <span className="typo-body-2-m">{location.address}</span>
               </div>
             </div>
           ))}

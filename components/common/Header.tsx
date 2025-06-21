@@ -38,10 +38,14 @@ export default function Header() {
         />
         {!isLoginHidden &&
           (name ? (
-            <div className="flex gap-[24px] font-semibold text-[18px">
+            <div className="flex gap-[24px] font-semibold">
               <button
-                className={`w-[103px] text-center cursor-pointer ${
-                  isGuide ? "text-white" : "text-gray-1300"
+                className={`w-[103px] text-center cursor-pointer typo-sub-head-sb ${
+                  pathname === "/compare-properties"
+                    ? "text-primary"
+                    : isGuide
+                    ? "text-white"
+                    : "text-gray-1300"
                 }`}
                 onClick={() => router.push("/compare-properties")}
               >
@@ -49,7 +53,7 @@ export default function Header() {
               </button>
               <div className="relative">
                 <button
-                  className="flex gap-[5px] font-bold text-[16px] text-nowrap text-black items-center bg-gray-100 border-[1px] border-gray-500 h-[40px] w-[99px] rounded-[8px] py-[8px] px-[12px] cursor-pointer"
+                  className="flex gap-[5px] typo-body-1-b text-nowrap text-black items-center bg-gray-100 border-[1px] border-gray-500 h-[40px] w-[99px] rounded-[8px] py-[8px] px-[12px] cursor-pointer"
                   onClick={() => setOpenMenu((prev) => !prev)}
                 >
                   {name}님
@@ -68,13 +72,13 @@ export default function Header() {
                     }}
                   >
                     <button
-                      className="py-[16px] font-semibold text-[18px] text-black cursor-pointer border-b-[1px] border-b-gray-400"
+                      className="py-[16px] typo-sub-head-sb text-black cursor-pointer border-b-[1px] border-b-gray-400"
                       onClick={() => router.push("/mypage")}
                     >
                       마이페이지
                     </button>
                     <button
-                      className="py-[16px] font-semibold text-[18px] text-black cursor-pointer"
+                      className="py-[16px] typo-sub-head-sb text-black cursor-pointer"
                       onClick={() => {
                         clearUser();
                         window.location.replace("/");
@@ -90,7 +94,7 @@ export default function Header() {
             <div className="flex gap-[14px] items-center">
               {pathname === "/" && showTooltip && (
                 <div className="login-tooltip">
-                  <span className="text-[16px] text-gray-1100">
+                  <span className="typo-body-1-m text-gray-1100">
                     로그인하면 나의 농작유형별 매물을 추천받을 수 있어요!
                   </span>
                   <Image

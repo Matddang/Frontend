@@ -25,8 +25,8 @@ export default function Agreement({ nextStep, prevStep }: StepProps) {
     >
       <div className="flex flex-col gap-[31.67px]">
         <div className="p-[10px] bg-gray-100 flex flex-col gap-[25px]">
-          <p className="font-bold text-[16px]">[위치정보 이용 동의]</p>
-          <span className="text-[14px] font-medium text-gray-1100">
+          <p className="typo-body-1-b">[위치정보 이용 동의]</p>
+          <span className="typo-14-r text-gray-1100">
             본 서비스는 귀하의 정확한 위치정보를 활용하여 맞춤형 콘텐츠 및 주변
             추천 정보를 제공합니다.
             <br />

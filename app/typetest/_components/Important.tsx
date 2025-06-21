@@ -47,7 +47,7 @@ export default function Important({ nextStep, prevStep }: StepProps) {
       prevStep={prevStep}
     >
       <div className="flex flex-col gap-[8px]">
-        <span className="text-[12px] text-gray-700">
+        <span className="typo-body-2-m text-gray-700">
           최대 3개까지 선택할 수 있습니다.
         </span>
         <div className="grid grid-cols-3 gap-[20px]">
@@ -65,7 +65,7 @@ export default function Important({ nextStep, prevStep }: StepProps) {
               onClick={() => handleClick(value[0])}
             >
               <Image src={value[1]} alt="" />
-              <span className="text-black text-[16px]">{value[0]}</span>
+              <span className="text-black typo-body-1-m">{value[0]}</span>
               {selected.includes(important_types[i][0]) && (
                 <Image
                   src={CheckIcon}

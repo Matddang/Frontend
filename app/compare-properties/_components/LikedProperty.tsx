@@ -3,6 +3,7 @@ import PropertyItem from "./PropertyItem";
 export default function LikedProperty() {
   const property_list = [
     {
+      id: 1,
       price: 1.5,
       type: "ORCHARD",
       area: 351,
@@ -10,6 +11,7 @@ export default function LikedProperty() {
       distance: "포도 / 집에서 5분 거리",
     },
     {
+      id: 2,
       price: 1.5,
       type: "ORCHARD",
       area: 351,
@@ -17,6 +19,7 @@ export default function LikedProperty() {
       distance: "포도 / 집에서 5분 거리",
     },
     {
+      id: 3,
       price: 1.5,
       type: "ORCHARD",
       area: 351,
