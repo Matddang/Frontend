@@ -372,19 +372,6 @@ export default function Map() {
 
         kakaoMapRef.current.setLevel(4);
         kakaoMapRef.current.panTo(loc);
-
-        const circle = new window.kakao.maps.Circle({
-          center: loc,
-          radius: 75,
-          strokeWeight: 3,
-          strokeColor: "#39B94C",
-          strokeOpacity: 0.8,
-          fillColor: "rgba(57, 185, 76, 0.4)",
-          fillOpacity: 0.4,
-          map: kakaoMapRef.current,
-        });
-
-        overlays.current.myLocation = circle;
       },
       (error) => {
         alert("위치 정보를 가져올 수 없습니다.");
