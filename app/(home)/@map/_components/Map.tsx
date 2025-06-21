@@ -5,7 +5,7 @@ import { positions } from "@/mock/markerPositions";
 import { clusterStyle } from "@/styles/mapClusterStyle";
 import { createOverlayContent } from "@/utils/mapOverlay";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PlusIcon from "@/assets/images/plus.svg";
 import MinusIcon from "@/assets/images/minus.svg";
 import CurrentLocationIcon from "@/assets/images/current-location.svg";
@@ -33,6 +33,60 @@ export default function Map() {
   const { isSidebarOpen } = useSidebarStore();
   const centerRef = useRef<any>(null);
 
+  const [showMoveToJeollaButton, setShowMoveToJeollaButton] = useState(false);
+
+  // 전라남도 센터(화순시)
+  const JEONNAM_CENTER = useMemo(
+    () => ({ lat: 35.064511, lng: 127.006969 }),
+    [],
+  );
+
+  // 전라남도 영역
+  const JEONNAM_BOUNDS = useMemo(
+    () => ({
+      latMin: 34.0,
+      latMax: 35.3,
+      lngMin: 125.0,
+      lngMax: 127.0,
+    }),
+    [],
+  );
+
+  // 두 박스가 겹치는지 체크하는 함수
+  const isBoundsIntersect = (
+    mapBounds: {
+      latMin: number;
+      latMax: number;
+      lngMin: number;
+      lngMax: number;
+    },
+    regionBounds: {
+      latMin: number;
+      latMax: number;
+      lngMin: number;
+      lngMax: number;
+    },
+  ) => {
+    return !(
+      (
+        mapBounds.latMax < regionBounds.latMin || // 지도 위쪽이 지역 아래쪽보다 낮음 (겹치지 않음)
+        mapBounds.latMin > regionBounds.latMax || // 지도 아래쪽이 지역 위쪽보다 높음 (겹치지 않음)
+        mapBounds.lngMax < regionBounds.lngMin || // 지도 오른쪽이 지역 왼쪽보다 왼쪽임 (겹치지 않음)
+        mapBounds.lngMin > regionBounds.lngMax
+      ) // 지도 왼쪽이 지역 오른쪽보다 오른쪽임 (겹치지 않음)
+    );
+  };
+
+  // 전라남도 구역으로 이동
+  const moveToJeonnam = () => {
+    if (!kakaoMapRef.current) return;
+    kakaoMapRef.current.setLevel(10);
+    kakaoMapRef.current.panTo(
+      new window.kakao.maps.LatLng(JEONNAM_CENTER.lat, JEONNAM_CENTER.lng),
+    );
+  };
+
+  // 오베레이 초기화
   const clearAllOverlays = () => {
     if (overlays.current.myLocation) {
       overlays.current.myLocation.setMap(null);
@@ -57,7 +111,11 @@ export default function Map() {
       return;
 
     const onLoad = () => {
-      centerRef.current = new window.kakao.maps.LatLng(34.9, 126.7);
+      centerRef.current = new window.kakao.maps.LatLng(
+        JEONNAM_CENTER.lat,
+        JEONNAM_CENTER.lng,
+      );
+
       const map = new window.kakao.maps.Map(mapRef.current, {
         center: centerRef.current,
         level: 10,
@@ -65,6 +123,29 @@ export default function Map() {
       });
 
       kakaoMapRef.current = map;
+
+      // 지도가 너무 축소되거나 전라남도가 안보이면 [전라남도 이동] 버튼 띄움
+      window.kakao.maps.event.addListener(map, "idle", () => {
+        const bounds = map.getBounds();
+        const sw = bounds.getSouthWest(); // 남서쪽 좌표
+        const ne = bounds.getNorthEast(); // 북동쪽 좌표
+
+        const mapBounds = {
+          latMin: sw.getLat(),
+          latMax: ne.getLat(),
+          lngMin: sw.getLng(),
+          lngMax: ne.getLng(),
+        };
+
+        const isJeonnamVisible = isBoundsIntersect(mapBounds, JEONNAM_BOUNDS);
+        const level = map.getLevel();
+
+        if (level >= 12 || !isJeonnamVisible) {
+          setShowMoveToJeollaButton(true);
+        } else {
+          setShowMoveToJeollaButton(false);
+        }
+      });
 
       // 커스텀 오버레이 마커 생성
       const allMarkers = positions.map(
@@ -274,7 +355,7 @@ export default function Map() {
     } else {
       onLoad();
     }
-  }, []);
+  }, [JEONNAM_CENTER, JEONNAM_BOUNDS]);
 
   const moveToMyLocation = () => {
     if (!navigator.geolocation || !kakaoMapRef.current) {
@@ -312,16 +393,12 @@ export default function Map() {
     );
   };
 
-  // const changeMapType = (type: "ROADMAP" | "HYBRID") => {
-  //   setActiveMapType(type);
-  //   kakaoMapRef.current?.setMapTypeId(window.kakao.maps.MapTypeId[type]);
-  // };
-
   return (
     <div className="relative w-full h-full">
       {/* 지도 */}
       <div ref={mapRef} className="w-full h-full" />
 
+      {/* 우측 버튼들 */}
       <div className="absolute top-10 right-10 z-10 flex flex-col gap-[23px]">
         <div className="flex flex-col gap-3">
           <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-primary">
@@ -368,6 +445,24 @@ export default function Map() {
           </button>
         </div>
       </div>
+
+      {/* 전라도 지도로 이동하기 버튼 */}
+      {showMoveToJeollaButton && (
+        <div className="group absolute z-10 bottom-[110px] left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <button
+            onClick={moveToJeonnam}
+            className="relative typo-sub-head-sb px-[34px] py-3 w-fit rounded-[119px] border border-[2px] border-primary bg-primary-light shadow-[0_0_20px_rgba(0,0,0,0.08)]"
+          >
+            전라남도 지도로 이동하기
+            {/* hover 시에 나타날 텍스트 */}
+            <p className="absolute bottom-full mb-[24px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-[16px] bg-primary-light px-4 py-[14px] typo-body-1-m opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+              맞땅은 지금 전라도 지역 매물부터 소개하고 있어요 🙂
+              <br />
+              전라도 지도로 이동하려면 아래 버튼을 눌러주세요!
+            </p>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
