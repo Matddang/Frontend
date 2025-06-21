@@ -36,45 +36,10 @@ export default function Map() {
   const [showMoveToJeollaButton, setShowMoveToJeollaButton] = useState(false);
 
   // 전라남도 센터(화순시)
-  const JEONNAM_CENTER = useMemo(
-    () => ({ lat: 35.064511, lng: 127.006969 }),
-    [],
-  );
+  const JEONNAM_CENTER = useMemo(() => ({ lat: 35.0675, lng: 126.994 }), []);
 
-  // 전라남도 영역
-  const JEONNAM_BOUNDS = useMemo(
-    () => ({
-      latMin: 34.0,
-      latMax: 35.3,
-      lngMin: 125.0,
-      lngMax: 127.0,
-    }),
-    [],
-  );
-
-  // 두 박스가 겹치는지 체크하는 함수
-  const isBoundsIntersect = (
-    mapBounds: {
-      latMin: number;
-      latMax: number;
-      lngMin: number;
-      lngMax: number;
-    },
-    regionBounds: {
-      latMin: number;
-      latMax: number;
-      lngMin: number;
-      lngMax: number;
-    },
-  ) => {
-    return !(
-      (
-        mapBounds.latMax < regionBounds.latMin || // 지도 위쪽이 지역 아래쪽보다 낮음 (겹치지 않음)
-        mapBounds.latMin > regionBounds.latMax || // 지도 아래쪽이 지역 위쪽보다 높음 (겹치지 않음)
-        mapBounds.lngMax < regionBounds.lngMin || // 지도 오른쪽이 지역 왼쪽보다 왼쪽임 (겹치지 않음)
-        mapBounds.lngMin > regionBounds.lngMax
-      ) // 지도 왼쪽이 지역 오른쪽보다 오른쪽임 (겹치지 않음)
-    );
+  const isInJeonnam = (lat: number, lng: number) => {
+    return lat >= 34.0 && lat <= 35.32 && lng >= 126.0 && lng <= 127.7434;
   };
 
   // 전라남도 구역으로 이동
@@ -126,19 +91,9 @@ export default function Map() {
 
       // 지도가 너무 축소되거나 전라남도가 안보이면 [전라남도 이동] 버튼 띄움
       window.kakao.maps.event.addListener(map, "idle", () => {
-        const bounds = map.getBounds();
-        const sw = bounds.getSouthWest(); // 남서쪽 좌표
-        const ne = bounds.getNorthEast(); // 북동쪽 좌표
-
-        const mapBounds = {
-          latMin: sw.getLat(),
-          latMax: ne.getLat(),
-          lngMin: sw.getLng(),
-          lngMax: ne.getLng(),
-        };
-
-        const isJeonnamVisible = isBoundsIntersect(mapBounds, JEONNAM_BOUNDS);
+        const center = map.getCenter();
         const level = map.getLevel();
+        const isJeonnamVisible = isInJeonnam(center.getLat(), center.getLng());
 
         if (level >= 12 || !isJeonnamVisible) {
           setShowMoveToJeollaButton(true);
@@ -312,16 +267,16 @@ export default function Map() {
         );
         currentMode = "number";
 
-        window.kakao.maps.event.addListener(
-          numberClusterer,
-          "clusterclick",
-          function (numberClusterer: any) {
-            const markers = numberClusterer.getMarkers();
-            markers.forEach((m: any) => {
-              console.log(m.getPosition());
-            });
-          },
-        );
+        // window.kakao.maps.event.addListener(
+        //   numberClusterer,
+        //   "clusterclick",
+        //   function (numberClusterer: any) {
+        //     const markers = numberClusterer.getMarkers();
+        //     markers.forEach((m: any) => {
+        //       console.log(m.getPosition());
+        //     });
+        //   },
+        // );
       };
 
       // 줌 레벨 제어
@@ -354,10 +309,10 @@ export default function Map() {
         });
 
         console.log("현재 화면에 보이는 매물 수:", visibleMarkers.length);
-        visibleMarkers.forEach((overlay, i) => {
-          const { lat, lng } = positions[i];
-          console.log(`위도: ${lat}, 경도: ${lng}`);
-        });
+        // visibleMarkers.forEach((overlay, i) => {
+        //   const { lat, lng } = positions[i];
+        //   console.log(`위도: ${lat}, 경도: ${lng}`);
+        // });
       };
 
       window.kakao.maps.event.addListener(map, "idle", showVisibleMarkers);
@@ -386,7 +341,7 @@ export default function Map() {
     } else {
       onLoad();
     }
-  }, [JEONNAM_CENTER, JEONNAM_BOUNDS]);
+  }, [JEONNAM_CENTER]);
 
   const moveToMyLocation = () => {
     if (!navigator.geolocation || !kakaoMapRef.current) {
