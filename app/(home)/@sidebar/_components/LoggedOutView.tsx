@@ -36,19 +36,6 @@ export default function LoggedOutView() {
 
       <section className="flex flex-col gap-5 mt-4">
         <h2 className="typo-sub-head-sb">가장 인기 많은 농지 매물🌾</h2>
-        {/* <CustomSwiper slidesPerView={2.5} spaceBetween={16}>
-          {slides.map((_, i) => (
-            <Card
-              key={i}
-              imageSrc={LandListingImg}
-              type="매매"
-              price={150000000}
-              area={351}
-              address="전라남도 여수시 청산면 12-1"
-              tag="과수원"
-            />
-          ))}
-        </CustomSwiper> */}
         <CustomSwiper
           slidesPerView={2.5}
           spaceBetween={16}
@@ -63,7 +50,7 @@ export default function LoggedOutView() {
               price={150000000}
               area={351}
               address="전라남도 여수시 청산면 12-1"
-              tag="과수원"
+              kind="과수원"
             />
           ))}
         </CustomSwiper>
