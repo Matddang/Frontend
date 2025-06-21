@@ -7,11 +7,14 @@ import LoginImg2 from "@/assets/images/login-img2.svg";
 import LoginTooltip from "@/assets/images/login-tooltip.svg";
 import KakaoIcon from "@/assets/images/kakao-icon.svg";
 import GoogleIcon from "@/assets/images/google-icon.svg";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/UserStore";
+import { useLoginModalStore } from "@/store/LoginModalStore";
 
 export default function LoginModal({ onClose }: { onClose: () => void }) {
-  const [isLogin, setIsLogin] = useState(false);
+  const { name } = useUserStore();
+  const { modalClose } = useLoginModalStore();
   const router = useRouter();
 
   const kakaoLoginHandler = () => {
@@ -39,13 +42,18 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
     }
   }, [window.Kakao]);
 
+  const handleClose = () => {
+    modalClose();
+    onClose();
+  };
+
   return (
     <Modal
       width={410}
-      onClose={onClose}
-      bgColor={isLogin ? `bg-primary-light` : ""}
+      onClose={handleClose}
+      bgColor={name ? `bg-primary-light` : ""}
     >
-      {!isLogin ? (
+      {!name ? (
         <div className="flex flex-col gap-[24px] pt-[59px] pb-[12px]">
           <div className="flex flex-col gap-[22px] items-center">
             <div className="flex flex-col gap-[10px]">
@@ -116,12 +124,18 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
             </div>
             <button
               className="font-semibold text-[18px] text-white bg-primary py-[12px] rounded-[8px] cursor-pointer"
-              onClick={() => router.push("/typetest")}
+              onClick={() => {
+                modalClose();
+                router.push("/typetest");
+              }}
             >
               시작하기
             </button>
           </div>
-          <span className="text-[14px] text-gray-600 underline cursor-pointer">
+          <span
+            className="text-[14px] text-gray-600 underline cursor-pointer"
+            onClick={modalClose}
+          >
             다음에 할래요
           </span>
         </div>
