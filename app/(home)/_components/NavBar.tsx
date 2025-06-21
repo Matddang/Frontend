@@ -50,22 +50,25 @@ export default function NavBar() {
         const isMaxDefault = price.max === PRICE_FILTER.at(-1)?.value;
 
         if (!isMinDefault && isMaxDefault) {
-          // 최소값만 다르고, 최대값은 기본값일 경우: 최소값 이상
           return `${formatKoreanUnit(price.min)} 이상`;
         } else if (!isMinDefault || !isMaxDefault) {
-          // 둘 중 하나라도 기본값과 다를 경우: 범위 출력
           return `${formatKoreanUnit(price.min)} ~ ${formatKoreanUnit(
             price.max,
           )}`;
         } else {
-          // 둘 다 기본값이면 비어 있는 상태
           return "";
         }
       case "area":
-        return area.min !== AREA_FILTER[0].value ||
-          area.max !== AREA_FILTER.at(-1)?.value
-          ? `${area.min.toLocaleString()} ~ ${area.max.toLocaleString()}평`
-          : "";
+        const isMinAreaDefault = area.min === AREA_FILTER[0].value;
+        const isMaxAreaDefault = area.max === AREA_FILTER.at(-1)?.value;
+
+        if (!isMinAreaDefault && isMaxAreaDefault) {
+          return `${area.min.toLocaleString()}평 이상`;
+        } else if (!isMinAreaDefault || !isMaxAreaDefault) {
+          return `${area.min.toLocaleString()} ~ ${area.max.toLocaleString()}평`;
+        } else {
+          return "";
+        }
       case "kind":
         return kind.length > 0
           ? kind.map((k) => KIND_FILTER[k]).join(", ")
