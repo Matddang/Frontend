@@ -1,7 +1,7 @@
 import Image from "next/image";
 import TypeFilter from "./TypeFilter";
 import ResetIcon from "@/assets/images/reset.svg";
-import { useFilterStore } from "@/store/FilterStore";
+import { useFilterStore } from "@/store/useFilterStore";
 import { useEffect, useState } from "react";
 import PriceFilter from "./PriceFilter";
 import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";

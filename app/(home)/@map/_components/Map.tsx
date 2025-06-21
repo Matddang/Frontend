@@ -11,7 +11,7 @@ import MinusIcon from "@/assets/images/minus.svg";
 import CurrentLocationIcon from "@/assets/images/current-location.svg";
 import AgroDistributionActiveIcon from "@/assets/images/agro-distribution-active.svg";
 import MachineryRentalActiveIcon from "@/assets/images/machinery-rental-active.svg";
-import { useSidebarStore } from "@/store/useFilterStore";
+import { useSidebarStore } from "@/store/useSidebarStore";
 
 declare global {
   interface Window {

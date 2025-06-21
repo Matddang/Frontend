@@ -4,7 +4,7 @@ import SearchBar from "@/components/common/SearchBar";
 import { ReactNode } from "react";
 import ChevronLeftIcon from "@/assets/images/chevron-left.svg";
 import Image from "next/image";
-import { useSidebarStore } from "@/store/useFilterStore";
+import { useSidebarStore } from "@/store/useSidebarStore";
 
 export default function SideBar({ children }: { children: ReactNode }) {
   const { isSidebarOpen, closeSidebar, openSidebar } = useSidebarStore();
