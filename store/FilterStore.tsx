@@ -3,20 +3,20 @@ import { create } from "zustand";
 
 interface FiltersState {
   type: "lease" | "sale" | null;
-  price: { min: number | null; max: number | null };
-  area: { min: number | null; max: number | null };
+  price: { min: number; max: number };
+  area: { min: number; max: number };
   kind: ("paddy" | "field" | "orchard")[];
   crop: { [parent: string]: string[] };
-  placeId: number | null;
+  place: { id: number | null; name: string | null };
 }
 
 interface FilterStore extends FiltersState {
   setType: (type: "lease" | "sale" | null) => void;
-  setPrice: (price: { min: number | null; max: number | null }) => void;
-  setArea: (area: { min: number | null; max: number | null }) => void;
+  setPrice: (price: { min: number; max: number }) => void;
+  setArea: (area: { min: number; max: number }) => void;
   setKind: (kind: ("paddy" | "field" | "orchard")[]) => void;
   setCrop: (crop: { [parent: string]: string[] }) => void;
-  setPlaceId: (placeId: number | null) => void;
+  setPlace: (place: { id: number | null; name: string | null }) => void;
 }
 
 export const useFilterStore = create<FilterStore>((set) => ({
@@ -31,12 +31,12 @@ export const useFilterStore = create<FilterStore>((set) => ({
   },
   kind: [],
   crop: {},
-  placeId: null,
+  place: { id: null, name: null },
 
   setType: (type) => set({ type }),
   setPrice: (price) => set({ price }),
   setArea: (area) => set({ area }),
   setKind: (kind) => set({ kind }),
   setCrop: (crop) => set({ crop }),
-  setPlaceId: (placeId) => set({ placeId }),
+  setPlace: (place) => set({ place }),
 }));

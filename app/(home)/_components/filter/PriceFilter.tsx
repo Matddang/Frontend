@@ -3,8 +3,8 @@ import { PRICE_FILTER } from "@/constants/filterOptions";
 import RangeResultBox from "./RangeResultBox";
 
 interface PriceFilterProps {
-  tempPrice: { min: number | null; max: number | null };
-  setTempPrice: (price: { min: number | null; max: number | null }) => void;
+  tempPrice: { min: number; max: number };
+  setTempPrice: (price: { min: number; max: number }) => void;
 }
 
 export default function PriceFilter({

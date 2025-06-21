@@ -24,13 +24,13 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     area,
     kind,
     crop,
-    placeId,
+    place,
     setType,
     setPrice,
     setArea,
     setKind,
     setCrop,
-    setPlaceId,
+    setPlace,
   } = useFilterStore();
   const [tempFilters, setTempFilters] = useState({
     type,
@@ -38,12 +38,12 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     area,
     kind,
     crop,
-    placeId,
+    place,
   });
 
   useEffect(() => {
-    setTempFilters({ type, price, area, kind, crop, placeId });
-  }, [type, price, area, kind, crop, placeId]);
+    setTempFilters({ type, price, area, kind, crop, place });
+  }, [type, price, area, kind, crop, place]);
 
   const handleApply = () => {
     setType(tempFilters.type);
@@ -51,7 +51,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     setArea(tempFilters.area);
     setKind(tempFilters.kind);
     setCrop(tempFilters.crop);
-    setPlaceId(tempFilters.placeId);
+    setPlace(tempFilters.place);
     onApply(
       `임대/매매: ${tempFilters.type ?? "전체"}, ` +
         `희망가: 최소-${tempFilters.price.min ?? "없음"}/최대-${
@@ -63,7 +63,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
         `종류: ${
           tempFilters.kind.length > 0 ? tempFilters.kind.join(", ") : "전체, "
         }` +
-        `선택한 장소: ${tempFilters.placeId ?? "없음"}`,
+        `선택한 장소: ${tempFilters.place.name ?? "없음"}`,
     );
   };
 
@@ -97,7 +97,10 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
         setTempFilters((prev) => ({ ...prev, crop: {} }));
         break;
       case "place":
-        setTempFilters((prev) => ({ ...prev, placeId: null }));
+        setTempFilters((prev) => ({
+          ...prev,
+          place: { id: null, name: null },
+        }));
         break;
       default:
         break;
@@ -154,9 +157,9 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
       case "place":
         return (
           <PlaceFilter
-            tempPlaceId={tempFilters.placeId}
-            setTempPlaceId={(value) =>
-              setTempFilters((prev) => ({ ...prev, placeId: value }))
+            tempPlace={tempFilters.place}
+            setTempPlace={(value) =>
+              setTempFilters((prev) => ({ ...prev, place: value }))
             }
           />
         );

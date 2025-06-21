@@ -4,9 +4,16 @@ import { useState } from "react";
 import FilterButton from "./filter/FilterButton";
 import FilterModal from "./filter/FilterModal";
 import { useFilterStore } from "@/store/FilterStore";
-import { AREA_FILTER, FILTERS, PRICE_FILTER } from "@/constants/filterOptions";
+import {
+  AREA_FILTER,
+  FILTERS,
+  KIND_FILTER,
+  PRICE_FILTER,
+  TYPE_FILTER,
+} from "@/constants/filterOptions";
 import Image from "next/image";
 import CloseIcon from "@/assets/images/close.svg";
+import { formatKoreanUnit, getCropLabelString } from "@/utils/format";
 
 export default function NavBar() {
   const {
@@ -15,13 +22,13 @@ export default function NavBar() {
     area,
     kind,
     crop,
-    placeId,
+    place,
     setType,
     setPrice,
     setArea,
     setKind,
     setCrop,
-    setPlaceId,
+    setPlace,
   } = useFilterStore();
 
   const [openFilter, setOpenFilter] = useState<string | null>(null);
@@ -34,30 +41,35 @@ export default function NavBar() {
     setOpenFilter((prev) => (prev === key ? null : key));
   };
 
-  // key별로 값이 있는지 확인하는 함수
-  const hasFilterValue = (key: string) => {
+  const getDisplayText = (key: string): string => {
     switch (key) {
       case "type":
-        return type !== null;
+        return type ? TYPE_FILTER[type] : "";
       case "price":
-        return (
-          price.min !== PRICE_FILTER[0].value ||
-          price.max !== PRICE_FILTER[PRICE_FILTER.length - 1].value
-        );
+        return price.min !== PRICE_FILTER[0].value ||
+          price.max !== PRICE_FILTER.at(-1)?.value
+          ? `${formatKoreanUnit(price.min)} ~ ${formatKoreanUnit(price.max)}원`
+          : "";
       case "area":
-        return (
-          area.min !== AREA_FILTER[0].value ||
-          area.max !== AREA_FILTER[AREA_FILTER.length - 1].value
-        );
+        return area.min !== AREA_FILTER[0].value ||
+          area.max !== AREA_FILTER.at(-1)?.value
+          ? `${area.min.toLocaleString()} ~ ${area.max.toLocaleString()}평`
+          : "";
       case "kind":
-        return kind.length > 0;
+        return kind.length > 0
+          ? kind.map((k) => KIND_FILTER[k]).join(", ")
+          : "";
       case "crop":
-        return Object.keys(crop).length > 0;
+        return Object.keys(crop).length > 0 ? getCropLabelString(crop) : "";
       case "place":
-        return placeId != null;
+        return place.name ? `${place.name}에서 가까운` : "";
       default:
-        return false;
+        return "";
     }
+  };
+
+  const hasFilterValue = (key: string) => {
+    return getDisplayText(key) !== "";
   };
 
   const handleAllReset = () => {
@@ -72,7 +84,7 @@ export default function NavBar() {
     });
     setKind([]);
     setCrop({});
-    setPlaceId(null);
+    setPlace({ id: null, name: null });
   };
 
   return (
@@ -95,7 +107,7 @@ export default function NavBar() {
                 }}
               >
                 <FilterButton
-                  text={filter.label}
+                  text={getDisplayText(filter.key) || filter.label}
                   isActive={isActive}
                   hasValue={hasValue}
                   onClick={() => handleClick(filter.key)}
