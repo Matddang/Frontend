@@ -36,5 +36,9 @@ export const getCropLabelString = (crop: { [parent: string]: string[] }) => {
     });
   });
 
-  return subCrops.join(", ");
+  if (subCrops.length <= 2) {
+    return subCrops.join(", ");
+  } else {
+    return `${subCrops[0]} + ${subCrops.length}`;
+  }
 };
