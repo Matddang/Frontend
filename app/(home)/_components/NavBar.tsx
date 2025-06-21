@@ -46,10 +46,21 @@ export default function NavBar() {
       case "type":
         return type ? TYPE_FILTER[type] : "";
       case "price":
-        return price.min !== PRICE_FILTER[0].value ||
-          price.max !== PRICE_FILTER.at(-1)?.value
-          ? `${formatKoreanUnit(price.min)} ~ ${formatKoreanUnit(price.max)}원`
-          : "";
+        const isMinDefault = price.min === PRICE_FILTER[0].value;
+        const isMaxDefault = price.max === PRICE_FILTER.at(-1)?.value;
+
+        if (!isMinDefault && isMaxDefault) {
+          // 최소값만 다르고, 최대값은 기본값일 경우: 최소값 이상
+          return `${formatKoreanUnit(price.min)} 이상`;
+        } else if (!isMinDefault || !isMaxDefault) {
+          // 둘 중 하나라도 기본값과 다를 경우: 범위 출력
+          return `${formatKoreanUnit(price.min)} ~ ${formatKoreanUnit(
+            price.max,
+          )}`;
+        } else {
+          // 둘 다 기본값이면 비어 있는 상태
+          return "";
+        }
       case "area":
         return area.min !== AREA_FILTER[0].value ||
           area.max !== AREA_FILTER.at(-1)?.value
