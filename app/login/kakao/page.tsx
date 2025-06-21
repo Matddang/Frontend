@@ -7,7 +7,8 @@ type Props = {
 export default async function Page({ searchParams }: Props) {
   const query = await searchParams;
 
-  if (Object.keys(query).length) return <AuthRouter code={query.code!} />;
+  if (Object.keys(query).length)
+    return <AuthRouter type="kakao" code={query.code!} />;
 
   return <></>;
 }

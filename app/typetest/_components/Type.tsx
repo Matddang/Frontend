@@ -2,9 +2,11 @@ import Image from "next/image";
 import TypeImage from "@/assets/images/type-image.svg";
 import { useEffect, useState } from "react";
 import Loading from "@/assets/images/loading.svg";
+import { useUserStore } from "@/store/UserStore";
 
 export default function Type() {
   const [loading, setLoading] = useState(true);
+  const { name } = useUserStore();
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 3000);
@@ -31,7 +33,7 @@ export default function Type() {
       <div className="flex flex-col gap-[60px]">
         <div className="w-full flex flex-col gap-[4px] items-start">
           <p className="text-[24px] font-bold text-black">
-            김이화님의 농업 라이프 스타일은
+            {name}님의 농업 라이프 스타일은
           </p>
           <button className="text-[16px] text-gray-900 underline">
             재진단하기

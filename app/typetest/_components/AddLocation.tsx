@@ -4,30 +4,16 @@ import { StepProps, STEPS_LABEL } from "@/types/typetest";
 import Image from "next/image";
 import HomeIcon from "@/assets/images/home-white.svg";
 import PlantIcon from "@/assets/images/plant.svg";
+import { useState } from "react";
 
 export default function AddLoaction({ nextStep, prevStep }: StepProps) {
   const title = {
     title: "내 장소를 등록하고, 가까운 농지를 추천받아보세요.",
     subTitle: "해당 장소와 가까운 농지를 추천해 드릴게요.",
   };
-
-  const locations = [
-    {
-      type: "ORCHARD",
-      name: "여수 과수원",
-      address: "여수시 신촌동 234길 ",
-    },
-    {
-      type: "ORCHARD",
-      name: "여수 과수원",
-      address: "여수시 신촌동 234길 ",
-    },
-    {
-      type: "HOME",
-      name: "여수 집",
-      address: "여수시 신촌동 234길 ",
-    },
-  ];
+  const [locations, setLocation] = useState<
+    { type: string; name: string; address: string }[]
+  >([]);
 
   return (
     <ProcessForm

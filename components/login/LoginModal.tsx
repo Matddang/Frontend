@@ -23,12 +23,15 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
     });
   };
 
+  const GoogleLoginHandler = () => {
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
+    window.location.href = url;
+  };
+
   useEffect(() => {
-    console.log("window.Kakao: ", window.Kakao);
     if (window.Kakao) {
       if (!window.Kakao.isInitialized()) {
         window.Kakao.init(process.env.KAKAO_API_KEY);
-        console.log("after Init: ", window.Kakao.isInitialized());
       }
     }
   }, []);
@@ -37,7 +40,6 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
     if (window.Kakao) {
       if (!window.Kakao.isInitialized()) {
         window.Kakao.init(process.env.KAKAO_API_KEY);
-        console.log("after Init: ", window.Kakao.isInitialized());
       }
     }
   }, [window.Kakao]);
@@ -93,7 +95,10 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
                 />
                 카카오로 로그인
               </button>
-              <button className="flex gap-[52px] font-semibold text-[18px] text-black rounded-[8px] border-[1px] border-gray-500 py-[12px] pl-[51.5px] cursor-pointer">
+              <button
+                className="flex gap-[52px] font-semibold text-[18px] text-black rounded-[8px] border-[1px] border-gray-500 py-[12px] pl-[51.5px] cursor-pointer"
+                onClick={GoogleLoginHandler}
+              >
                 <Image
                   src={GoogleIcon}
                   alt="google"

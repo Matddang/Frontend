@@ -45,10 +45,10 @@ export default function ListSelector({
           <div
             key={i}
             className={`
-            border-[1px]  rounded-[5px] p-[20px] w-full h-[64px] cursor-pointer flex justify-between 
+            border-[1px] rounded-[5px] p-[20px] w-full h-[64px] cursor-pointer flex justify-between 
             ${
               selected === list[i] || selected.includes(list[i])
-                ? "bg-primary-light border-primary"
+                ? "bg-primary-light border-primary font-bold"
                 : "bg-white border-gray-400"
             }
           `}

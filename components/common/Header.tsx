@@ -89,8 +89,7 @@ export default function Header() {
                     src={CloseIcon}
                     alt="close"
                     width={12}
-                    height={12}
-                    className="cursor-pointer"
+                    className="cursor-pointer w-[12px] h-auto"
                     onClick={() => setShowTooltip(false)}
                   />
                 </div>
