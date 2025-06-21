@@ -331,6 +331,37 @@ export default function Map() {
         if (level > 8 && currentMode !== "region") setupRegionClusters();
       };
 
+      // 현재 보이는 매물 정보
+      const showVisibleMarkers = () => {
+        const map = kakaoMapRef.current;
+        if (!map) return;
+
+        const bounds = map.getBounds(); // 현재 지도 영역
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+
+        const visibleMarkers = allMarkers.filter((overlay) => {
+          const position = overlay.getPosition();
+          const lat = position.getLat();
+          const lng = position.getLng();
+
+          return (
+            lat >= sw.getLat() &&
+            lat <= ne.getLat() &&
+            lng >= sw.getLng() &&
+            lng <= ne.getLng()
+          );
+        });
+
+        console.log("현재 화면에 보이는 매물 수:", visibleMarkers.length);
+        visibleMarkers.forEach((overlay, i) => {
+          const { lat, lng } = positions[i];
+          console.log(`위도: ${lat}, 경도: ${lng}`);
+        });
+      };
+
+      window.kakao.maps.event.addListener(map, "idle", showVisibleMarkers);
+
       // 초기 설정
       setupRegionClusters();
       window.kakao.maps.event.addListener(
