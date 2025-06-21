@@ -11,6 +11,7 @@ export default async function Page({ searchParams }: Props) {
   if (Object.keys(query).length) {
     const res = await getTokens(query.code!);
 
+    console.log(res)
     if (res.status === 200) {
       redirect("/");
     }

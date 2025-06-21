@@ -28,7 +28,7 @@ export default function ProcessForm({
 }: ProcessFormProps) {
   return (
     <div
-      className={`max-w-[817px] px-[40px] pt-[34px] pb-[70px] mt-[24px] mb-[87px] mx-auto bg-white rounded-[20px] flex flex-col
+      className={`min-w-[817px] max-w-[817px] px-[40px] pt-[34px] pb-[70px] mt-[24px] mb-[87px] mx-auto bg-white rounded-[20px] flex flex-col
       ${
         isLocation
           ? "gap-[90px]"

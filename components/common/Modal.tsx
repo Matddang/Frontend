@@ -44,7 +44,7 @@ export default function Modal({
             bgColor || "bg-white"
           }`}
           style={{
-            width: `${width}px`,
+            minWidth: `${width}px`,
             maxHeight: "calc(100vh - 80px)",
             boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)",
           }}

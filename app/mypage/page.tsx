@@ -22,7 +22,7 @@ export default function Page() {
 
   return (
     <Frame>
-      <div className="w-[818px] h-[589px] rounded-[20px] bg-white px-[40px] py-[44px] mt-[24px] mb-[153px] mx-auto flex flex-col gap-[24px]">
+      <div className="w-[817px] h-[589px] rounded-[20px] bg-white px-[40px] py-[44px] mt-[24px] mb-[153px] mx-auto flex flex-col gap-[24px]">
         <h1 className="font-bold text-[24px] text-black">마이 페이지</h1>
         <div className="flex flex-col gap-[40px]">
           <div className="bg-primary-light flex justify-between items-center py-[14px] px-[6px]">
