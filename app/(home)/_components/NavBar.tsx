@@ -161,8 +161,7 @@ export default function NavBar() {
                 <div className="absolute top-full left-0 z-50 mt-5">
                   <FilterModal
                     filter={filter}
-                    onApply={(value) => {
-                      alert(value);
+                    onApply={() => {
                       setOpenFilter(null);
                     }}
                   />

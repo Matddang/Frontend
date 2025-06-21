@@ -11,13 +11,17 @@ import CropFilter from "./CropFilter";
 import PlaceFilter from "./PlaceFilter";
 import InfoIcon from "@/assets/images/info.svg";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { buildFilterQuery } from "@/utils/filterQuery";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
-  onApply: (value: string | number | null) => void;
+  onApply: () => void;
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
+  const router = useRouter();
+
   const {
     type,
     price,
@@ -52,19 +56,12 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     setKind(tempFilters.kind);
     setCrop(tempFilters.crop);
     setPlace(tempFilters.place);
-    onApply(
-      `임대/매매: ${tempFilters.type ?? "전체"}, ` +
-        `희망가: 최소-${tempFilters.price.min ?? "없음"}/최대-${
-          tempFilters.price.max ?? "없음"
-        }, ` +
-        `면적: 최소-${tempFilters.area.min ?? "없음"}/최대-${
-          tempFilters.area.max ?? "없음"
-        }, ` +
-        `종류: ${
-          tempFilters.kind.length > 0 ? tempFilters.kind.join(", ") : "전체, "
-        }` +
-        `선택한 장소: ${tempFilters.place.name ?? "없음"}`,
-    );
+
+    onApply();
+
+    const query = buildFilterQuery(tempFilters);
+    const searchParams = new URLSearchParams(query).toString();
+    router.replace(`?${searchParams}`);
   };
 
   const handleReset = () => {
