@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/assets/images/logo.svg";
+import LogoWhite from "@/assets/images/logo-white.svg";
 import CloseIcon from "@/assets/images/close.svg";
 import Image from "next/image";
 import { useState } from "react";
@@ -19,22 +20,29 @@ export default function Header() {
 
   const pathname = usePathname();
   const isLoginHidden = pathname === "/typetest";
+  const isGuide = pathname === "/guide";
   const router = useRouter();
 
   return (
-    <div className="relative z-20 h-[65px] px-[50px] pt-[14px] pb-[12px] flex justify-center border-b-[1px] bg-white border-b-gray-300">
+    <div
+      className={`relative z-20 h-[65px] px-[50px] pt-[14px] pb-[12px] flex justify-center ${
+        isGuide ? "bg-guide-green" : "border-b-[1px] bg-white border-b-gray-300"
+      }`}
+    >
       <div className="max-w-[1440px] w-full flex justify-between items-center">
         <Image
-          src={Logo}
+          src={isGuide ? LogoWhite : Logo}
           alt="logo"
           className="cursor-pointer"
           onClick={() => router.push("/")}
         />
         {!isLoginHidden &&
           (name ? (
-            <div className="flex gap-[24px] font-semibold text-[18px] text-gray-1300">
+            <div className="flex gap-[24px] font-semibold text-[18px">
               <button
-                className="w-[103px] text-center cursor-pointer"
+                className={`w-[103px] text-center cursor-pointer ${
+                  isGuide ? "text-white" : "text-gray-1300"
+                }`}
                 onClick={() => router.push("/compare-properties")}
               >
                 매물비교

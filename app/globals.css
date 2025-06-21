@@ -15,7 +15,10 @@
 @theme {
   --color-primary: #39b94c;
   --color-primary-light: #f6ffe8;
+  --color-primary-dark: #339c43;
   --color-system-red: #ff5e5e;
+  --color-guide-green: #17a52c;
+  --color-guide-olive: #48a323;
   --color-gray-100: #f8f9fb;
   --color-gray-200: #f3f5fa;
   --color-gray-300: #eeeff2;
@@ -131,6 +134,18 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+@font-face {
+  font-family: "LINESeedKR-Bd";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
+.font-line-seed {
+  font-family: "LINESeedKR-Bd", sans-serif;
 }
 
 html,
