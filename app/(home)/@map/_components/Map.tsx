@@ -12,6 +12,7 @@ import CurrentLocationIcon from "@/assets/images/current-location.svg";
 import AgroDistributionActiveIcon from "@/assets/images/agro-distribution-active.svg";
 import MachineryRentalActiveIcon from "@/assets/images/machinery-rental-active.svg";
 import { useSidebarStore } from "@/store/useSidebarStore";
+import { useRouter, useSearchParams } from "next/navigation";
 
 declare global {
   interface Window {
@@ -20,6 +21,15 @@ declare global {
 }
 
 export default function Map() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const zoom = searchParams.get("zoom");
+  const initialZoom = zoom ? Number(zoom) : 10;
+
+  const mLat = searchParams.get("m_lat");
+  const mLng = searchParams.get("m_lng");
+
   const mapRef = useRef<HTMLDivElement>(null); // 지도를 표시할 HTML DOM 요소 참조
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스 저장
   const overlays = useRef<{
@@ -33,7 +43,6 @@ export default function Map() {
   });
 
   const { isSidebarOpen } = useSidebarStore();
-  const centerRef = useRef<any>(null);
 
   const [showMoveToJeollaButton, setShowMoveToJeollaButton] = useState(false);
 
@@ -78,14 +87,17 @@ export default function Map() {
       return;
 
     const onLoad = () => {
-      centerRef.current = new window.kakao.maps.LatLng(
-        JEONNAM_CENTER.lat,
-        JEONNAM_CENTER.lng,
-      );
+      const initialCenter =
+        mLat && mLng
+          ? new window.kakao.maps.LatLng(Number(mLat), Number(mLng))
+          : new window.kakao.maps.LatLng(
+              JEONNAM_CENTER.lat,
+              JEONNAM_CENTER.lng,
+            );
 
       const map = new window.kakao.maps.Map(mapRef.current, {
-        center: centerRef.current,
-        level: 10,
+        center: initialCenter,
+        level: initialZoom,
         mapTypeId: window.kakao.maps.MapTypeId.HYBRID,
       });
 
@@ -115,7 +127,7 @@ export default function Map() {
             clearAllOverlays();
 
             // 지도 중심 이동 및 줌인
-            kakaoMapRef.current.setLevel(0); // 더 낮을수록 더 줌인
+            kakaoMapRef.current.setLevel(0);
             kakaoMapRef.current.panTo(latLng);
 
             if (overlays.current.selectedOverlayRef) {
@@ -142,7 +154,7 @@ export default function Map() {
             pointer.style.height = "0";
             pointer.style.borderLeft = "10px solid transparent";
             pointer.style.borderRight = "10px solid transparent";
-            pointer.style.borderTop = "10px solid #F6FFE8"; // 말풍선 배경색과 동일하게
+            pointer.style.borderTop = "10px solid #F6FFE8";
 
             infoContent.appendChild(pointer);
 
@@ -176,7 +188,6 @@ export default function Map() {
 
       let regionClusterers: any[] = [];
       let numberClusterer: any = null;
-      let currentMode: "region" | "number" = "region";
 
       // 클러스터 제거
       const clearAllClusters = () => {
@@ -252,8 +263,6 @@ export default function Map() {
             return clusterer;
           },
         );
-
-        currentMode = "region";
       };
 
       // 위치 기반 숫자 클러스터 세팅
@@ -274,25 +283,6 @@ export default function Map() {
           { background: "#39b94c" },
           { background: "rgba(57, 185, 76, 0.78)" },
         );
-        currentMode = "number";
-
-        // window.kakao.maps.event.addListener(
-        //   numberClusterer,
-        //   "clusterclick",
-        //   function (numberClusterer: any) {
-        //     const markers = numberClusterer.getMarkers();
-        //     markers.forEach((m: any) => {
-        //       console.log(m.getPosition());
-        //     });
-        //   },
-        // );
-      };
-
-      // 줌 레벨 제어
-      const handleZoomChanged = () => {
-        const level = map.getLevel();
-        if (level <= 8 && currentMode !== "number") setupNumberCluster();
-        if (level > 8 && currentMode !== "region") setupRegionClusters();
       };
 
       // 현재 보이는 매물 정보
@@ -300,7 +290,7 @@ export default function Map() {
         const map = kakaoMapRef.current;
         if (!map) return;
 
-        const bounds = map.getBounds(); // 현재 지도 영역
+        const bounds = map.getBounds();
         const sw = bounds.getSouthWest();
         const ne = bounds.getNorthEast();
 
@@ -324,23 +314,38 @@ export default function Map() {
         // });
       };
 
-      window.kakao.maps.event.addListener(map, "idle", showVisibleMarkers);
-
+      /* ----------------------------------------------------------- */
       // 초기 설정
-      setupRegionClusters();
-      window.kakao.maps.event.addListener(
-        map,
-        "zoom_changed",
-        handleZoomChanged,
-      );
+      if (initialZoom <= 8) setupNumberCluster();
+      else setupRegionClusters();
+
+      // 지도가 움직일 때 마다 위치, 줌 레벨, 보이는 매물 정보 제어
+      const updateUrlParams = () => {
+        if (!map) return;
+
+        const level = map.getLevel();
+        const center = map.getCenter();
+
+        if (level <= 8) setupNumberCluster();
+        else setupRegionClusters();
+
+        const params = new URLSearchParams(window.location.search);
+        params.set("zoom", String(level));
+        params.set("m_lat", String(center.getLat()));
+        params.set("m_lng", String(center.getLng()));
+
+        router.replace(`${window.location.pathname}?${params.toString()}`, {
+          scroll: false,
+        });
+
+        showVisibleMarkers();
+      };
+
+      window.kakao.maps.event.addListener(map, "idle", updateUrlParams);
 
       // 언마운트 시 이벤트 제거
       return () => {
-        window.kakao.maps.event.removeListener(
-          map,
-          "zoom_changed",
-          handleZoomChanged,
-        );
+        window.kakao.maps.event.removeListener(map, "idle", updateUrlParams);
         clearAllClusters();
       };
     };
@@ -350,7 +355,7 @@ export default function Map() {
     } else {
       onLoad();
     }
-  }, [JEONNAM_CENTER]);
+  }, []);
 
   const moveToMyLocation = () => {
     if (!navigator.geolocation || !kakaoMapRef.current) {
