@@ -12,7 +12,7 @@ import PlaceFilter from "./PlaceFilter";
 import InfoIcon from "@/assets/images/info.svg";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { buildFilterQuery } from "@/utils/filterQuery";
+import { updateFilterQuery } from "@/utils/filterQuery";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
@@ -59,9 +59,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
 
     onApply();
 
-    const query = buildFilterQuery(tempFilters);
-    const searchParams = new URLSearchParams(query).toString();
-    router.replace(`?${searchParams}`);
+    updateFilterQuery(tempFilters, router);
   };
 
   const handleReset = () => {
