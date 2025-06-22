@@ -17,7 +17,7 @@ export default function MapButtons({
   onZoomOut,
 }: MapButtonsProps) {
   return (
-    <div className="absolute top-10 right-10 z-10 flex flex-col gap-[23px]">
+    <div className="absolute top-10 right-10 z-1 flex flex-col gap-[23px]">
       <div className="flex flex-col gap-3">
         <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-primary">
           <Image src={MachineryRentalActiveIcon} alt="농기계 임대 사업소" />
