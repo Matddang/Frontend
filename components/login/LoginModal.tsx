@@ -19,12 +19,21 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
 
   const kakaoLoginHandler = () => {
     window.Kakao.Auth.authorize({
-      redirectUri: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI,
+      redirectUri:
+        process.env.NODE_ENV === "development"
+          ? process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_LOCAL
+          : process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI,
     });
   };
 
   const GoogleLoginHandler = () => {
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${
+      process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+    }&redirect_uri=${
+      process.env.NODE_ENV === "development"
+        ? process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_LOCAL
+        : process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
+    }&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
     window.location.href = url;
   };
 
