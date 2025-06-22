@@ -5,6 +5,8 @@ import Link from "next/link";
 import ArrowBlackIcon from "@/assets/images/arrow-right-black.svg";
 import { useState } from "react";
 import Modal from "@/components/common/Modal";
+import { useQuery } from "@tanstack/react-query";
+import { getUserInfo } from "@/services/getUserInfo";
 
 export default function MyPageLink({
   tab,
@@ -12,10 +14,14 @@ export default function MyPageLink({
   tab: {
     key: string;
     title: string;
-    content?: string;
   };
 }) {
   const [openModal, setOpenModal] = useState(false);
+  const { data } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: () => getUserInfo(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   return (
     <>
@@ -27,7 +33,9 @@ export default function MyPageLink({
         <span className="typo-body-1-b text-black">{tab.title}</span>
         <div className="flex gap-[12px] items-center">
           {tab.key === "login" && (
-            <span className="typo-body-1-m text-gray-700">{tab.content}</span>
+            <span className="typo-body-1-m text-gray-700">
+              {data?.socialLoginType || ""}
+            </span>
           )}
           <Image src={ArrowBlackIcon} alt="right" />
         </div>

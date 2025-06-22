@@ -7,7 +7,6 @@ export default function Page() {
     {
       key: "login",
       title: "로그인 정보",
-      content: "Kakao",
     },
     {
       key: "location",
