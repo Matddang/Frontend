@@ -7,6 +7,7 @@ import { useState } from "react";
 import Modal from "@/components/common/Modal";
 import { useQuery } from "@tanstack/react-query";
 import { getUserInfo } from "@/services/getUserInfo";
+import { useTokenStore } from "@/store/useTokenStore";
 
 export default function MyPageLink({
   tab,
@@ -17,10 +18,12 @@ export default function MyPageLink({
   };
 }) {
   const [openModal, setOpenModal] = useState(false);
+  const { token } = useTokenStore();
   const { data } = useQuery({
     queryKey: ["userInfo"],
-    queryFn: () => getUserInfo(),
+    queryFn: () => getUserInfo(token!),
     staleTime: 5 * 60 * 1000,
+    enabled: !!token,
   });
 
   return (
@@ -34,7 +37,7 @@ export default function MyPageLink({
         <div className="flex gap-[12px] items-center">
           {tab.key === "login" && (
             <span className="typo-body-1-m text-gray-700">
-              {data?.socialLoginType || ""}
+              {data?.data.socialLoginType || ""}
             </span>
           )}
           <Image src={ArrowBlackIcon} alt="right" />

@@ -1,14 +1,16 @@
 import ListSelector from "@/components/process/_components/ListSelector";
 import ProcessForm from "@/components/process/ProcessForm";
+import { useUserStore } from "@/store/UserStore";
 import { StepProps, STEPS_LABEL } from "@/types/typetest";
 import { useState } from "react";
 
 export default function Purpose({ nextStep, prevStep }: StepProps) {
   const [purpose, setPurpose] = useState<string[] | string>([]);
+  const { name } = useUserStore();
 
   const title = {
     title: "농업의 목적을 알려주세요.",
-    subTitle: "김이화님의 농업목적에 맞는 농지를 추천해드릴게요.",
+    subTitle: `${name || ""}님의 농업목적에 맞는 농지를 추천해드릴게요.`,
   };
 
   const purpose_types = [

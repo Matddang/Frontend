@@ -10,7 +10,7 @@ import GoogleIcon from "@/assets/images/google-icon.svg";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/UserStore";
-import { useLoginModalStore } from "@/store/LoginModalStore";
+import { useLoginModalStore } from "@/store/useLoginModalStore";
 
 export default function LoginModal({ onClose }: { onClose: () => void }) {
   const { isLogin, name } = useUserStore();
