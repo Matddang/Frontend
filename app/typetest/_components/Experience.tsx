@@ -1,14 +1,16 @@
 import ListSelector from "@/components/process/_components/ListSelector";
 import ProcessForm from "@/components/process/ProcessForm";
+import { useUserStore } from "@/store/UserStore";
 import { StepProps, STEPS_LABEL } from "@/types/typetest";
 import { useState } from "react";
 
 export default function Experience({ nextStep }: StepProps) {
   const [experience, setExperience] = useState<string | string[]>("");
+  const { name } = useUserStore();
 
   const title = {
     title: "농업 경험, 어느 정도 있으신가요?",
-    subTitle: "안녕하세요 김이화님, 간단한 정보를 먼저 알려주세요.",
+    subTitle: `안녕하세요 ${name || ""}님, 간단한 정보를 먼저 알려주세요.`,
   };
 
   const experience_types = [
