@@ -12,7 +12,7 @@ import ChevronDown from "@/assets/images/chevron-down.svg";
 import { useLoginModalStore } from "@/store/LoginModalStore";
 
 export default function Header() {
-  const { name, clearUser } = useUserStore();
+  const { isLogin, name, clearUser } = useUserStore();
   const { isOpen } = useLoginModalStore();
   const [loginModal, setLoginModal] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
@@ -37,7 +37,7 @@ export default function Header() {
           onClick={() => router.push("/")}
         />
         {!isLoginHidden &&
-          (name ? (
+          (isLogin ? (
             <div className="flex gap-[24px] font-semibold">
               <button
                 className={`w-[103px] text-center cursor-pointer typo-sub-head-sb ${

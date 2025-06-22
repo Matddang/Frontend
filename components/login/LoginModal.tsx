@@ -13,7 +13,7 @@ import { useUserStore } from "@/store/UserStore";
 import { useLoginModalStore } from "@/store/LoginModalStore";
 
 export default function LoginModal({ onClose }: { onClose: () => void }) {
-  const { name } = useUserStore();
+  const { isLogin, name } = useUserStore();
   const { modalClose } = useLoginModalStore();
   const router = useRouter();
 
@@ -53,9 +53,9 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
     <Modal
       width={410}
       onClose={handleClose}
-      bgColor={name ? `bg-primary-light` : ""}
+      bgColor={isLogin ? `bg-primary-light` : ""}
     >
-      {!name ? (
+      {!isLogin ? (
         <div className="flex flex-col gap-[24px] pt-[59px] pb-[12px]">
           <div className="flex flex-col gap-[22px] items-center">
             <div className="flex flex-col gap-[10px]">
