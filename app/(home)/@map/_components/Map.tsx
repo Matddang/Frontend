@@ -25,9 +25,11 @@ export default function Map() {
   const overlays = useRef<{
     myLocation: any | null;
     infoOverlay: any | null;
+    selectedOverlayRef: HTMLElement | null;
   }>({
     myLocation: null,
     infoOverlay: null,
+    selectedOverlayRef: null,
   });
 
   const { isSidebarOpen } = useSidebarStore();
@@ -115,6 +117,13 @@ export default function Map() {
             // 지도 중심 이동 및 줌인
             kakaoMapRef.current.setLevel(0); // 더 낮을수록 더 줌인
             kakaoMapRef.current.panTo(latLng);
+
+            if (overlays.current.selectedOverlayRef) {
+              overlays.current.selectedOverlayRef.classList.remove("selected");
+            }
+
+            content.classList.add("selected");
+            overlays.current.selectedOverlayRef = content;
 
             // 정보 표시할 HTML 콘텐츠
             const infoContent = document.createElement("div");
