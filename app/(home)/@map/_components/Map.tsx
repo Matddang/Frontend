@@ -4,15 +4,12 @@
 import { positions } from "@/mock/markerPositions";
 import { clusterStyle } from "@/styles/mapClusterStyle";
 import { createOverlayContent } from "@/utils/mapOverlay";
-import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import PlusIcon from "@/assets/images/plus.svg";
-import MinusIcon from "@/assets/images/minus.svg";
-import CurrentLocationIcon from "@/assets/images/current-location.svg";
-import AgroDistributionActiveIcon from "@/assets/images/agro-distribution-active.svg";
-import MachineryRentalActiveIcon from "@/assets/images/machinery-rental-active.svg";
+
 import { useSidebarStore } from "@/store/useSidebarStore";
 import { useRouter, useSearchParams } from "next/navigation";
+import MapButtons from "./MapButtons";
+import MoveToJeollaButton from "./MoveToJeollaButton";
 
 declare global {
   interface Window {
@@ -386,70 +383,24 @@ export default function Map() {
       <div ref={mapRef} className="w-full h-full" />
 
       {/* 우측 버튼들 */}
-      <div className="absolute top-10 right-10 z-10 flex flex-col gap-[23px]">
-        <div className="flex flex-col gap-3">
-          <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-primary">
-            <Image src={MachineryRentalActiveIcon} alt="농기계 임대 사업소" />
-          </button>
-          <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-[#FF822F]">
-            <Image src={AgroDistributionActiveIcon} alt="농수산물 유통 센터" />
-          </button>
-        </div>
-        <button
-          onClick={moveToMyLocation}
-          className="px-[6px] py-2 rounded-[8px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white flex flex-col gap-1 items-center justify-center"
-          aria-label="현위치로 이동"
-          title="현위치로 이동"
-        >
-          <Image src={CurrentLocationIcon} alt="현위치" />
-          <span className="typo-sub-title-m text-primary">현위치</span>
-        </button>
-        <div className=" flex flex-col gap-[11.5px] px-3 py-[15px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white rounded-[8px]">
-          <button
-            onClick={() => {
-              const map = kakaoMapRef.current;
-              if (!map) return;
-              const level = map.getLevel();
-              map.setLevel(level - 1);
-            }}
-            className=""
-            aria-label="지도 확대"
-          >
-            <Image src={PlusIcon} alt="확대" />
-          </button>
-          <hr className="w-full h-[1px] text-gray-500" />
-          <button
-            onClick={() => {
-              const map = kakaoMapRef.current;
-              if (!map) return;
-              const level = map.getLevel();
-              map.setLevel(level + 1);
-            }}
-            className=""
-            aria-label="지도 축소"
-          >
-            <Image src={MinusIcon} alt="축소" />
-          </button>
-        </div>
-      </div>
+      <MapButtons
+        onMoveToMyLocation={moveToMyLocation}
+        onZoomIn={() => {
+          const map = kakaoMapRef.current;
+          if (!map) return;
+          const level = map.getLevel();
+          map.setLevel(level - 1);
+        }}
+        onZoomOut={() => {
+          const map = kakaoMapRef.current;
+          if (!map) return;
+          const level = map.getLevel();
+          map.setLevel(level + 1);
+        }}
+      />
 
       {/* 전라도 지도로 이동하기 버튼 */}
-      {showMoveToJeollaButton && (
-        <div className="group absolute z-10 bottom-[110px] left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <button
-            onClick={moveToJeonnam}
-            className="relative typo-sub-head-sb px-[34px] py-3 w-fit rounded-[119px] border border-[2px] border-primary bg-primary-light shadow-[0_0_20px_rgba(0,0,0,0.08)]"
-          >
-            전라남도 지도로 이동하기
-            {/* hover 시에 나타날 텍스트 */}
-            <p className="absolute bottom-full mb-[24px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-[16px] bg-primary-light px-4 py-[14px] typo-body-1-m opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-              맞땅은 지금 전라도 지역 매물부터 소개하고 있어요 🙂
-              <br />
-              전라도 지도로 이동하려면 아래 버튼을 눌러주세요!
-            </p>
-          </button>
-        </div>
-      )}
+      {showMoveToJeollaButton && <MoveToJeollaButton onClick={moveToJeonnam} />}
     </div>
   );
 }
