@@ -3,8 +3,8 @@ import { AREA_FILTER } from "@/constants/filterOptions";
 import RangeResultBox from "./RangeResultBox";
 
 interface AreaFilterProps {
-  tempArea: { min: number | null; max: number | null };
-  setTempArea: (area: { min: number | null; max: number | null }) => void;
+  tempArea: { min: number; max: number };
+  setTempArea: (area: { min: number; max: number }) => void;
 }
 
 export default function AreaFilter({ tempArea, setTempArea }: AreaFilterProps) {

@@ -1,3 +1,5 @@
+import { CROP_CHILD_FILTER } from "@/constants/filterOptions";
+
 export const formatKoreanUnit = (value: number): string => {
   if (value === 0) return "0";
 
@@ -18,4 +20,25 @@ export const formatKoreanUnit = (value: number): string => {
   }
 
   return result;
+};
+
+export const getCropLabelString = (crop: { [parent: string]: string[] }) => {
+  const subCrops: string[] = [];
+
+  Object.entries(crop).forEach(([parentKey, childIds]) => {
+    const labelMap =
+      CROP_CHILD_FILTER[parentKey as keyof typeof CROP_CHILD_FILTER];
+    if (!labelMap) return;
+
+    childIds.forEach((id) => {
+      const label = labelMap[Number(id) as keyof typeof labelMap];
+      if (label) subCrops.push(label);
+    });
+  });
+
+  if (subCrops.length <= 2) {
+    return subCrops.join(", ");
+  } else {
+    return `${subCrops[0]} + ${subCrops.length}`;
+  }
 };

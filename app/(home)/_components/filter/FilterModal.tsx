@@ -1,7 +1,7 @@
 import Image from "next/image";
 import TypeFilter from "./TypeFilter";
 import ResetIcon from "@/assets/images/reset.svg";
-import { useFilterStore } from "@/store/FilterStore";
+import { useFilterStore } from "@/store/useFilterStore";
 import { useEffect, useState } from "react";
 import PriceFilter from "./PriceFilter";
 import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
@@ -11,26 +11,30 @@ import CropFilter from "./CropFilter";
 import PlaceFilter from "./PlaceFilter";
 import InfoIcon from "@/assets/images/info.svg";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { buildFilterQuery } from "@/utils/filterQuery";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
-  onApply: (value: string | number | null) => void;
+  onApply: () => void;
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
+  const router = useRouter();
+
   const {
     type,
     price,
     area,
     kind,
     crop,
-    placeId,
+    place,
     setType,
     setPrice,
     setArea,
     setKind,
     setCrop,
-    setPlaceId,
+    setPlace,
   } = useFilterStore();
   const [tempFilters, setTempFilters] = useState({
     type,
@@ -38,12 +42,12 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     area,
     kind,
     crop,
-    placeId,
+    place,
   });
 
   useEffect(() => {
-    setTempFilters({ type, price, area, kind, crop, placeId });
-  }, [type, price, area, kind, crop, placeId]);
+    setTempFilters({ type, price, area, kind, crop, place });
+  }, [type, price, area, kind, crop, place]);
 
   const handleApply = () => {
     setType(tempFilters.type);
@@ -51,20 +55,13 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     setArea(tempFilters.area);
     setKind(tempFilters.kind);
     setCrop(tempFilters.crop);
-    setPlaceId(tempFilters.placeId);
-    onApply(
-      `임대/매매: ${tempFilters.type ?? "전체"}, ` +
-        `희망가: 최소-${tempFilters.price.min ?? "없음"}/최대-${
-          tempFilters.price.max ?? "없음"
-        }, ` +
-        `면적: 최소-${tempFilters.area.min ?? "없음"}/최대-${
-          tempFilters.area.max ?? "없음"
-        }, ` +
-        `종류: ${
-          tempFilters.kind.length > 0 ? tempFilters.kind.join(", ") : "전체, "
-        }` +
-        `선택한 장소: ${tempFilters.placeId ?? "없음"}`,
-    );
+    setPlace(tempFilters.place);
+
+    onApply();
+
+    const query = buildFilterQuery(tempFilters);
+    const searchParams = new URLSearchParams(query).toString();
+    router.replace(`?${searchParams}`);
   };
 
   const handleReset = () => {
@@ -97,7 +94,10 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
         setTempFilters((prev) => ({ ...prev, crop: {} }));
         break;
       case "place":
-        setTempFilters((prev) => ({ ...prev, placeId: null }));
+        setTempFilters((prev) => ({
+          ...prev,
+          place: { id: null, name: null },
+        }));
         break;
       default:
         break;
@@ -154,9 +154,9 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
       case "place":
         return (
           <PlaceFilter
-            tempPlaceId={tempFilters.placeId}
-            setTempPlaceId={(value) =>
-              setTempFilters((prev) => ({ ...prev, placeId: value }))
+            tempPlace={tempFilters.place}
+            setTempPlace={(value) =>
+              setTempFilters((prev) => ({ ...prev, place: value }))
             }
           />
         );

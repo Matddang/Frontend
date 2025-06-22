@@ -5,12 +5,13 @@ import { positions } from "@/mock/markerPositions";
 import { clusterStyle } from "@/styles/mapClusterStyle";
 import { createOverlayContent } from "@/utils/mapOverlay";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PlusIcon from "@/assets/images/plus.svg";
 import MinusIcon from "@/assets/images/minus.svg";
 import CurrentLocationIcon from "@/assets/images/current-location.svg";
 import AgroDistributionActiveIcon from "@/assets/images/agro-distribution-active.svg";
 import MachineryRentalActiveIcon from "@/assets/images/machinery-rental-active.svg";
+import { useSidebarStore } from "@/store/useSidebarStore";
 
 declare global {
   interface Window {
@@ -23,22 +24,40 @@ export default function Map() {
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스 저장
   const overlays = useRef<{
     myLocation: any | null;
-    circle: any | null;
     infoOverlay: any | null;
+    selectedOverlayRef: HTMLElement | null;
   }>({
     myLocation: null,
-    circle: null,
     infoOverlay: null,
+    selectedOverlayRef: null,
   });
 
+  const { isSidebarOpen } = useSidebarStore();
+  const centerRef = useRef<any>(null);
+
+  const [showMoveToJeollaButton, setShowMoveToJeollaButton] = useState(false);
+
+  // 전라남도 센터(화순시)
+  const JEONNAM_CENTER = useMemo(() => ({ lat: 35.0675, lng: 126.994 }), []);
+
+  const isInJeonnam = (lat: number, lng: number) => {
+    return lat >= 34.0 && lat <= 35.32 && lng >= 126.0 && lng <= 127.7434;
+  };
+
+  // 전라남도 구역으로 이동
+  const moveToJeonnam = () => {
+    if (!kakaoMapRef.current) return;
+    kakaoMapRef.current.setLevel(10);
+    kakaoMapRef.current.panTo(
+      new window.kakao.maps.LatLng(JEONNAM_CENTER.lat, JEONNAM_CENTER.lng),
+    );
+  };
+
+  // 오베레이 초기화
   const clearAllOverlays = () => {
     if (overlays.current.myLocation) {
       overlays.current.myLocation.setMap(null);
       overlays.current.myLocation = null;
-    }
-    if (overlays.current.circle) {
-      overlays.current.circle.setMap(null);
-      overlays.current.circle = null;
     }
     if (overlays.current.infoOverlay) {
       overlays.current.infoOverlay.setMap(null);
@@ -46,22 +65,44 @@ export default function Map() {
     }
   };
 
-  // 현재 선택된 지도 타입 상태
-  // const [activeMapType, setActiveMapType] = useState<"ROADMAP" | "HYBRID">(
-  //   "ROADMAP",
-  // );
+  useEffect(() => {
+    if (!kakaoMapRef.current) return;
+
+    const currentCenter = kakaoMapRef.current.getCenter();
+    kakaoMapRef.current.relayout(); // 지도 크기 재계산
+    kakaoMapRef.current.setCenter(currentCenter);
+  }, [isSidebarOpen]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.kakao || !mapRef.current)
       return;
 
     const onLoad = () => {
+      centerRef.current = new window.kakao.maps.LatLng(
+        JEONNAM_CENTER.lat,
+        JEONNAM_CENTER.lng,
+      );
+
       const map = new window.kakao.maps.Map(mapRef.current, {
-        center: new window.kakao.maps.LatLng(34.9, 126.7),
+        center: centerRef.current,
         level: 10,
+        mapTypeId: window.kakao.maps.MapTypeId.HYBRID,
       });
 
       kakaoMapRef.current = map;
+
+      // 지도가 너무 축소되거나 전라남도가 안보이면 [전라남도 이동] 버튼 띄움
+      window.kakao.maps.event.addListener(map, "idle", () => {
+        const center = map.getCenter();
+        const level = map.getLevel();
+        const isJeonnamVisible = isInJeonnam(center.getLat(), center.getLng());
+
+        if (level >= 12 || !isJeonnamVisible) {
+          setShowMoveToJeollaButton(true);
+        } else {
+          setShowMoveToJeollaButton(false);
+        }
+      });
 
       // 커스텀 오버레이 마커 생성
       const allMarkers = positions.map(
@@ -77,19 +118,12 @@ export default function Map() {
             kakaoMapRef.current.setLevel(0); // 더 낮을수록 더 줌인
             kakaoMapRef.current.panTo(latLng);
 
-            // 새 원 그리기 (예: 반경 500m)
-            const circle = new window.kakao.maps.Circle({
-              center: latLng,
-              radius: 50, // 미터 단위
-              strokeWeight: 2,
-              strokeColor: "#39B94C",
-              strokeOpacity: 0.8,
-              fillColor: "rgba(57, 185, 76, 0.44)",
-              fillOpacity: 0.44,
-              map: kakaoMapRef.current,
-            });
+            if (overlays.current.selectedOverlayRef) {
+              overlays.current.selectedOverlayRef.classList.remove("selected");
+            }
 
-            overlays.current.circle = circle;
+            content.classList.add("selected");
+            overlays.current.selectedOverlayRef = content;
 
             // 정보 표시할 HTML 콘텐츠
             const infoContent = document.createElement("div");
@@ -242,16 +276,16 @@ export default function Map() {
         );
         currentMode = "number";
 
-        window.kakao.maps.event.addListener(
-          numberClusterer,
-          "clusterclick",
-          function (numberClusterer: any) {
-            const markers = numberClusterer.getMarkers();
-            markers.forEach((m: any) => {
-              console.log(m.getPosition());
-            });
-          },
-        );
+        // window.kakao.maps.event.addListener(
+        //   numberClusterer,
+        //   "clusterclick",
+        //   function (numberClusterer: any) {
+        //     const markers = numberClusterer.getMarkers();
+        //     markers.forEach((m: any) => {
+        //       console.log(m.getPosition());
+        //     });
+        //   },
+        // );
       };
 
       // 줌 레벨 제어
@@ -260,6 +294,37 @@ export default function Map() {
         if (level <= 8 && currentMode !== "number") setupNumberCluster();
         if (level > 8 && currentMode !== "region") setupRegionClusters();
       };
+
+      // 현재 보이는 매물 정보
+      const showVisibleMarkers = () => {
+        const map = kakaoMapRef.current;
+        if (!map) return;
+
+        const bounds = map.getBounds(); // 현재 지도 영역
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+
+        const visibleMarkers = allMarkers.filter((overlay) => {
+          const position = overlay.getPosition();
+          const lat = position.getLat();
+          const lng = position.getLng();
+
+          return (
+            lat >= sw.getLat() &&
+            lat <= ne.getLat() &&
+            lng >= sw.getLng() &&
+            lng <= ne.getLng()
+          );
+        });
+
+        console.log("현재 화면에 보이는 매물 수:", visibleMarkers.length);
+        // visibleMarkers.forEach((overlay, i) => {
+        //   const { lat, lng } = positions[i];
+        //   console.log(`위도: ${lat}, 경도: ${lng}`);
+        // });
+      };
+
+      window.kakao.maps.event.addListener(map, "idle", showVisibleMarkers);
 
       // 초기 설정
       setupRegionClusters();
@@ -285,7 +350,7 @@ export default function Map() {
     } else {
       onLoad();
     }
-  }, []);
+  }, [JEONNAM_CENTER]);
 
   const moveToMyLocation = () => {
     if (!navigator.geolocation || !kakaoMapRef.current) {
@@ -302,19 +367,6 @@ export default function Map() {
 
         kakaoMapRef.current.setLevel(4);
         kakaoMapRef.current.panTo(loc);
-
-        const circle = new window.kakao.maps.Circle({
-          center: loc,
-          radius: 75,
-          strokeWeight: 3,
-          strokeColor: "#39B94C",
-          strokeOpacity: 0.8,
-          fillColor: "rgba(57, 185, 76, 0.4)",
-          fillOpacity: 0.4,
-          map: kakaoMapRef.current,
-        });
-
-        overlays.current.myLocation = circle;
       },
       (error) => {
         alert("위치 정보를 가져올 수 없습니다.");
@@ -323,16 +375,12 @@ export default function Map() {
     );
   };
 
-  // const changeMapType = (type: "ROADMAP" | "HYBRID") => {
-  //   setActiveMapType(type);
-  //   kakaoMapRef.current?.setMapTypeId(window.kakao.maps.MapTypeId[type]);
-  // };
-
   return (
     <div className="relative w-full h-full">
       {/* 지도 */}
       <div ref={mapRef} className="w-full h-full" />
 
+      {/* 우측 버튼들 */}
       <div className="absolute top-10 right-10 z-10 flex flex-col gap-[23px]">
         <div className="flex flex-col gap-3">
           <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-primary">
@@ -378,23 +426,25 @@ export default function Map() {
             <Image src={MinusIcon} alt="축소" />
           </button>
         </div>
-        {/* <div className="flex flex-col gap-2">
-          <button
-            onClick={() => changeMapType("ROADMAP")}
-            className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
-            ${activeMapType === "ROADMAP" ? "bg-primary" : "bg-gray-500"}`}
-          >
-            일반지도
-          </button>
-          <button
-            onClick={() => changeMapType("HYBRID")}
-            className={`w-12 h-12 text-white text-sm border-none rounded-full shadow flex items-center justify-center cursor-pointer hover:bg-primary
-            ${activeMapType === "HYBRID" ? "bg-[#00DD9B]" : "bg-gray-500"}`}
-          >
-            스카이뷰
-          </button>
-        </div> */}
       </div>
+
+      {/* 전라도 지도로 이동하기 버튼 */}
+      {showMoveToJeollaButton && (
+        <div className="group absolute z-10 bottom-[110px] left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <button
+            onClick={moveToJeonnam}
+            className="relative typo-sub-head-sb px-[34px] py-3 w-fit rounded-[119px] border border-[2px] border-primary bg-primary-light shadow-[0_0_20px_rgba(0,0,0,0.08)]"
+          >
+            전라남도 지도로 이동하기
+            {/* hover 시에 나타날 텍스트 */}
+            <p className="absolute bottom-full mb-[24px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-[16px] bg-primary-light px-4 py-[14px] typo-body-1-m opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+              맞땅은 지금 전라도 지역 매물부터 소개하고 있어요 🙂
+              <br />
+              전라도 지도로 이동하려면 아래 버튼을 눌러주세요!
+            </p>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
