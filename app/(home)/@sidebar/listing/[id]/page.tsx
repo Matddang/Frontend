@@ -7,6 +7,7 @@ import ComparisonImage from "@/assets/images/comparison-info-image.svg";
 import Image from "next/image";
 import SimilarItems from "./_components/SimilarItems";
 import CropRecommendation from "./_components/CropRecommendation";
+import { getListingDetail } from "@/services/getListingDetail";
 
 export default async function DetailPage({
   params,
@@ -19,29 +20,36 @@ export default async function DetailPage({
     return null;
   }
 
-  console.log(id);
+  try {
+    const data = await getListingDetail(id);
+    const listingDetail = data[0];
+    console.log(listingDetail);
 
-  return (
-    <main className="flex flex-col">
-      <DetailHeader />
+    return (
+      <main className="flex flex-col">
+        <DetailHeader />
 
-      <article className="bg-white">
-        <SummaryInfo />
-        <hr className="h-[5px] bg-gray-300 border-none" />
-        <DescriptionInfo />
-      </article>
+        <article className="bg-white">
+          <SummaryInfo />
+          <hr className="h-[5px] bg-gray-300 border-none" />
+          <DescriptionInfo />
+        </article>
 
-      <aside className="mt-6 space-y-[34px] bg-white" aria-label="추가 정보">
-        <DistanceInfo />
-        <hr className="h-[5px] bg-gray-300 border-none" />
-        <InfraInfo />
-        <Image src={ComparisonImage} alt="매물 비교" />
-        <CropRecommendation />
-        <SimilarItems />
-      </aside>
-      <button className="w-full bg-primary text-white py-3 typo-sub-head-sb mt-[43px]">
-        사이트로 이동하기
-      </button>
-    </main>
-  );
+        <aside className="mt-6 space-y-[34px] bg-white" aria-label="추가 정보">
+          <DistanceInfo />
+          <hr className="h-[5px] bg-gray-300 border-none" />
+          <InfraInfo />
+          <Image src={ComparisonImage} alt="매물 비교" />
+          <CropRecommendation />
+          <SimilarItems />
+        </aside>
+        <button className="w-full bg-primary text-white py-3 typo-sub-head-sb mt-[43px]">
+          사이트로 이동하기
+        </button>
+      </main>
+    );
+  } catch (error) {
+    console.error(error);
+    return <div>요청에 실패했습니다.</div>;
+  }
 }
