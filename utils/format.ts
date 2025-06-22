@@ -39,6 +39,6 @@ export const getCropLabelString = (crop: { [parent: string]: string[] }) => {
   if (subCrops.length <= 2) {
     return subCrops.join(", ");
   } else {
-    return `${subCrops[0]} + ${subCrops.length}`;
+    return `${subCrops[0]} + ${subCrops.length - 1}`;
   }
 };
