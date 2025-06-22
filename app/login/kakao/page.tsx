@@ -1,5 +1,4 @@
-import { getTokens } from "@/services/getTokens";
-import { redirect } from "next/navigation";
+import AuthRouter from "@/components/login/AuthRouter";
 
 type Props = {
   searchParams: Promise<{ code?: string }>;
@@ -8,13 +7,8 @@ type Props = {
 export default async function Page({ searchParams }: Props) {
   const query = await searchParams;
 
-  if (Object.keys(query).length) {
-    const res = await getTokens(query.code!);
+  if (Object.keys(query).length)
+    return <AuthRouter type="kakao" code={query.code!} />;
 
-    if (res.status === 200) {
-      redirect("/");
-    }
-  }
-
-  return <div></div>;
+  return <></>;
 }

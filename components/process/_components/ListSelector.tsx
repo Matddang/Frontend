@@ -36,7 +36,7 @@ export default function ListSelector({
   return (
     <div className="flex flex-col gap-[8px]">
       {limit && (
-        <span className="text-[12px] text-gray-700">
+        <span className="typo-body-2-m text-gray-700">
           최대 2개까지 선택할 수 있습니다.
         </span>
       )}
@@ -45,10 +45,10 @@ export default function ListSelector({
           <div
             key={i}
             className={`
-            border-[1px]  rounded-[5px] p-[20px] w-full h-[64px] cursor-pointer flex justify-between 
+            border-[1px] rounded-[5px] p-[20px] w-full h-[64px] cursor-pointer flex justify-between 
             ${
               selected === list[i] || selected.includes(list[i])
-                ? "bg-primary-light border-primary"
+                ? "bg-primary-light border-primary font-bold"
                 : "bg-white border-gray-400"
             }
           `}

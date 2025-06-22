@@ -78,7 +78,7 @@ export default function CompareHistory() {
       {history_list.map((history, i) => (
         <div key={i} className="flex flex-col">
           <div className="h-[38px] bg-primary flex items-center justify-between rounded-t-[8px] py-[7px] px-[11px]">
-            <span className="text-[16px] text-white">{history.date}</span>
+            <span className="typo-body-1-m text-white">{history.date}</span>
             <Image src={ArrowRight} alt="right" className="cursor-pointer" />
           </div>
           <div className="flex gap-[12px] items-center bg-gray-200 py-[16px] px-[14px] rounded-b-[8px]">
@@ -107,14 +107,12 @@ function Property({
       <div className="min-w-[140px] min-h-[140px] rounded-[9px] flex justify-center items-center bg-gray-400"></div>
       <div className="flex flex-col gap-[8px]">
         <div className="flex flex-col">
-          <span className="text-[16px] font-bold text-black">
-            매매 {data.price}억
-          </span>
-          <span className="text-[14px] text-black">
+          <span className="typo-body-1-b text-black">매매 {data.price}억</span>
+          <span className="typo-sub-title-m text-black">
             {data.area}평 / {data.address}
           </span>
         </div>
-        <div className="w-fit bg-primary-light py-[6px] px-[10px] rounded-[4px] text-[12px] font-bold text-primary border-[1px] border-primary">
+        <div className="w-fit bg-primary-light py-[6px] px-[10px] rounded-[4px] typo-body-2-b text-primary border-[1px] border-primary">
           {data.type === "ORCHARD" ? "과수원" : "밭"}
         </div>
       </div>

@@ -15,7 +15,11 @@
 @theme {
   --color-primary: #39b94c;
   --color-primary-light: #f6ffe8;
+  --color-primary-dark: #339c43;
   --color-system-red: #ff5e5e;
+  --color-guide-green: #17a52c;
+  --color-guide-olive: #48a323;
+  --color-system-black: #121212;
   --color-gray-100: #f8f9fb;
   --color-gray-200: #f3f5fa;
   --color-gray-300: #eeeff2;
@@ -24,15 +28,11 @@
   --color-gray-600: #b1b4bc;
   --color-gray-700: #9c9ea5;
   --color-gray-800: #7e8085;
-  --color-gray-500: #cacdd4;
-  --color-gray-600: #b1b4bc;
-  --color-gray-700: #9c9ea5;
-  --color-gray-800: #7e8085;
   --color-gray-900: #717377;
   --color-gray-1000: #5e6064;
   --color-gray-1100: #505154;
-  --color-gray-1300: #2c2d30;
   --color-gray-1200: #3c3e41;
+  --color-gray-1300: #2c2d30;
   --font-display: "Pretendard";
 }
 
@@ -135,6 +135,18 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+@font-face {
+  font-family: "LINESeedKR-Bd";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
+.font-line-seed {
+  font-family: "LINESeedKR-Bd", sans-serif;
 }
 
 html,
@@ -349,4 +361,25 @@ input[type="range"].thumb-custom::-moz-range-thumb {
   cursor: pointer;
   background-color: white;
   pointer-events: auto;
+}
+
+.login-tooltip {
+  background-color: #eeeff2;
+  border-radius: 6px;
+  padding: 8px 12px 8px 16px;
+  display: flex;
+  gap: 10px;
+  position: relative;
+}
+
+.login-tooltip::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 6px);
+  right: -7px;
+
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 7px solid #eeeff2;
+  border-right: none;
 }

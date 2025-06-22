@@ -64,11 +64,11 @@ export default function PropertyList() {
           isCompared ? "pb-[24px] border-b-[1px] border-b-gray-400" : ""
         }`}
       >
-        <span className="font-bold text-[24px] text-black">
+        <span className="typo-head-3 text-black">
           {isCompared ? "매물 비교 결과" : "비교할 2개의 농지를 선택해 주세요."}
         </span>
         {isCompared && (
-          <span className="text-[14px] text-gray-1100">
+          <span className="typo-sub-title-m text-gray-1100">
             구체적인 정보를 비교해 보세요!
           </span>
         )}
@@ -89,7 +89,7 @@ export default function PropertyList() {
             ))}
           </div>
           <button
-            className="font-semibold text-[18px] text-white bg-primary py-[12px] rounded-[8px] cursor-pointer disabled:bg-gray-500 disabled:cursor-auto"
+            className="typo-sub-head-sb text-white bg-primary py-[12px] rounded-[8px] cursor-pointer disabled:bg-gray-500 disabled:cursor-auto"
             style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
             disabled={selected.length < 2}
             onClick={() => setIsCompared(true)}

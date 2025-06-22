@@ -16,7 +16,7 @@ export default function TabComponent() {
           {["관심 농지 매물", "이전 비교 내역"].map((title, i) => (
             <div
               key={i}
-              className={`flex-1 text-center text-[16px] text-black h-[32px] border-b-[4px] cursor-pointer ${
+              className={`flex-1 text-center typo-body-1-m text-black h-[32px] border-b-[4px] cursor-pointer ${
                 tab === title ? "border-b-primary" : "border-b-gray-300"
               }`}
               onClick={() => setTab(title)}
@@ -29,7 +29,7 @@ export default function TabComponent() {
       </div>
       {tab === "관심 농지 매물" && (
         <button
-          className="font-semibold text-[18px] text-white bg-primary py-[12px] rounded-[8px] cursor-pointer"
+          className="typo-sub-head-sb text-white bg-primary py-[12px] rounded-[8px] cursor-pointer"
           style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
           onClick={() => router.push("/compare-properties/compare")}
         >

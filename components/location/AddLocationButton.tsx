@@ -15,7 +15,7 @@ export default function AddLoctaionButton({ title }: { title: string }) {
         onClick={() => setModalOpen(true)}
       >
         <Image src={AddIcon} alt="add" />
-        <span className="text-[18px] font-semibold text-black">
+        <span className="typo-sub-head-sb font-semibold text-black">
           장소 추가하기
         </span>
       </button>

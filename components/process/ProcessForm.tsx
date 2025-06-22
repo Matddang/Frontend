@@ -28,7 +28,7 @@ export default function ProcessForm({
 }: ProcessFormProps) {
   return (
     <div
-      className={`max-w-[817px] px-[40px] pt-[34px] pb-[70px] mt-[24px] mb-[87px] mx-auto bg-white rounded-[20px] flex flex-col
+      className={`min-w-[817px] max-w-[817px] px-[40px] pt-[34px] pb-[70px] mt-[24px] mb-[87px] mx-auto bg-white rounded-[20px] flex flex-col
       ${
         isLocation
           ? "gap-[90px]"
@@ -58,7 +58,9 @@ export default function ProcessForm({
           />
 
           <div className="flex flex-col gap-[4px]">
-            <span className="text-[16px] text-gray-900">{title.subTitle}</span>
+            <span className="typo-body-1-m text-gray-900">
+              {title.subTitle}
+            </span>
             <span className="text-[24px] font-bold text-black">
               {title.title}
             </span>
@@ -70,7 +72,7 @@ export default function ProcessForm({
       <div className="flex flex-col gap-[20px]">
         {isLocation && (
           <button
-            className="w-full h-[51px] rounded-lg bg-white text-primary font-semibold text-[18px] cursor-pointer border-[1px] border-primary"
+            className="w-full h-[51px] rounded-lg bg-white text-primary typo-sub-head-sb cursor-pointer border-[1px] border-primary"
             style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
             onClick={nextStep}
           >
@@ -78,7 +80,7 @@ export default function ProcessForm({
           </button>
         )}
         <button
-          className="w-full h-[51px] rounded-lg bg-primary text-white font-semibold text-[18px] cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
+          className="w-full h-[51px] rounded-lg bg-primary text-white typo-sub-head-sb cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
           style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
           onClick={nextStep}
           disabled={disable}

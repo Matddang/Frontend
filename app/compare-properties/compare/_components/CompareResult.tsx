@@ -91,14 +91,14 @@ function ResultItem() {
     <div className="w-[348px] flex flex-col gap-[24px]">
       <div className="flex flex-col gap-[8px]">
         <div className="flex flex-col">
-          <span className="text-[24px] font-bold text-black">매매 4억 3천</span>
-          <span className="text-[14px] text-gray-900">
+          <span className="typo-head-3 text-black">매매 4억 3천</span>
+          <span className="typo-sub-title-m text-gray-900">
             전라남도 완도군 청산면 12-1
           </span>
         </div>
         <div className="w-full h-[214px] rounded-[9px] bg-gray-200 flex justify-center items-center" />
         <button
-          className="flex items-center justify-center gap-[8px] font-semibold text-[18px] text-gray-1100 bg-gray-200 border-[1px] border-gray-400 cursor-pointer py-[12px] rounded-[8px]"
+          className="flex items-center justify-center gap-[8px] typo-sub-head-sb text-gray-1100 bg-gray-200 border-[1px] border-gray-400 cursor-pointer py-[12px] rounded-[8px]"
           style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
         >
           자세히 보기
@@ -108,7 +108,7 @@ function ResultItem() {
       <div className="flex flex-col gap-[16px]">
         {details.map((detail) => (
           <div key={detail.key} className="flex flex-col">
-            <div className="font-light text-[14px] text-gray-700 flex gap-[4px] items-center">
+            <div className="typo-14-r text-gray-700 flex gap-[4px] items-center">
               {detail.title}
               {(detail.key === "revenue" ||
                 detail.key === "infra" ||
@@ -117,7 +117,7 @@ function ResultItem() {
               )}
             </div>
             <span
-              className={`font-bold text-[14px] ${
+              className={`typo-14-b ${
                 detail.key === "price" || detail.key === "price_of_area"
                   ? "text-system-red"
                   : "text-black"

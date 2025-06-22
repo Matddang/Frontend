@@ -7,8 +7,11 @@ import MarginRateCropLoggedInImg from "@/assets/images/margin-rate-crop-loggedin
 import Image from "next/image";
 import { RANKLISTINGS } from "@/constants/sideBarOption";
 import ListingRankCard from "./ListingRankCard";
+import { useRouter } from "next/navigation";
 
 export default function LoggedInView() {
+  const router = useRouter();
+
   return (
     <div className="bg-gray-100">
       <section className="bg-primary-light flex justify-between items-center px-4 py-[10px]">
@@ -30,7 +33,7 @@ export default function LoggedInView() {
         <button
           className="rounded-[8px] relative w-full "
           style={{ aspectRatio: "358 / 108" }}
-          onClick={() => alert("맞땅 가이드")}
+          onClick={() => router.push("/guide")}
         >
           <Image
             src={GuideImg}
