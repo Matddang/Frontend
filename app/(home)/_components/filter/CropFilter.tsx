@@ -57,9 +57,17 @@ export default function CropFilter({ tempCrop, setTempCrop }: CropFilterProps) {
                   onClick={() => {
                     const prevSelected = tempCrop[cropParent] ?? [];
                     let newSelected: string[];
+
+                    // 현재 전체 선택된 작물 수 계산
+                    const totalSelectedCount = Object.values(tempCrop).reduce(
+                      (acc, arr) => acc + (arr?.length ?? 0),
+                      0,
+                    );
+
                     if (prevSelected.includes(key)) {
                       newSelected = prevSelected.filter((v) => v !== key);
                     } else {
+                      if (totalSelectedCount >= 4) return; // 4개 이상이면 추가 X
                       newSelected = [...prevSelected, key];
                     }
                     setTempCrop({

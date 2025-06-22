@@ -3,10 +3,17 @@
 import { useState } from "react";
 import FilterButton from "./filter/FilterButton";
 import FilterModal from "./filter/FilterModal";
-import { useFilterStore } from "@/store/FilterStore";
-import { AREA_FILTER, FILTERS, PRICE_FILTER } from "@/constants/filterOptions";
+import { useFilterStore } from "@/store/useFilterStore";
+import {
+  AREA_FILTER,
+  FILTERS,
+  KIND_FILTER,
+  PRICE_FILTER,
+  TYPE_FILTER,
+} from "@/constants/filterOptions";
 import Image from "next/image";
 import CloseIcon from "@/assets/images/close.svg";
+import { formatKoreanUnit, getCropLabelString } from "@/utils/format";
 
 export default function NavBar() {
   const {
@@ -15,13 +22,13 @@ export default function NavBar() {
     area,
     kind,
     crop,
-    placeId,
+    place,
     setType,
     setPrice,
     setArea,
     setKind,
     setCrop,
-    setPlaceId,
+    setPlace,
   } = useFilterStore();
 
   const [openFilter, setOpenFilter] = useState<string | null>(null);
@@ -34,30 +41,49 @@ export default function NavBar() {
     setOpenFilter((prev) => (prev === key ? null : key));
   };
 
-  // key별로 값이 있는지 확인하는 함수
-  const hasFilterValue = (key: string) => {
+  const getDisplayText = (key: string): string => {
     switch (key) {
       case "type":
-        return type !== null;
+        return type ? TYPE_FILTER[type] : "";
       case "price":
-        return (
-          price.min !== PRICE_FILTER[0].value ||
-          price.max !== PRICE_FILTER[PRICE_FILTER.length - 1].value
-        );
+        const isMinDefault = price.min === PRICE_FILTER[0].value;
+        const isMaxDefault = price.max === PRICE_FILTER.at(-1)?.value;
+
+        if (!isMinDefault && isMaxDefault) {
+          return `${formatKoreanUnit(price.min)} 이상`;
+        } else if (!isMinDefault || !isMaxDefault) {
+          return `${formatKoreanUnit(price.min)} ~ ${formatKoreanUnit(
+            price.max,
+          )}`;
+        } else {
+          return "";
+        }
       case "area":
-        return (
-          area.min !== AREA_FILTER[0].value ||
-          area.max !== AREA_FILTER[AREA_FILTER.length - 1].value
-        );
+        const isMinAreaDefault = area.min === AREA_FILTER[0].value;
+        const isMaxAreaDefault = area.max === AREA_FILTER.at(-1)?.value;
+
+        if (!isMinAreaDefault && isMaxAreaDefault) {
+          return `${area.min.toLocaleString()}평 이상`;
+        } else if (!isMinAreaDefault || !isMaxAreaDefault) {
+          return `${area.min.toLocaleString()} ~ ${area.max.toLocaleString()}평`;
+        } else {
+          return "";
+        }
       case "kind":
-        return kind.length > 0;
+        return kind.length > 0
+          ? kind.map((k) => KIND_FILTER[k]).join(", ")
+          : "";
       case "crop":
-        return Object.keys(crop).length > 0;
+        return Object.keys(crop).length > 0 ? getCropLabelString(crop) : "";
       case "place":
-        return placeId != null;
+        return place.name ? `${place.name}에서 가까운` : "";
       default:
-        return false;
+        return "";
     }
+  };
+
+  const hasFilterValue = (key: string) => {
+    return getDisplayText(key) !== "";
   };
 
   const handleAllReset = () => {
@@ -72,11 +98,11 @@ export default function NavBar() {
     });
     setKind([]);
     setCrop({});
-    setPlaceId(null);
+    setPlace({ id: null, name: null });
   };
 
   return (
-    <div className="bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center px-[50px] py-4 gap-[12px]">
+    <div className="bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center pl-5 pr-[36px] py-4 gap-[12px]">
       <div className="flex gap-[12px] whitespace-nowrap">
         {FILTERS.map((filter) => {
           if (filter.key === "place" && !isLoggedIn) return null;
@@ -95,7 +121,7 @@ export default function NavBar() {
                 }}
               >
                 <FilterButton
-                  text={filter.label}
+                  text={getDisplayText(filter.key) || filter.label}
                   isActive={isActive}
                   hasValue={hasValue}
                   onClick={() => handleClick(filter.key)}
@@ -135,8 +161,7 @@ export default function NavBar() {
                 <div className="absolute top-full left-0 z-50 mt-5">
                   <FilterModal
                     filter={filter}
-                    onApply={(value) => {
-                      alert(value);
+                    onApply={() => {
                       setOpenFilter(null);
                     }}
                   />

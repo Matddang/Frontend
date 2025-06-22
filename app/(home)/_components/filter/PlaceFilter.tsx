@@ -5,13 +5,13 @@ import AddIcon from "@/assets/images/add.svg";
 import Image from "next/image";
 
 interface PlaceIdFilterProps {
-  tempPlaceId: number | null;
-  setTempPlaceId: (value: number) => void;
+  tempPlace: { id: number | null; name: string | null };
+  setTempPlace: (value: { id: number | null; name: string | null }) => void;
 }
 
 export default function PlaceFilter({
-  tempPlaceId,
-  setTempPlaceId,
+  tempPlace,
+  setTempPlace,
 }: PlaceIdFilterProps) {
   return (
     <div className="flex flex-col gap-6 mt-[6px]">
@@ -21,10 +21,10 @@ export default function PlaceFilter({
       <div className="flex flex-col gap-[10px]">
         {places.map(({ id, name, address, type }, index) => (
           <button
-            onClick={() => setTempPlaceId(id)}
+            onClick={() => setTempPlace({ id, name })}
             key={index}
             className={`p-[10px] flex gap-[10px] items-center border border-gray-400 rounded-[10px] ${
-              tempPlaceId === id
+              tempPlace.id === id
                 ? "border-primary bg-primary-light"
                 : "border-gray-400"
             }`}
