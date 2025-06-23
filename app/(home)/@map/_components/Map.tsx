@@ -115,7 +115,7 @@ export default function Map() {
 
       // 커스텀 오버레이 마커 생성
       const allMarkers = positions.map(
-        ({ lat, lng, region, type, price, area, kind }) => {
+        ({ saleId, lat, lng, region, type, price, area, kind }) => {
           const content = createOverlayContent(type, price, area, kind);
 
           content.addEventListener("click", () => {
@@ -163,6 +163,9 @@ export default function Map() {
             });
 
             overlays.current.infoOverlay = infoOverlay;
+
+            // 기존 쿼리 파라미터 유지하면서 상세 페이지 이동
+            router.push(`/listing/${saleId}?${searchParams.toString()}`);
           });
 
           const overlay = new window.kakao.maps.CustomOverlay({
