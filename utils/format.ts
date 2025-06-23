@@ -18,7 +18,7 @@ export const formatKoreanUnit = (value: number): string => {
     return `${tenMillion}천`;
   }
 
-  return `${tenThousand}만`;
+  return `${tenThousand}만원`;
 };
 
 export const getCropLabelString = (crop: { [parent: string]: string[] }) => {

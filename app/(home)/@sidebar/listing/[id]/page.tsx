@@ -66,7 +66,7 @@ export default async function DetailPage({
               landUse: landUse,
               restrictionArea: restrictionArea,
               officialPricePerSqm: officialPrice,
-              listingPricePerSqm: 1190000,
+              listingPricePerSqm: price / (area * 3.3),
             }}
           />
         </article>
