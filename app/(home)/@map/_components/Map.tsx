@@ -78,6 +78,10 @@ export default function Map() {
       overlays.current.infoOverlay.setMap(null);
       overlays.current.infoOverlay = null;
     }
+    if (overlays.current.selectedOverlayRef) {
+      overlays.current.selectedOverlayRef.classList.remove("selected");
+      overlays.current.selectedOverlayRef = null;
+    }
   };
 
   const handleMarkerClick = useCallback(
@@ -401,6 +405,11 @@ export default function Map() {
         params.set("m_lat", String(center.getLat()));
         params.set("m_lng", String(center.getLng()));
 
+        if (level >= 2 && overlays.current.selectedOverlayRef) {
+          console.log(1);
+          clearAllOverlays();
+        }
+
         // 매물이 2개 이상이고 zoom 레벨이 7 미만이면 listing으로 이동
         if (
           window.location.pathname !== "/listing" &&
@@ -424,6 +433,11 @@ export default function Map() {
       // 초기 설정
       if (initialZoom <= 8) setupNumberCluster();
       else setupRegionClusters();
+
+      if (window.location.pathname === "/") {
+        console.log(1);
+        clearAllOverlays();
+      }
 
       // 지도가 움직일 때 마다 위치, 줌 레벨, 보이는 매물 정보 제어
       const updateUrlParams = () => {
