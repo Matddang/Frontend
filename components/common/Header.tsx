@@ -55,10 +55,12 @@ export default function Header() {
               </button>
               <div className="relative">
                 <button
-                  className="flex gap-[5px] typo-body-1-b text-nowrap text-black items-center bg-gray-100 border-[1px] border-gray-500 h-[40px] w-[99px] rounded-[8px] py-[8px] px-[12px] cursor-pointer"
+                  className="flex gap-[5px] items-center bg-gray-100 border-[1px] border-gray-500 h-[40px] rounded-[8px] py-[8px] px-[12px] cursor-pointer"
                   onClick={() => setOpenMenu((prev) => !prev)}
                 >
-                  {name}님
+                  <span className="typo-body-1-b text-nowrap text-black">
+                    {name}님
+                  </span>
                   <Image
                     src={ChevronDown}
                     alt=""
