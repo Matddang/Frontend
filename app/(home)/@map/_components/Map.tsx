@@ -393,9 +393,27 @@ export default function Map() {
         });
 
         console.log("현재 화면에 보이는 매물 수:", visibleMarkers.length);
-        // 매물이 2개 이상 보여지면, listing 페이지로 이동
-        if (visibleMarkers.length >= 2)
-          router.push(`/listing?${searchParams.toString()}`);
+
+        const level = map.getLevel();
+        const center = map.getCenter();
+        const params = new URLSearchParams(window.location.search);
+        params.set("zoom", String(level));
+        params.set("m_lat", String(center.getLat()));
+        params.set("m_lng", String(center.getLng()));
+
+        // 매물이 2개 이상이고 zoom 레벨이 7 미만이면 listing으로 이동
+        if (
+          window.location.pathname !== "/listing" &&
+          visibleMarkers.length >= 2 &&
+          level < 7
+        ) {
+          router.replace(`/listing?${params.toString()}`);
+        }
+        // 현재 경로가 홈이 아니라면 이동
+        else if (window.location.pathname !== "/" && level >= 7) {
+          router.replace(`/?${params.toString()}`);
+        }
+
         // visibleMarkers.forEach((overlay, i) => {
         //   const { lat, lng } = positions[i];
         //   console.log(`위도: ${lat}, 경도: ${lng}`);

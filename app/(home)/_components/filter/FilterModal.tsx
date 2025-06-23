@@ -11,8 +11,6 @@ import CropFilter from "./CropFilter";
 import PlaceFilter from "./PlaceFilter";
 import InfoIcon from "@/assets/images/info.svg";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { updateFilterQuery } from "@/utils/filterQuery";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
@@ -20,8 +18,6 @@ interface FilterModalProps {
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
-  const router = useRouter();
-
   const {
     type,
     price,
@@ -58,8 +54,6 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     setPlace(tempFilters.place);
 
     onApply();
-
-    updateFilterQuery(tempFilters, router);
   };
 
   const handleReset = () => {
