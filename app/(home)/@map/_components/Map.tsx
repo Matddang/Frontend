@@ -334,9 +334,9 @@ export default function Map() {
         params.set("m_lat", String(center.getLat()));
         params.set("m_lng", String(center.getLng()));
 
-        router.replace(`${window.location.pathname}?${params.toString()}`, {
-          scroll: false,
-        });
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        // 브라우저 히스토리만 변경 (서버 렌더링 X)
+        window.history.replaceState(null, "", newUrl);
 
         showVisibleMarkers();
       };
