@@ -9,6 +9,7 @@ interface UserInfo {
 }
 
 interface UserStore {
+  isLogin: boolean;
   name: string | null;
   userInfo: UserInfo | null;
   addUser: (user: UserInfo) => void;
@@ -18,14 +19,15 @@ interface UserStore {
 export const useUserStore = create(
   persist<UserStore>(
     (set) => ({
+      isLogin: false,
       name: null,
       userInfo: null,
 
       addUser: (user) => {
-        set(() => ({ name: user.name, userInfo: user }));
+        set(() => ({ isLogin: true, name: user.name, userInfo: user }));
       },
       clearUser: () => {
-        set({ name: null, userInfo: null });
+        set({ isLogin: false, name: null, userInfo: null });
         localStorage.removeItem("user");
       },
     }),

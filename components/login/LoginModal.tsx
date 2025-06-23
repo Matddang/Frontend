@@ -10,21 +10,30 @@ import GoogleIcon from "@/assets/images/google-icon.svg";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/UserStore";
-import { useLoginModalStore } from "@/store/LoginModalStore";
+import { useLoginModalStore } from "@/store/useLoginModalStore";
 
 export default function LoginModal({ onClose }: { onClose: () => void }) {
-  const { name } = useUserStore();
+  const { isLogin, name } = useUserStore();
   const { modalClose } = useLoginModalStore();
   const router = useRouter();
 
   const kakaoLoginHandler = () => {
     window.Kakao.Auth.authorize({
-      redirectUri: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI,
+      redirectUri:
+        process.env.NODE_ENV === "development"
+          ? process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_LOCAL
+          : process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI,
     });
   };
 
   const GoogleLoginHandler = () => {
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${
+      process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+    }&redirect_uri=${
+      process.env.NODE_ENV === "development"
+        ? process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_LOCAL
+        : process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
+    }&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
     window.location.href = url;
   };
 
@@ -53,9 +62,9 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
     <Modal
       width={410}
       onClose={handleClose}
-      bgColor={name ? `bg-primary-light` : ""}
+      bgColor={isLogin ? `bg-primary-light` : ""}
     >
-      {!name ? (
+      {!isLogin ? (
         <div className="flex flex-col gap-[24px] pt-[59px] pb-[12px]">
           <div className="flex flex-col gap-[22px] items-center">
             <div className="flex flex-col gap-[10px]">

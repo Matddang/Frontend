@@ -4,12 +4,14 @@ import { useState } from "react";
 import CheckDefaultIcon from "@/assets/images/check-gray.svg";
 import CheckIcon from "@/assets/images/check-primary.svg";
 import Image from "next/image";
+import { useUserStore } from "@/store/UserStore";
 
 export default function Agreement({ nextStep, prevStep }: StepProps) {
   const [agree, setAgree] = useState(false);
+  const { name } = useUserStore();
 
   const title = {
-    title: "마지막으로 김이화님의 위치정보 이용을 승인해 주세요",
+    title: `마지막으로 ${name || ""}님의 위치정보 이용을 승인해 주세요`,
     subTitle: "다 왔습니다!",
   };
 

@@ -1,8 +1,9 @@
 "use client";
 
 import { googleLogin, kakaoLogin } from "@/services/login";
-import { useLoginModalStore } from "@/store/LoginModalStore";
+import { useLoginModalStore } from "@/store/useLoginModalStore";
 import { useUserStore } from "@/store/UserStore";
+import { useTokenStore } from "@/store/useTokenStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -17,6 +18,7 @@ export default function AuthRouter({
 }) {
   const router = useRouter();
   const { addUser } = useUserStore.getState();
+  const { addToken } = useTokenStore.getState();
   const { modalOpen } = useLoginModalStore.getState();
 
   useEffect(() => {
@@ -24,8 +26,9 @@ export default function AuthRouter({
       if (type === "kakao") {
         const res = await kakaoLogin(code);
 
-        if (res.status === 200) {
-          addUser(res.data);
+        if (res.data.status === 200) {
+          addUser(res.data.data);
+          addToken(res.token);
           modalOpen();
 
           router.replace("/");
@@ -33,8 +36,9 @@ export default function AuthRouter({
       } else {
         const res = await googleLogin(code, idToken!);
 
-        if (res.status === 200) {
-          addUser(res.data);
+        if (res.data.status === 200) {
+          addUser(res.data.data);
+          addToken(res.token);
           modalOpen();
 
           router.replace("/");

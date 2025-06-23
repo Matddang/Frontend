@@ -14,7 +14,10 @@ export default async function Page({ searchParams }: Props) {
       code: query.code!,
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
       client_secret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET!,
-      redirect_uri: "http://localhost:3000/login/google",
+      redirect_uri:
+        process.env.NODE_ENV === "development"
+          ? process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_LOCAL!
+          : process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
       grant_type: "authorization_code",
     }).toString(),
   });
