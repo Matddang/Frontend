@@ -3,7 +3,7 @@
 import { useState } from "react";
 import FilterButton from "./filter/FilterButton";
 import FilterModal from "./filter/FilterModal";
-import { useFilterStore } from "@/store/useFilterStore";
+import { useFilterStore } from "@/store/FilterStore";
 import {
   AREA_FILTER,
   FILTERS,

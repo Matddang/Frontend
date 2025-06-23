@@ -51,12 +51,7 @@ export default function DistanceInfo() {
                 isActive ? "border-primary bg-primary-light" : "border-gray-400"
               }`}
             >
-              <Image
-                src={getIcon(id, type, isActive)}
-                alt={label}
-                width={24}
-                height={24}
-              />
+              <Image src={getIcon(id, type, isActive)} alt={label} />
               <span className="typo-sub-title-m">{label}</span>
             </button>
           );
@@ -64,11 +59,11 @@ export default function DistanceInfo() {
       </div>
       <div className="flex gap-3">
         <div className="w-full flex gap-[6px] justify-center items-center rounded-[10px] bg-gray-300 py-[20px]">
-          <Image src={CarIcon} alt="차량" width={24} height={24} />
+          <Image src={CarIcon} alt="차량" />
           <span>10분</span>
         </div>
         <div className="w-full flex gap-[6px] justify-center items-center rounded-[10px] bg-gray-300 py-[20px]">
-          <Image src={WalkIcon} alt="도보" width={24} height={24} />
+          <Image src={WalkIcon} alt="도보" />
           <span>10분</span>
         </div>
       </div>

@@ -50,12 +50,7 @@ export default function InfraInfo() {
                 isActive ? "bg-primary text-white" : "bg-gray-100 text-gray-800"
               }`}
             >
-              <Image
-                src={getIcon(type, isActive)!}
-                alt={label}
-                width={24}
-                height={24}
-              />
+              <Image src={getIcon(type, isActive)!} alt={label} />
               <span className="typo-sub-title-m">{label}</span>
             </button>
           );
