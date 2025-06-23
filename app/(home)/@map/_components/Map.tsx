@@ -127,6 +127,9 @@ export default function Map() {
             kakaoMapRef.current.setLevel(0);
             kakaoMapRef.current.panTo(latLng);
 
+            // 이미 선택된 매물 다시 선택하면 리턴
+            if (overlays.current.selectedOverlayRef === content) return;
+
             if (overlays.current.selectedOverlayRef) {
               overlays.current.selectedOverlayRef.classList.remove("selected");
             }
