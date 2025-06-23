@@ -239,7 +239,7 @@ export default function Map() {
             const clusterer = new window.kakao.maps.MarkerClusterer({
               map,
               averageCenter: true,
-              minLevel: 5,
+              minLevel: 7,
               disableClickZoom: false,
               texts: [region],
               styles: clusterStyle.region,
@@ -268,7 +268,7 @@ export default function Map() {
         numberClusterer = new window.kakao.maps.MarkerClusterer({
           map,
           averageCenter: true,
-          minLevel: 5,
+          minLevel: 7,
           disableClickZoom: false,
           calculator: [2, 4, 8],
           styles: clusterStyle.number,
