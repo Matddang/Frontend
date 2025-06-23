@@ -393,7 +393,9 @@ export default function Map() {
         });
 
         console.log("현재 화면에 보이는 매물 수:", visibleMarkers.length);
-
+        // 매물이 2개 이상 보여지면, listing 페이지로 이동
+        if (visibleMarkers.length >= 2)
+          router.push(`/listing?${searchParams.toString()}`);
         // visibleMarkers.forEach((overlay, i) => {
         //   const { lat, lng } = positions[i];
         //   console.log(`위도: ${lat}, 경도: ${lng}`);
