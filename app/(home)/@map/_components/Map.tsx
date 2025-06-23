@@ -406,7 +406,6 @@ export default function Map() {
         params.set("m_lng", String(center.getLng()));
 
         if (level >= 2 && overlays.current.selectedOverlayRef) {
-          console.log(1);
           clearAllOverlays();
         }
 
