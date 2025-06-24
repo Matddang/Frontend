@@ -27,7 +27,7 @@ export default function Header() {
 
   return (
     <div
-      className={`relative z-20 h-[65px] px-[50px] pt-[14px] pb-[12px] flex justify-center ${
+      className={`min-w-[1007px] relative z-20 h-[65px] px-[50px] pt-[14px] pb-[12px] flex justify-center ${
         isGuide ? "bg-guide-green" : "border-b-[1px] bg-white border-b-gray-300"
       }`}
     >

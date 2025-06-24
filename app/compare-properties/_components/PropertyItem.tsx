@@ -1,7 +1,11 @@
 import Image from "next/image";
-import HeartIcon from "@/assets/images/heart-primary.svg";
+import HeartActiveIcon from "@/assets/images/heart-primary.svg";
+import HeartIcon from "@/assets/images/heart-white.svg";
 import CheckDefaultIcon from "@/assets/images/check-gray.svg";
 import CheckIcon from "@/assets/images/check-primary.svg";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { likeProperty } from "@/services/likeProperty";
 
 type property = {
   id: number;
@@ -25,6 +29,24 @@ export default function PropertyItem({
   selected,
   handleClick,
 }: PropertyItemProps) {
+  const [like, setLike] = useState(true);
+
+  const mutation = useMutation({
+    mutationFn: () => likeProperty(1),
+    onSuccess: (status) => {
+      if (status === 200) {
+        setLike((prev) => !prev);
+      }
+    },
+    onError: () => {
+      console.error("매물 좋아요 실패");
+    },
+  });
+
+  const handleLike = () => {
+    mutation.mutate();
+  };
+
   return (
     <div
       className={`pb-[16px] flex gap-[12px] border-b-[1px] border-b-gray-300 ${
@@ -44,7 +66,14 @@ export default function PropertyItem({
               <span className="typo-body-1-b text-black">
                 매매 {property.price}억
               </span>
-              {!compare && <Image src={HeartIcon} alt="heart" />}
+              {!compare && (
+                <Image
+                  src={like ? HeartActiveIcon : HeartIcon}
+                  alt="heart"
+                  className="cursor-pointer"
+                  onClick={handleLike}
+                />
+              )}
             </div>
             <span className="typo-sub-title-m text-black">
               {property.area}평 / {property.address}

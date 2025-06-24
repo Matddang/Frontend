@@ -1,4 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
 import PropertyItem from "./PropertyItem";
+import { getLikedProperty } from "@/services/getLikedProperty";
+import { useTokenStore } from "@/store/useTokenStore";
 
 export default function LikedProperty() {
   const property_list = [
@@ -27,6 +30,15 @@ export default function LikedProperty() {
       distance: "포도 / 집에서 5분 거리",
     },
   ];
+
+  const { token } = useTokenStore();
+
+  const { data } = useQuery({
+    queryKey: ["likedProperty"],
+    queryFn: () => getLikedProperty(),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token,
+  });
 
   return (
     <div className="flex flex-col gap-[16px]">

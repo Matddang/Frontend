@@ -1,4 +1,7 @@
 import ArrowRight from "@/assets/images/arrow-right-white.svg";
+import { getCompareHistory } from "@/services/getCompareHistory";
+import { useTokenStore } from "@/store/useTokenStore";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
 export default function CompareHistory() {
@@ -72,6 +75,15 @@ export default function CompareHistory() {
       ],
     },
   ];
+
+  const { token } = useTokenStore();
+
+  const { data } = useQuery({
+    queryKey: ["compareHistory"],
+    queryFn: () => getCompareHistory(),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token,
+  });
 
   return (
     <div className="grid grid-cols-2 gap-[30px]">

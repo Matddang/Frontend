@@ -3,6 +3,9 @@
 import { useState } from "react";
 import PropertyItem from "../../_components/PropertyItem";
 import CompareResult from "./CompareResult";
+import { useQuery } from "@tanstack/react-query";
+import { getLikedProperty } from "@/services/getLikedProperty";
+import { useTokenStore } from "@/store/useTokenStore";
 
 type property = {
   id: number;
@@ -16,6 +19,14 @@ type property = {
 export default function PropertyList() {
   const [selected, setSelected] = useState<property[]>([]);
   const [isCompared, setIsCompared] = useState(false);
+  const { token } = useTokenStore();
+
+  const { data } = useQuery({
+    queryKey: ["likedProperty"],
+    queryFn: () => getLikedProperty(),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token,
+  });
 
   const handleClick = (value: property) => {
     if (selected.some((v) => v.id === value.id)) {
