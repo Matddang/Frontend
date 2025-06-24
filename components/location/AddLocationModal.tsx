@@ -102,7 +102,7 @@ export default function AddLocationModal({
 
   return (
     <Modal width={498} onClose={onClose}>
-      <div className="flex flex-col h-full max-h-[calc(100vh-141px)]">
+      <div className="relative z-30 flex flex-col h-full max-h-[calc(100vh-141px)]">
         <div className="flex flex-col gap-[4px] mb-[34px]">
           <span className="typo-head-3 text-black">{title}</span>
           <span className="typo-body-1-m text-gray-900">

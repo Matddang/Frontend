@@ -19,7 +19,7 @@ export default function MyPageBanner() {
     enabled: !!token,
   });
 
-  if (!data.data.typeTestComplete)
+  if (!data?.data?.typeTestComplete)
     return <Image src={TypeTestBanner} alt="banner" />;
   else
     return (
