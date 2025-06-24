@@ -1,0 +1,96 @@
+"use client";
+
+import { useState } from "react";
+import { useFilterStore } from "@/store/FilterStore";
+import { FILTERS } from "@/constants/filterOptions";
+import { formatDisplayFilterText } from "@/utils/format";
+import { useTokenStore } from "@/store/useTokenStore";
+import { useQuery } from "@tanstack/react-query";
+import { getMyPlace } from "@/services/getMyPlage";
+import PlaceTooltip from "./PlaceTooltip";
+import ResetButton from "./ResetButton";
+import FilterButton from "./FilterButton";
+import FilterModal from "./FilterModal";
+
+export default function NavBar() {
+  const isLoggedIn = true; // 임시
+
+  const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const [isTooltipEnabled, setIsTooltipEnabled] = useState(true); // 툴팁을 한 번만 보여줄지 여부
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false); // 툴팁이 현재 보여지고 있는지 여부
+
+  const filterState = useFilterStore();
+  const { token } = useTokenStore();
+
+  const { data } = useQuery({
+    queryKey: ["myPlace"],
+    queryFn: () => getMyPlace(token!),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!token,
+  });
+
+  console.log(data);
+
+  const handleClick = (key: string) => {
+    setOpenFilter((prev) => (prev === key ? null : key));
+  };
+
+  const hasFilterValue = (key: string) => {
+    return formatDisplayFilterText(key, filterState) !== "";
+  };
+
+  return (
+    <div className="bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center pl-5 pr-[36px] py-4 gap-[12px]">
+      <div className="flex gap-[12px] whitespace-nowrap">
+        {FILTERS.map((filter) => {
+          if (filter.key === "place" && !isLoggedIn) return null;
+
+          const isActive = openFilter === filter.key;
+          const hasValue = hasFilterValue(filter.key);
+
+          return (
+            <div key={filter.key} className="relative">
+              <div
+                className="relative"
+                onMouseEnter={() => {
+                  if (filter.key === "place" && isTooltipEnabled) {
+                    setIsTooltipVisible(true);
+                  }
+                }}
+              >
+                <FilterButton
+                  text={
+                    formatDisplayFilterText(filter.key, filterState) ||
+                    filter.label
+                  }
+                  isActive={isActive}
+                  hasValue={hasValue}
+                  onClick={() => handleClick(filter.key)}
+                />
+                {filter.key === "place" && isTooltipVisible && (
+                  <PlaceTooltip
+                    onClose={() => {
+                      setIsTooltipEnabled(false);
+                      setIsTooltipVisible(false);
+                    }}
+                  />
+                )}
+              </div>
+              {isActive && (
+                <div className="absolute top-full left-0 z-50 mt-5">
+                  <FilterModal
+                    filter={filter}
+                    onApply={() => {
+                      setOpenFilter(null);
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <ResetButton />
+    </div>
+  );
+}

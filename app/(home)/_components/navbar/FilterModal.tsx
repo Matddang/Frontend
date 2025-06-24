@@ -1,16 +1,16 @@
 import Image from "next/image";
-import TypeFilter from "./TypeFilter";
 import ResetIcon from "@/assets/images/reset.svg";
 import { useFilterStore } from "@/store/FilterStore";
 import { useEffect, useState } from "react";
-import PriceFilter from "./PriceFilter";
 import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
-import AreaFilter from "./AreaFilter";
-import KindFilter from "./KindFilter";
-import CropFilter from "./CropFilter";
-import PlaceFilter from "./PlaceFilter";
 import InfoIcon from "@/assets/images/info.svg";
 import Link from "next/link";
+import TypeFilter from "../filter/TypeFilter";
+import PriceFilter from "../filter/PriceFilter";
+import AreaFilter from "../filter/AreaFilter";
+import KindFilter from "../filter/KindFilter";
+import CropFilter from "../filter/CropFilter";
+import PlaceFilter from "../filter/PlaceFilter";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
