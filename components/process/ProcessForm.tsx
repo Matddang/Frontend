@@ -1,3 +1,4 @@
+import { checkTypetest } from "@/services/checkTypetest";
 import StepIndicator from "./_components/StepIndicator";
 
 interface ProcessFormProps {
@@ -26,6 +27,11 @@ export default function ProcessForm({
   disable,
   prevStep,
 }: ProcessFormProps) {
+  const handleCheck = async () => {
+    const status = await checkTypetest();
+    if (status === 200) nextStep();
+  };
+
   return (
     <div
       className={`min-w-[817px] max-w-[817px] px-[40px] pt-[34px] pb-[70px] mt-[24px] mb-[87px] mx-auto bg-white rounded-[20px] flex flex-col
@@ -82,7 +88,7 @@ export default function ProcessForm({
         <button
           className="w-full h-[51px] rounded-lg bg-primary text-white typo-sub-head-sb cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
           style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
-          onClick={nextStep}
+          onClick={isAgreement ? handleCheck : nextStep}
           disabled={disable}
         >
           {isAgreement ? "유형 결과 확인하기" : "다음"}

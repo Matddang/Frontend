@@ -19,7 +19,8 @@ export default function MyPageBanner() {
     enabled: !!token,
   });
 
-  if (data) return <Image src={TypeTestBanner} alt="banner" />;
+  if (!data.data.typeTestComplete)
+    return <Image src={TypeTestBanner} alt="banner" />;
   else
     return (
       <div className="bg-primary-light flex justify-between items-center py-[14px] px-[6px]">
