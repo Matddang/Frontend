@@ -20,6 +20,24 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   title: "맞땅",
+  description: "나에게 딱 맞는 농지 매물 찾기",
+  metadataBase: new URL("https://matddang.shop"),
+  openGraph: {
+    title: "맞땅",
+    description: "나에게 딱 맞는 농지 매물 찾기",
+    url: "https://matddang.shop",
+    images: [
+      {
+        url: "/og-image.png",
+        alt: "맞땅",
+      },
+    ],
+    type: "website",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
