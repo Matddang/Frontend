@@ -9,7 +9,6 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { getAddress } from "@/services/getAddress";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import createMyPlace from "@/services/createMyPlace";
-import { useTokenStore } from "@/store/useTokenStore";
 import { queryClient } from "@/app/Providers";
 import updateMyPlace from "@/services/updateMyPlace";
 
@@ -37,7 +36,6 @@ export default function AddLocationModal({
   const [addressResult, setAddressResult] = useState([]);
   const [selectedLocation, setSelectedLoctaion] = useState("");
   const [shouldSearch, setShouldSearch] = useState(true);
-  const { token } = useTokenStore();
 
   const isEdit = title === "내 장소 수정하기";
 
@@ -50,14 +48,11 @@ export default function AddLocationModal({
 
   const mutation = useMutation({
     mutationFn: () =>
-      createMyPlace(
-        {
-          placeType: type,
-          placeName: name,
-          address: selectedLocation,
-        },
-        token!,
-      ),
+      createMyPlace({
+        placeType: type,
+        placeName: name,
+        address: selectedLocation,
+      }),
     onSuccess: (status) => {
       if (status === 200) {
         onClose();
@@ -71,15 +66,11 @@ export default function AddLocationModal({
 
   const updateMutation = useMutation({
     mutationFn: () =>
-      updateMyPlace(
-        data!.placeId,
-        {
-          placeType: type,
-          placeName: name,
-          address: selectedLocation || data!.address,
-        },
-        token!,
-      ),
+      updateMyPlace(data!.placeId, {
+        placeType: type,
+        placeName: name,
+        address: selectedLocation || data!.address,
+      }),
     onSuccess: (status) => {
       if (status === 200) {
         onClose();

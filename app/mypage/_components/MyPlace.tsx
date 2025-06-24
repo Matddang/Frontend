@@ -20,7 +20,7 @@ export default function MyPlace() {
 
   const { data } = useQuery({
     queryKey: ["myPlace"],
-    queryFn: () => getMyPlace(token!),
+    queryFn: () => getMyPlace(),
     staleTime: 1000 * 60 * 5,
     enabled: !!token,
   });

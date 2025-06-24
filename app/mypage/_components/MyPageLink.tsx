@@ -8,6 +8,7 @@ import Modal from "@/components/common/Modal";
 import { useQuery } from "@tanstack/react-query";
 import { getUserInfo } from "@/services/getUserInfo";
 import { useTokenStore } from "@/store/useTokenStore";
+import { deleteUser } from "@/services/deleteUser";
 
 export default function MyPageLink({
   tab,
@@ -21,10 +22,14 @@ export default function MyPageLink({
   const { token } = useTokenStore();
   const { data } = useQuery({
     queryKey: ["userInfo"],
-    queryFn: () => getUserInfo(token!),
+    queryFn: () => getUserInfo(),
     staleTime: 5 * 60 * 1000,
     enabled: !!token,
   });
+
+  const handleLeave = async () => {
+    await deleteUser();
+  };
 
   return (
     <>
@@ -56,7 +61,10 @@ export default function MyPageLink({
                 사라지며, 되돌릴 수 없습니다.
               </span>
             </div>
-            <button className="w-full typo-sub-head-sb text-white bg-system-red py-[12px] rounded-[8px] cursor-pointer">
+            <button
+              className="w-full typo-sub-head-sb text-white bg-system-red py-[12px] rounded-[8px] cursor-pointer"
+              onClick={handleLeave}
+            >
               탈퇴하기
             </button>
           </div>

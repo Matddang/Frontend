@@ -26,7 +26,7 @@ export default function AddLoaction({ nextStep, prevStep }: StepProps) {
 
   const { data } = useQuery({
     queryKey: ["myPlace"],
-    queryFn: () => getMyPlace(token!),
+    queryFn: () => getMyPlace(),
     staleTime: 1000 * 60 * 5,
     enabled: !!token,
   });

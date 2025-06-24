@@ -1,3 +1,4 @@
+import { useTokenStore } from "@/store/useTokenStore";
 import axios from "axios";
 
 export default async function updateMyPlace(
@@ -7,15 +8,16 @@ export default async function updateMyPlace(
     placeName: string;
     address: string;
   },
-  accessToken: string,
 ) {
+  const { token } = useTokenStore.getState();
+
   try {
     const response = await axios.patch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/user/v1/place/${placeId}`,
       place,
       {
         headers: {
-          Authorization: accessToken,
+          Authorization: token,
         },
       },
     );
