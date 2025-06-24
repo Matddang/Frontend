@@ -3,6 +3,7 @@ import TypeImage from "@/assets/images/type-image.svg";
 import { useEffect, useState } from "react";
 import Loading from "@/assets/images/loading.svg";
 import { useUserStore } from "@/store/UserStore";
+import { redirect } from "next/navigation";
 
 export default function Type() {
   const [loading, setLoading] = useState(true);
@@ -79,6 +80,7 @@ export default function Type() {
       <button
         className="w-full h-[51px] rounded-lg bg-primary text-white typo-sub-head-sb cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
         style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
+        onClick={() => redirect("/")}
       >
         맞춤 추천 받으러가기
       </button>

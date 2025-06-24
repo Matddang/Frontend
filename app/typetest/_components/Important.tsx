@@ -58,8 +58,8 @@ export default function Important({ nextStep, prevStep }: StepProps) {
                  p-[20px] w-[233px] h-[181px] rounded-[11px] flex flex-col gap-[26px] items-center justify-center cursor-pointer relative
                 ${
                   selected.includes(important_types[i][0])
-                    ? "bg-primary-light border-primary"
-                    : "bg-gray-100 border-gray-400"
+                    ? "bg-primary-light border-[1px] border-primary"
+                    : "bg-gray-100"
                 }
               `}
               onClick={() => handleClick(value[0])}

@@ -9,9 +9,10 @@ import AddLocationModal from "./AddLocationModal";
 
 interface LocationBarType {
   location: {
-    type: string;
-    name: string;
+    placeId: number;
     address: string;
+    placeType: string;
+    placeName: string;
   };
 }
 
@@ -23,12 +24,14 @@ export default function LocationBar({ location }: LocationBarType) {
       <div className="flex gap-[10px] items-center">
         <div className="w-[34px] h-[34px] rounded-[50%] bg-primary flex justify-center items-center">
           <Image
-            src={location.type === "HOME" ? HomeIcon : PlantIcon}
+            src={location.placeType === "HOME" ? HomeIcon : PlantIcon}
             alt="icon"
           />
         </div>
         <div className="flex flex-col gap-[2px]">
-          <span className="font-semibold text-[18px]">{location.name}</span>
+          <span className="font-semibold text-[18px]">
+            {location.placeName}
+          </span>
           <span className="text-[12px]">{location.address}</span>
         </div>
       </div>

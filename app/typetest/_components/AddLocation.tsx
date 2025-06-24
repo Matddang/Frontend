@@ -4,16 +4,38 @@ import { StepProps, STEPS_LABEL } from "@/types/typetest";
 import Image from "next/image";
 import HomeIcon from "@/assets/images/home-white.svg";
 import PlantIcon from "@/assets/images/plant.svg";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getMyPlace } from "@/services/getMyPlace";
+import { useTokenStore } from "@/store/useTokenStore";
+import { useEffect, useState } from "react";
+
+interface Place {
+  placeId: number;
+  address: string;
+  placeType: string;
+  placeName: string;
+}
 
 export default function AddLoaction({ nextStep, prevStep }: StepProps) {
   const title = {
     title: "내 장소를 등록하고, 가까운 농지를 추천받아보세요.",
     subTitle: "해당 장소와 가까운 농지를 추천해 드릴게요.",
   };
-  const [locations, setLocation] = useState<
-    { type: string; name: string; address: string }[]
-  >([]);
+  const { token } = useTokenStore();
+  const [locations, setLocations] = useState<Place[]>([]);
+
+  const { data } = useQuery({
+    queryKey: ["myPlace"],
+    queryFn: () => getMyPlace(),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setLocations(data.data);
+    }
+  }, [data]);
 
   return (
     <ProcessForm
@@ -37,13 +59,13 @@ export default function AddLoaction({ nextStep, prevStep }: StepProps) {
             >
               <div className="w-[34px] h-[34px] rounded-[50%] bg-primary flex justify-center items-center">
                 <Image
-                  src={location.type === "HOME" ? HomeIcon : PlantIcon}
+                  src={location.placeType === "HOME" ? HomeIcon : PlantIcon}
                   alt="icon"
                 />
               </div>
               <div className="flex flex-col gap-[2px]">
                 <span className="font-semibold typo-sub-head-sb">
-                  {location.name}
+                  {location.placeName}
                 </span>
                 <span className="typo-body-2-m">{location.address}</span>
               </div>

@@ -27,7 +27,7 @@ export default function Header() {
 
   return (
     <div
-      className={`relative z-20 h-[65px] px-[50px] pt-[14px] pb-[12px] flex justify-center ${
+      className={`min-w-[1007px] relative z-20 h-[65px] px-[50px] pt-[14px] pb-[12px] flex justify-center ${
         isGuide ? "bg-guide-green" : "border-b-[1px] bg-white border-b-gray-300"
       }`}
     >
@@ -55,10 +55,12 @@ export default function Header() {
               </button>
               <div className="relative">
                 <button
-                  className="flex gap-[5px] typo-body-1-b text-nowrap text-black items-center bg-gray-100 border-[1px] border-gray-500 h-[40px] w-[99px] rounded-[8px] py-[8px] px-[12px] cursor-pointer"
+                  className="flex gap-[5px] items-center bg-gray-100 border-[1px] border-gray-500 h-[40px] rounded-[8px] py-[8px] px-[12px] cursor-pointer"
                   onClick={() => setOpenMenu((prev) => !prev)}
                 >
-                  {name}님
+                  <span className="typo-body-1-b text-nowrap text-black">
+                    {name}님
+                  </span>
                   <Image
                     src={ChevronDown}
                     alt=""
