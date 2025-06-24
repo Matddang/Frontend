@@ -6,7 +6,11 @@ import ChevronLeftIcon from "@/assets/images/chevron-left.svg";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function DetailHeader() {
+interface DetailHeaderProps {
+  title: string;
+}
+
+export default function DetailHeader({ title }: DetailHeaderProps) {
   const router = useRouter();
 
   const [addWish, setAddWish] = useState(false);
@@ -20,7 +24,7 @@ export default function DetailHeader() {
         <button onClick={() => router.back()}>
           <Image src={ChevronLeftIcon} alt="뒤로 가기" />
         </button>
-        <h1 className="text-lg font-semibold">매매 12억 과수원</h1>
+        <h1 className="text-lg font-semibold">{title}</h1>
       </div>
       <div className="flex items-center gap-3">
         <Image src={ShareIcon} alt="공유" />

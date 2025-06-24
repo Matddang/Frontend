@@ -14,7 +14,7 @@ export default function FilterButton({
   hasValue = false,
 }: FilterButtonProps) {
   const baseClass =
-    "px-4 py-2 typo-sub-head-sb rounded-full border transition-colors duration-200 outline-none text-[18px] cursor-pointer";
+    "px-4 py-2 typo-sub-head-m rounded-full border transition-colors duration-200 outline-none text-[18px] cursor-pointer";
   const activeClass = "border-primary bg-primary-light text-primary";
   const hasValueClass = "bg-primary text-white";
   const defaultClass = "border-transparent hover:text-gray-600";

@@ -4,28 +4,43 @@ import Image from "next/image";
 import ChevronDownIcon from "@/assets/images/chevron-down.svg";
 import { detailDescriptions } from "@/constants/labels";
 import React, { useState } from "react";
+import { formatKoreanUnit } from "@/utils/format";
 
-export default function DescriptionInfo() {
+interface DescriptionInfoProps {
+  descriptions: Record<string, string | number>;
+}
+
+export default function DescriptionInfo({
+  descriptions,
+}: DescriptionInfoProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => setIsExpanded((prev) => !prev);
 
   return (
     <section aria-label="매물 상세 정보">
       <dl className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-[10px] bg-gray-100 p-4">
-        {detailDescriptions.map(({ key, label }) => (
-          <React.Fragment key={key}>
-            <dt className="text-right typo-sub-title-m text-gray-1000">
-              {label}
-            </dt>
-            <dd
-              className={`typo-14-b ${
-                !isExpanded ? "truncate" : "whitespace-normal"
-              }`}
-            >
-              임시
-            </dd>
-          </React.Fragment>
-        ))}
+        {detailDescriptions.map(({ key, label }) => {
+          const value = descriptions[key];
+          const displayValue =
+            typeof value === "number"
+              ? formatKoreanUnit(value)
+              : value ?? "정보 없음";
+
+          return (
+            <React.Fragment key={key}>
+              <dt className="text-right typo-sub-title-m text-gray-1000">
+                {label}
+              </dt>
+              <dd
+                className={`typo-14-b ${
+                  !isExpanded ? "truncate" : "whitespace-normal"
+                }`}
+              >
+                {displayValue}
+              </dd>
+            </React.Fragment>
+          );
+        })}
       </dl>
 
       <button

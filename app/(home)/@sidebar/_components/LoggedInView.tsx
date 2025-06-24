@@ -8,14 +8,16 @@ import Image from "next/image";
 import { RANKLISTINGS } from "@/constants/sideBarOption";
 import ListingRankCard from "./ListingRankCard";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/UserStore";
 
 export default function LoggedInView() {
   const router = useRouter();
+  const { name } = useUserStore();
 
   return (
     <div className="bg-gray-100">
       <section className="bg-primary-light flex justify-between items-center px-4 py-[10px]">
-        <span>{"000님은 '수익형' 농부입니다☺️"}</span>
+        <span>{`${name ?? ""}님은 '수익형' 농부입니다☺️`}</span>
         <button
           className="flex p-[10px] gap-[6px] items-center bg-primary rounded-[8px]"
           style={{

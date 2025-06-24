@@ -1,7 +1,7 @@
 import Image from "next/image";
 import TypeFilter from "./TypeFilter";
 import ResetIcon from "@/assets/images/reset.svg";
-import { useFilterStore } from "@/store/useFilterStore";
+import { useFilterStore } from "@/store/FilterStore";
 import { useEffect, useState } from "react";
 import PriceFilter from "./PriceFilter";
 import { AREA_FILTER, PRICE_FILTER } from "@/constants/filterOptions";
@@ -11,8 +11,6 @@ import CropFilter from "./CropFilter";
 import PlaceFilter from "./PlaceFilter";
 import InfoIcon from "@/assets/images/info.svg";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { buildFilterQuery } from "@/utils/filterQuery";
 
 interface FilterModalProps {
   filter: { key: string; label: string };
@@ -20,8 +18,6 @@ interface FilterModalProps {
 }
 
 export default function FilterModal({ filter, onApply }: FilterModalProps) {
-  const router = useRouter();
-
   const {
     type,
     price,
@@ -58,10 +54,6 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     setPlace(tempFilters.place);
 
     onApply();
-
-    const query = buildFilterQuery(tempFilters);
-    const searchParams = new URLSearchParams(query).toString();
-    router.replace(`?${searchParams}`);
   };
 
   const handleReset = () => {

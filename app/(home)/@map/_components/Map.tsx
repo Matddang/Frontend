@@ -4,14 +4,19 @@
 import { positions } from "@/mock/markerPositions";
 import { clusterStyle } from "@/styles/mapClusterStyle";
 import { createOverlayContent } from "@/utils/mapOverlay";
-import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
-import PlusIcon from "@/assets/images/plus.svg";
-import MinusIcon from "@/assets/images/minus.svg";
-import CurrentLocationIcon from "@/assets/images/current-location.svg";
-import AgroDistributionActiveIcon from "@/assets/images/agro-distribution-active.svg";
-import MachineryRentalActiveIcon from "@/assets/images/machinery-rental-active.svg";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import { useSidebarStore } from "@/store/useSidebarStore";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import MapButtons from "./MapButtons";
+import MoveToJeollaButton from "./MoveToJeollaButton";
+import { markerImages } from "@/constants/markerImages";
+import { searchPlaceByKeyword } from "@/utils/map/searchPlaceByKeyword";
 
 declare global {
   interface Window {
@@ -20,8 +25,22 @@ declare global {
 }
 
 export default function Map() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams();
+  const searchParams = useSearchParams();
+
+  const zoom = searchParams.get("zoom");
+  const initialZoom = zoom ? Number(zoom) : 10;
+
+  const mLat = searchParams.get("m_lat");
+  const mLng = searchParams.get("m_lng");
+
   const mapRef = useRef<HTMLDivElement>(null); // 지도를 표시할 HTML DOM 요소 참조
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스 저장
+  const allMarkersRef = useRef<any[]>([]);
+  // const placesServiceRef = useRef<any>(null);
+  const placesMarkersRef = useRef<Record<string, any[]>>({});
   const overlays = useRef<{
     myLocation: any | null;
     infoOverlay: any | null;
@@ -33,9 +52,10 @@ export default function Map() {
   });
 
   const { isSidebarOpen } = useSidebarStore();
-  const centerRef = useRef<any>(null);
 
   const [showMoveToJeollaButton, setShowMoveToJeollaButton] = useState(false);
+  const [isMapReady, setIsMapReady] = useState(false);
+  const [searchToggle, setSearchToggle] = useState<Record<string, boolean>>({});
 
   // 전라남도 센터(화순시)
   const JEONNAM_CENTER = useMemo(() => ({ lat: 35.0675, lng: 126.994 }), []);
@@ -63,6 +83,90 @@ export default function Map() {
       overlays.current.infoOverlay.setMap(null);
       overlays.current.infoOverlay = null;
     }
+    if (overlays.current.selectedOverlayRef) {
+      overlays.current.selectedOverlayRef.classList.remove("selected");
+      overlays.current.selectedOverlayRef = null;
+    }
+  };
+
+  const handleMarkerClick = useCallback(
+    ({
+      content,
+      lat,
+      lng,
+      region,
+      kakaoMapRef,
+      overlays,
+    }: {
+      content: HTMLElement;
+      lat: number;
+      lng: number;
+      region: string;
+      saleId: number;
+      kakaoMapRef: React.RefObject<any>;
+      overlays: any;
+      router: any;
+      searchParams: URLSearchParams;
+    }) => {
+      const latLng = new window.kakao.maps.LatLng(lat, lng);
+
+      clearAllOverlays();
+
+      // 지도 중심 이동 및 줌인
+      kakaoMapRef.current.setLevel(0);
+      kakaoMapRef.current.panTo(latLng);
+
+      if (overlays.current.selectedOverlayRef) {
+        overlays.current.selectedOverlayRef.classList.remove("selected");
+      }
+
+      content.classList.add("selected");
+      overlays.current.selectedOverlayRef = content;
+
+      // 정보 표시할 HTML 콘텐츠 생성
+      const infoContent = document.createElement("div");
+      infoContent.style.position = "relative";
+      infoContent.style.padding = "8px 12px";
+      infoContent.style.background = "#F6FFE8";
+      infoContent.style.borderRadius = "40px";
+      infoContent.innerHTML = `<h4 style="font-size:16px; font-weight:700;">${region}</h4>`;
+
+      const pointer = document.createElement("div");
+      pointer.style.position = "absolute";
+      pointer.style.bottom = "-10px";
+      pointer.style.left = "50%";
+      pointer.style.transform = "translateX(-50%)";
+      pointer.style.width = "0";
+      pointer.style.height = "0";
+      pointer.style.borderLeft = "10px solid transparent";
+      pointer.style.borderRight = "10px solid transparent";
+      pointer.style.borderTop = "10px solid #F6FFE8";
+
+      infoContent.appendChild(pointer);
+
+      const infoOverlay = new window.kakao.maps.CustomOverlay({
+        content: infoContent,
+        position: latLng,
+        yAnchor: 0.5 + 2.3,
+        map: kakaoMapRef.current,
+      });
+
+      overlays.current.infoOverlay = infoOverlay;
+    },
+    [],
+  );
+
+  const handleKeywordSearch = (keyword: string) => {
+    if (!kakaoMapRef.current) return;
+
+    searchPlaceByKeyword({
+      keyword,
+      kakaoMap: kakaoMapRef.current,
+      markerImages,
+      placesMarkersRef,
+      searchToggle,
+      setSearchToggle,
+    });
   };
 
   useEffect(() => {
@@ -74,18 +178,61 @@ export default function Map() {
   }, [isSidebarOpen]);
 
   useEffect(() => {
+    if (isMapReady && pathname?.startsWith("/listing/") && params?.id) {
+      const target = positions.find(
+        (pos) => String(pos.saleId) === String(params.id),
+      );
+
+      if (!target) return;
+
+      const { lat, lng, region, saleId } = target;
+
+      // 이전 선택 마커 selected 클래스 제거
+      if (overlays.current.selectedOverlayRef) {
+        overlays.current.selectedOverlayRef.classList.remove("selected");
+        overlays.current.selectedOverlayRef = null;
+      }
+
+      // 선택된 마커 찾기
+      const targetOverlay = allMarkersRef.current.find((overlay) => {
+        const content = overlay.getContent?.();
+        return content?.dataset?.saleId === params.id;
+      });
+
+      if (!targetOverlay) return;
+
+      const content = targetOverlay.getContent();
+
+      handleMarkerClick({
+        content,
+        lat,
+        lng,
+        region,
+        saleId,
+        kakaoMapRef,
+        overlays,
+        router,
+        searchParams,
+      });
+    }
+  }, [isMapReady, handleMarkerClick, params.id, pathname]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || !window.kakao || !mapRef.current)
       return;
 
     const onLoad = () => {
-      centerRef.current = new window.kakao.maps.LatLng(
-        JEONNAM_CENTER.lat,
-        JEONNAM_CENTER.lng,
-      );
+      const initialCenter =
+        mLat && mLng
+          ? new window.kakao.maps.LatLng(Number(mLat), Number(mLng))
+          : new window.kakao.maps.LatLng(
+              JEONNAM_CENTER.lat,
+              JEONNAM_CENTER.lng,
+            );
 
       const map = new window.kakao.maps.Map(mapRef.current, {
-        center: centerRef.current,
-        level: 10,
+        center: initialCenter,
+        level: initialZoom,
         mapTypeId: window.kakao.maps.MapTypeId.HYBRID,
       });
 
@@ -106,54 +253,24 @@ export default function Map() {
 
       // 커스텀 오버레이 마커 생성
       const allMarkers = positions.map(
-        ({ lat, lng, region, type, price, area, kind }) => {
+        ({ saleId, lat, lng, region, type, price, area, kind }) => {
           const content = createOverlayContent(type, price, area, kind);
+          content.dataset.saleId = String(saleId);
 
           content.addEventListener("click", () => {
-            const latLng = new window.kakao.maps.LatLng(lat, lng);
-
-            clearAllOverlays();
-
-            // 지도 중심 이동 및 줌인
-            kakaoMapRef.current.setLevel(0); // 더 낮을수록 더 줌인
-            kakaoMapRef.current.panTo(latLng);
-
-            if (overlays.current.selectedOverlayRef) {
-              overlays.current.selectedOverlayRef.classList.remove("selected");
-            }
-
-            content.classList.add("selected");
-            overlays.current.selectedOverlayRef = content;
-
-            // 정보 표시할 HTML 콘텐츠
-            const infoContent = document.createElement("div");
-            infoContent.style.position = "relative";
-            infoContent.style.padding = "8px 12px";
-            infoContent.style.background = "#F6FFE8";
-            infoContent.style.borderRadius = "40px";
-            infoContent.innerHTML = `<h4 style="font-size:16px; font-weight:700;">${region}</h4>`;
-
-            const pointer = document.createElement("div");
-            pointer.style.position = "absolute";
-            pointer.style.bottom = "-10px";
-            pointer.style.left = "50%";
-            pointer.style.transform = "translateX(-50%)";
-            pointer.style.width = "0";
-            pointer.style.height = "0";
-            pointer.style.borderLeft = "10px solid transparent";
-            pointer.style.borderRight = "10px solid transparent";
-            pointer.style.borderTop = "10px solid #F6FFE8"; // 말풍선 배경색과 동일하게
-
-            infoContent.appendChild(pointer);
-
-            const infoOverlay = new window.kakao.maps.CustomOverlay({
-              content: infoContent,
-              position: latLng,
-              yAnchor: 0.5 + 2.3,
-              map: kakaoMapRef.current,
+            handleMarkerClick({
+              content,
+              lat,
+              lng,
+              region,
+              saleId,
+              kakaoMapRef,
+              overlays,
+              router,
+              searchParams,
             });
-
-            overlays.current.infoOverlay = infoOverlay;
+            // 상세 페이지 이동
+            router.push(`/listing/${saleId}?${searchParams.toString()}`);
           });
 
           const overlay = new window.kakao.maps.CustomOverlay({
@@ -167,6 +284,8 @@ export default function Map() {
         },
       );
 
+      allMarkersRef.current = allMarkers;
+
       // 지역별로 마커를 그룹핑하기 위한 객체
       const groupMarkers: Record<string, any[]> = {};
       positions.forEach(({ region }, i) => {
@@ -176,7 +295,6 @@ export default function Map() {
 
       let regionClusterers: any[] = [];
       let numberClusterer: any = null;
-      let currentMode: "region" | "number" = "region";
 
       // 클러스터 제거
       const clearAllClusters = () => {
@@ -231,7 +349,7 @@ export default function Map() {
             const clusterer = new window.kakao.maps.MarkerClusterer({
               map,
               averageCenter: true,
-              minLevel: 5,
+              minLevel: 7,
               disableClickZoom: false,
               texts: [region],
               styles: clusterStyle.region,
@@ -252,8 +370,6 @@ export default function Map() {
             return clusterer;
           },
         );
-
-        currentMode = "region";
       };
 
       // 위치 기반 숫자 클러스터 세팅
@@ -262,7 +378,7 @@ export default function Map() {
         numberClusterer = new window.kakao.maps.MarkerClusterer({
           map,
           averageCenter: true,
-          minLevel: 5,
+          minLevel: 7,
           disableClickZoom: false,
           calculator: [2, 4, 8],
           styles: clusterStyle.number,
@@ -274,25 +390,6 @@ export default function Map() {
           { background: "#39b94c" },
           { background: "rgba(57, 185, 76, 0.78)" },
         );
-        currentMode = "number";
-
-        // window.kakao.maps.event.addListener(
-        //   numberClusterer,
-        //   "clusterclick",
-        //   function (numberClusterer: any) {
-        //     const markers = numberClusterer.getMarkers();
-        //     markers.forEach((m: any) => {
-        //       console.log(m.getPosition());
-        //     });
-        //   },
-        // );
-      };
-
-      // 줌 레벨 제어
-      const handleZoomChanged = () => {
-        const level = map.getLevel();
-        if (level <= 8 && currentMode !== "number") setupNumberCluster();
-        if (level > 8 && currentMode !== "region") setupRegionClusters();
       };
 
       // 현재 보이는 매물 정보
@@ -300,7 +397,7 @@ export default function Map() {
         const map = kakaoMapRef.current;
         if (!map) return;
 
-        const bounds = map.getBounds(); // 현재 지도 영역
+        const bounds = map.getBounds();
         const sw = bounds.getSouthWest();
         const ne = bounds.getNorthEast();
 
@@ -318,39 +415,88 @@ export default function Map() {
         });
 
         console.log("현재 화면에 보이는 매물 수:", visibleMarkers.length);
+
+        const level = map.getLevel();
+        const center = map.getCenter();
+        const params = new URLSearchParams(window.location.search);
+        params.set("zoom", String(level));
+        params.set("m_lat", String(center.getLat()));
+        params.set("m_lng", String(center.getLng()));
+
+        if (level >= 2 && overlays.current.selectedOverlayRef) {
+          clearAllOverlays();
+        }
+
+        // 매물이 2개 이상이고 zoom 레벨이 7 미만이면 listing으로 이동
+        if (
+          window.location.pathname !== "/listing" &&
+          visibleMarkers.length >= 2 &&
+          level < 7
+        ) {
+          router.replace(`/listing?${params.toString()}`);
+        }
+        // 현재 경로가 홈이 아니라면 이동
+        else if (window.location.pathname !== "/" && level >= 7) {
+          router.replace(`/?${params.toString()}`);
+        }
+
         // visibleMarkers.forEach((overlay, i) => {
         //   const { lat, lng } = positions[i];
         //   console.log(`위도: ${lat}, 경도: ${lng}`);
         // });
       };
 
-      window.kakao.maps.event.addListener(map, "idle", showVisibleMarkers);
-
+      /* ----------------------------------------------------------- */
       // 초기 설정
-      setupRegionClusters();
-      window.kakao.maps.event.addListener(
-        map,
-        "zoom_changed",
-        handleZoomChanged,
-      );
+      if (initialZoom <= 8) setupNumberCluster();
+      else setupRegionClusters();
+
+      if (window.location.pathname === "/") {
+        console.log(1);
+        clearAllOverlays();
+      }
+
+      // 지도가 움직일 때 마다 위치, 줌 레벨, 보이는 매물 정보 제어
+      const updateUrlParams = () => {
+        if (!map) return;
+
+        const level = map.getLevel();
+        const center = map.getCenter();
+
+        if (level <= 8) setupNumberCluster();
+        else setupRegionClusters();
+
+        const params = new URLSearchParams(window.location.search);
+        params.set("zoom", String(level));
+        params.set("m_lat", String(center.getLat()));
+        params.set("m_lng", String(center.getLng()));
+
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        // 브라우저 히스토리만 변경 (서버 렌더링 X)
+        window.history.replaceState(null, "", newUrl);
+
+        showVisibleMarkers();
+      };
+
+      window.kakao.maps.event.addListener(map, "idle", updateUrlParams);
 
       // 언마운트 시 이벤트 제거
       return () => {
-        window.kakao.maps.event.removeListener(
-          map,
-          "zoom_changed",
-          handleZoomChanged,
-        );
+        window.kakao.maps.event.removeListener(map, "idle", updateUrlParams);
         clearAllClusters();
       };
     };
 
     if (window.kakao.maps?.load) {
-      window.kakao.maps.load(onLoad);
+      window.kakao.maps.load(() => {
+        onLoad();
+        setIsMapReady(true);
+      });
     } else {
       onLoad();
+      setIsMapReady(true);
     }
-  }, [JEONNAM_CENTER]);
+  }, []);
 
   const moveToMyLocation = () => {
     if (!navigator.geolocation || !kakaoMapRef.current) {
@@ -381,70 +527,25 @@ export default function Map() {
       <div ref={mapRef} className="w-full h-full" />
 
       {/* 우측 버튼들 */}
-      <div className="absolute top-10 right-10 z-10 flex flex-col gap-[23px]">
-        <div className="flex flex-col gap-3">
-          <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-primary">
-            <Image src={MachineryRentalActiveIcon} alt="농기계 임대 사업소" />
-          </button>
-          <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-[#FF822F]">
-            <Image src={AgroDistributionActiveIcon} alt="농수산물 유통 센터" />
-          </button>
-        </div>
-        <button
-          onClick={moveToMyLocation}
-          className="px-[6px] py-2 rounded-[8px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white flex flex-col gap-1 items-center justify-center"
-          aria-label="현위치로 이동"
-          title="현위치로 이동"
-        >
-          <Image src={CurrentLocationIcon} alt="현위치" />
-          <span className="typo-sub-title-m text-primary">현위치</span>
-        </button>
-        <div className=" flex flex-col gap-[11.5px] px-3 py-[15px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.08)] bg-white rounded-[8px]">
-          <button
-            onClick={() => {
-              const map = kakaoMapRef.current;
-              if (!map) return;
-              const level = map.getLevel();
-              map.setLevel(level - 1);
-            }}
-            className=""
-            aria-label="지도 확대"
-          >
-            <Image src={PlusIcon} alt="확대" />
-          </button>
-          <hr className="w-full h-[1px] text-gray-500" />
-          <button
-            onClick={() => {
-              const map = kakaoMapRef.current;
-              if (!map) return;
-              const level = map.getLevel();
-              map.setLevel(level + 1);
-            }}
-            className=""
-            aria-label="지도 축소"
-          >
-            <Image src={MinusIcon} alt="축소" />
-          </button>
-        </div>
-      </div>
+      <MapButtons
+        onMoveToMyLocation={moveToMyLocation}
+        onZoomIn={() => {
+          const map = kakaoMapRef.current;
+          if (!map) return;
+          const level = map.getLevel();
+          map.setLevel(level - 1);
+        }}
+        onZoomOut={() => {
+          const map = kakaoMapRef.current;
+          if (!map) return;
+          const level = map.getLevel();
+          map.setLevel(level + 1);
+        }}
+        onSearch={handleKeywordSearch}
+      />
 
       {/* 전라도 지도로 이동하기 버튼 */}
-      {showMoveToJeollaButton && (
-        <div className="group absolute z-10 bottom-[110px] left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <button
-            onClick={moveToJeonnam}
-            className="relative typo-sub-head-sb px-[34px] py-3 w-fit rounded-[119px] border border-[2px] border-primary bg-primary-light shadow-[0_0_20px_rgba(0,0,0,0.08)]"
-          >
-            전라남도 지도로 이동하기
-            {/* hover 시에 나타날 텍스트 */}
-            <p className="absolute bottom-full mb-[24px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-[16px] bg-primary-light px-4 py-[14px] typo-body-1-m opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-              맞땅은 지금 전라도 지역 매물부터 소개하고 있어요 🙂
-              <br />
-              전라도 지도로 이동하려면 아래 버튼을 눌러주세요!
-            </p>
-          </button>
-        </div>
-      )}
+      {showMoveToJeollaButton && <MoveToJeollaButton onClick={moveToJeonnam} />}
     </div>
   );
 }

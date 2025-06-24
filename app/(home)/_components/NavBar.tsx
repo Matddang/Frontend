@@ -3,7 +3,7 @@
 import { useState } from "react";
 import FilterButton from "./filter/FilterButton";
 import FilterModal from "./filter/FilterModal";
-import { useFilterStore } from "@/store/useFilterStore";
+import { useFilterStore } from "@/store/FilterStore";
 import {
   AREA_FILTER,
   FILTERS,
@@ -14,8 +14,12 @@ import {
 import Image from "next/image";
 import CloseIcon from "@/assets/images/close.svg";
 import { formatKoreanUnit, getCropLabelString } from "@/utils/format";
+import { updateFilterQuery } from "@/utils/filterQuery";
+import { useRouter } from "next/navigation";
 
 export default function NavBar() {
+  const router = useRouter();
+
   const {
     type,
     price,
@@ -99,6 +103,18 @@ export default function NavBar() {
     setKind([]);
     setCrop({});
     setPlace({ id: null, name: null });
+
+    updateFilterQuery(
+      {
+        type: null,
+        price: { min: PRICE_FILTER[0].value, max: PRICE_FILTER.at(-1)!.value },
+        area: { min: AREA_FILTER[0].value, max: AREA_FILTER.at(-1)!.value },
+        kind: [],
+        crop: {},
+        place: { id: null, name: null },
+      },
+      router,
+    );
   };
 
   return (

@@ -1,6 +1,6 @@
 export const detailInfos = [
   { key: "area", label: "면적" },
-  { key: "type", label: "유형" },
+  { key: "kind", label: "유형" },
   { key: "price", label: "가격" },
 ];
 

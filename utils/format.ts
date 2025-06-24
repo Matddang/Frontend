@@ -1,25 +1,24 @@
 import { CROP_CHILD_FILTER } from "@/constants/filterOptions";
 
 export const formatKoreanUnit = (value: number): string => {
-  if (value === 0) return "0";
+  if (value < 10000) return `${value}원`;
 
-  const units = [
-    { unit: 100000000, label: "억" },
-    { unit: 10000000, label: "천" },
-    { unit: 10000, label: "만원" },
-  ];
+  const hundredMillion = Math.floor(value / 100000000); // 억
+  const tenMillion = Math.floor((value % 100000000) / 10000000); // 천만
+  const tenThousand = Math.floor(value / 10000); // 만
 
-  let result = "";
-
-  for (const { unit, label } of units) {
-    const quotient = Math.floor(value / unit);
-    if (quotient > 0) {
-      result += `${quotient}${label} `;
-      value -= quotient * unit;
+  if (value >= 100000000) {
+    if (tenMillion > 0) {
+      return `${hundredMillion}억 ${tenMillion}천`;
     }
+    return `${hundredMillion}억`;
   }
 
-  return result;
+  if (value >= 10000000) {
+    return `${tenMillion}천`;
+  }
+
+  return `${tenThousand}만원`;
 };
 
 export const getCropLabelString = (crop: { [parent: string]: string[] }) => {
@@ -39,6 +38,6 @@ export const getCropLabelString = (crop: { [parent: string]: string[] }) => {
   if (subCrops.length <= 2) {
     return subCrops.join(", ");
   } else {
-    return `${subCrops[0]} + ${subCrops.length}`;
+    return `${subCrops[0]} + ${subCrops.length - 1}`;
   }
 };
