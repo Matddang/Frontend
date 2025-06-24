@@ -15,6 +15,8 @@ import {
 } from "next/navigation";
 import MapButtons from "./MapButtons";
 import MoveToJeollaButton from "./MoveToJeollaButton";
+import { markerImages } from "@/constants/markerImages";
+import { searchPlaceByKeyword } from "@/utils/map/searchPlaceByKeyword";
 
 declare global {
   interface Window {
@@ -37,6 +39,8 @@ export default function Map() {
   const mapRef = useRef<HTMLDivElement>(null); // 지도를 표시할 HTML DOM 요소 참조
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스 저장
   const allMarkersRef = useRef<any[]>([]);
+  // const placesServiceRef = useRef<any>(null);
+  const placesMarkersRef = useRef<Record<string, any[]>>({});
   const overlays = useRef<{
     myLocation: any | null;
     infoOverlay: any | null;
@@ -51,6 +55,7 @@ export default function Map() {
 
   const [showMoveToJeollaButton, setShowMoveToJeollaButton] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [searchToggle, setSearchToggle] = useState<Record<string, boolean>>({});
 
   // 전라남도 센터(화순시)
   const JEONNAM_CENTER = useMemo(() => ({ lat: 35.0675, lng: 126.994 }), []);
@@ -150,6 +155,19 @@ export default function Map() {
     },
     [],
   );
+
+  const handleKeywordSearch = (keyword: string) => {
+    if (!kakaoMapRef.current) return;
+
+    searchPlaceByKeyword({
+      keyword,
+      kakaoMap: kakaoMapRef.current,
+      markerImages,
+      placesMarkersRef,
+      searchToggle,
+      setSearchToggle,
+    });
+  };
 
   useEffect(() => {
     if (!kakaoMapRef.current) return;
@@ -523,6 +541,7 @@ export default function Map() {
           const level = map.getLevel();
           map.setLevel(level + 1);
         }}
+        onSearch={handleKeywordSearch}
       />
 
       {/* 전라도 지도로 이동하기 버튼 */}

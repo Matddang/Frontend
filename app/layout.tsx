@@ -33,7 +33,7 @@ export default function RootLayout({
         <Script
           type="text/javascript"
           strategy="beforeInteractive"
-          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=clusterer&autoload=false`}
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=clusterer,services&autoload=false`}
         />
       </head>
       <body className={`${pretendard.variable} font-pretendard`}>

@@ -4,25 +4,56 @@ import MinusIcon from "@/assets/images/minus.svg";
 import CurrentLocationIcon from "@/assets/images/current-location.svg";
 import AgroDistributionActiveIcon from "@/assets/images/agro-distribution-active.svg";
 import MachineryRentalActiveIcon from "@/assets/images/machinery-rental-active.svg";
+import { useState } from "react";
 
 interface MapButtonsProps {
   onMoveToMyLocation: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
+  onSearch: (keyword: string) => void;
 }
 
 export default function MapButtons({
   onMoveToMyLocation,
   onZoomIn,
   onZoomOut,
+  onSearch,
 }: MapButtonsProps) {
+  const [activeKeywords, setActiveKeywords] = useState<string[]>([]);
+
+  const handleSearchClick = (keyword: string) => {
+    const isActive = activeKeywords.includes(keyword);
+
+    if (isActive) {
+      setActiveKeywords((prev) => prev.filter((k) => k !== keyword));
+    } else {
+      setActiveKeywords((prev) => [...prev, keyword]);
+    }
+
+    onSearch(keyword);
+  };
+
   return (
     <div className="absolute top-10 right-10 z-1 flex flex-col gap-[23px]">
       <div className="flex flex-col gap-3">
-        <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-primary">
+        <button
+          className={`p-[13px] rounded-[50%] flex justify-center items-center bg-primary ${
+            activeKeywords.includes("농기계임대사업소")
+              ? "ring-4 ring-[#2A7735]"
+              : ""
+          }`}
+          onClick={() => handleSearchClick("농기계임대사업소")}
+        >
           <Image src={MachineryRentalActiveIcon} alt="농기계 임대 사업소" />
         </button>
-        <button className="p-[13px] rounded-[50%] flex justify-center items-center bg-[#FF822F]">
+        <button
+          className={`p-[13px] rounded-[50%] flex justify-center items-center bg-[#FF822F] ${
+            activeKeywords.includes("농수산물유통센터")
+              ? "ring-4 ring-[#DD610E]"
+              : ""
+          }`}
+          onClick={() => handleSearchClick("농수산물유통센터")}
+        >
           <Image src={AgroDistributionActiveIcon} alt="농수산물 유통 센터" />
         </button>
       </div>
