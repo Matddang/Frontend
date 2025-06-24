@@ -6,14 +6,21 @@ import HomeIcon from "@/assets/images/home-white.svg";
 import { useEffect, useState } from "react";
 import SearchIcon from "@/assets/images/search.svg";
 import { useDebounce } from "@/hooks/useDebounce";
+import { getAddress } from "@/services/getAddress";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import createMyPlace from "@/services/createMyPlace";
+import { useTokenStore } from "@/store/useTokenStore";
+import { queryClient } from "@/app/Providers";
+import updateMyPlace from "@/services/updateMyPlace";
 
 interface AddLocationModalProps {
   title: string;
   onClose: () => void;
   data?: {
-    type: string;
-    name: string;
+    placeId: number;
     address: string;
+    placeType: string;
+    placeName: string;
   };
 }
 
@@ -22,15 +29,67 @@ export default function AddLocationModal({
   onClose,
   data,
 }: AddLocationModalProps) {
-  const [type, setType] = useState(data?.type || "");
+  const [type, setType] = useState(data?.placeType || "");
   const [count, setCount] = useState(0);
-  const [name, setName] = useState(data?.name || "");
+  const [name, setName] = useState(data?.placeName || "");
   const [location, setLoction] = useState(data?.address || "");
   const debouncedValue = useDebounce(location, 1000);
-  const [address, setAddress] = useState([
-    "전라남도 영광군 법성명 진굴비길 22-28",
-  ]);
-  const [selectedLocation, setSelectedLoctaion] = useState(-1);
+  const [addressResult, setAddressResult] = useState([]);
+  const [selectedLocation, setSelectedLoctaion] = useState("");
+  const [shouldSearch, setShouldSearch] = useState(true);
+  const { token } = useTokenStore();
+
+  const isEdit = title === "내 장소 수정하기";
+
+  const { data: region } = useQuery({
+    queryKey: ["address", debouncedValue],
+    queryFn: () => debouncedValue && getAddress(debouncedValue),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!debouncedValue && shouldSearch,
+  });
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      createMyPlace(
+        {
+          placeType: type,
+          placeName: name,
+          address: selectedLocation,
+        },
+        token!,
+      ),
+    onSuccess: (status) => {
+      if (status === 200) {
+        onClose();
+        queryClient.invalidateQueries({ queryKey: ["myPlace"] });
+      }
+    },
+    onError: () => {
+      console.error("내 장소 등록 실패");
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: () =>
+      updateMyPlace(
+        data!.placeId,
+        {
+          placeType: type,
+          placeName: name,
+          address: selectedLocation || data!.address,
+        },
+        token!,
+      ),
+    onSuccess: (status) => {
+      if (status === 200) {
+        onClose();
+        queryClient.invalidateQueries({ queryKey: ["myPlace"] });
+      }
+    },
+    onError: () => {
+      console.error("내 장소 등록 실패");
+    },
+  });
 
   useEffect(() => {
     if (name === "") setCount(0);
@@ -38,8 +97,17 @@ export default function AddLocationModal({
   }, [name]);
 
   useEffect(() => {
-    if (selectedLocation >= 0) setLoction(address[selectedLocation]);
-  }, [selectedLocation, address]);
+    if (region) {
+      const results = region.map((v: { roadAddr: string }) => v.roadAddr);
+      setAddressResult(results);
+      setSelectedLoctaion("");
+    }
+  }, [region]);
+
+  const handleRegister = () => {
+    if (isEdit) updateMutation.mutate();
+    else mutation.mutate();
+  };
 
   return (
     <Modal width={498} onClose={onClose}>
@@ -52,7 +120,7 @@ export default function AddLocationModal({
         </div>
 
         <div className="flex justify-between gap-[14px] mb-[34px]">
-          {["HOME", "ORCHARD"].map((value) => (
+          {["HOME", "FARM"].map((value) => (
             <button
               key={value}
               className={`w-full py-[10px] rounded-[6px] border-[1px] flex gap-[10px] justify-center items-center cursor-pointer ${
@@ -113,7 +181,10 @@ export default function AddLocationModal({
                 <input
                   className="w-full rounded-[8px] border-[1px] border-gray-400 py-[12px] pl-[14px] pr-[52px] bg-gray-100 focus:outline-none focus:border-primary typo-body-1-m text-black placeholder:text-gray-600"
                   placeholder="지번으로 검색 ex) 광양시 OO구 OO동 1-1"
-                  onChange={(e) => setLoction(e.target.value)}
+                  onChange={(e) => {
+                    setLoction(e.target.value);
+                    setShouldSearch(true);
+                  }}
                   value={location}
                 />
                 <Image
@@ -124,7 +195,7 @@ export default function AddLocationModal({
               </div>
             </div>
 
-            {address.length > 0 && (
+            {addressResult.length > 0 && (
               <div
                 className="overflow-y-auto bg-gray-100 rounded-[8px]"
                 style={{
@@ -133,15 +204,19 @@ export default function AddLocationModal({
                 }}
               >
                 <div className="min-h-[343px]">
-                  {address.map((addr, i) => (
+                  {addressResult.map((addr, i) => (
                     <div
                       key={i}
                       className={`h-[81px] typo-body-1-b text-black px-[12px] flex items-center border-b-[1px] border-b-gray-400 cursor-pointer ${
-                        selectedLocation === i
+                        selectedLocation === addr
                           ? "bg-primary-light"
                           : "bg-gray-100"
                       }`}
-                      onClick={() => setSelectedLoctaion(i)}
+                      onClick={() => {
+                        setSelectedLoctaion(addr);
+                        setShouldSearch(false);
+                        setLoction(addr);
+                      }}
                     >
                       {addr}
                     </div>
@@ -154,7 +229,8 @@ export default function AddLocationModal({
           <button
             className="typo-sub-head-sb text-white py-[12px] rounded-[8px] cursor-pointer bg-primary disabled:bg-gray-500 disabled:cursor-auto"
             style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08" }}
-            disabled={selectedLocation === -1 || !name}
+            disabled={!isEdit && (selectedLocation === "" || !name)}
+            onClick={handleRegister}
           >
             등록
           </button>
