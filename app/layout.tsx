@@ -21,11 +21,11 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   title: "맞땅",
   description: "나에게 딱 맞는 농지 매물 찾기",
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL("https://www.matddang.shop"),
   openGraph: {
     title: "맞땅",
     description: "나에게 딱 맞는 농지 매물 찾기",
-    url: "http://localhost:3000",
+    url: "https://www.matddang.shop",
     images: [
       {
         url: "/og-image.png",
