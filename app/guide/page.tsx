@@ -1,11 +1,12 @@
 import Frame from "@/components/layout/Frame";
-import GuideImg1 from "@/assets/images/guide-1.svg";
-import GuideImg2 from "@/assets/images/guide-2.svg";
-import GuideImg3 from "@/assets/images/guide-3.svg";
-import GuideImg4 from "@/assets/images/guide-4.svg";
-import GuideImg5 from "@/assets/images/guide-5.svg";
-import GuideImg6 from "@/assets/images/guide-6.svg";
-import GuideImg7 from "@/assets/images/guide-7.svg";
+import GuideImg1 from "@/assets/images/guide-1.png";
+import GuideImg2 from "@/assets/images/guide-2.png";
+import GuideImg3 from "@/assets/images/guide-3.png";
+import GuideImg4 from "@/assets/images/guide-4.png";
+import GuideImg5 from "@/assets/images/guide-5.png";
+import GuideImg6 from "@/assets/images/guide-6.png";
+import GuideImg7 from "@/assets/images/guide-7.png";
+import GuideImg8 from "@/assets/images/guide-8.png";
 import Image from "next/image";
 
 export default function Page() {
@@ -30,7 +31,7 @@ export default function Page() {
                 농지 검색 및 추천 서비스입니다.
               </span>
             </div>
-            <Image src={GuideImg1} alt="guide-img" />
+            <Image src={GuideImg1} alt="guide-img" width={559} />
           </div>
         </div>
 
@@ -48,7 +49,7 @@ export default function Page() {
               돕습니다
             </span>
           </div>
-          <Image src={GuideImg2} alt="guide-img" />
+          <Image src={GuideImg2} alt="guide-img" width={782} />
         </div>
       </div>
 
@@ -70,11 +71,11 @@ export default function Page() {
               </span>
             </div>
           </div>
-          <Image src={GuideImg3} alt="guide-img" />
+          <Image src={GuideImg3} alt="guide-img" width={418.22} />
         </div>
 
         <div className="flex items-center justify-center h-[638px] bg-primary gap-[132.68px]">
-          <Image src={GuideImg7} alt="guide-img" />
+          <Image src={GuideImg4} alt="guide-img" width={420.32} />
           <div className="flex flex-col gap-[55px]">
             <span className="font-bold text-[36px] text-white font-line-seed leading-tight text-nowrap">
               내 농업 스타일을 진단하고,
@@ -111,7 +112,7 @@ export default function Page() {
               </span>
             </div>
           </div>
-          <Image src={GuideImg4} alt="guide-img" />
+          <Image src={GuideImg5} alt="guide-img" width={470.6} />
         </div>
 
         <div className="flex gap-[48px] h-[638px] items-center justify-center bg-primary-light">
@@ -134,7 +135,7 @@ export default function Page() {
               </span>
             </div>
           </div>
-          <Image src={GuideImg5} alt="guide-img" />
+          <Image src={GuideImg6} alt="guide-img" width={505} />
         </div>
 
         <div className="flex gap-[109px] h-[638px] items-center justify-center bg-primary-dark mb-[199px]">
@@ -155,7 +156,15 @@ export default function Page() {
               </span>
             </div>
           </div>
-          <Image src={GuideImg6} alt="guide-img" />
+          <div className="relative">
+            <Image src={GuideImg8} alt="guide-img" width={432} />
+            <Image
+              src={GuideImg7}
+              alt="guide-img"
+              width={283.97}
+              className="absolute bottom-[-70px] right-[-164px]"
+            />
+          </div>
         </div>
       </div>
     </Frame>

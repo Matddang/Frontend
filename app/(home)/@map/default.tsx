@@ -1,6 +1,10 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Map from "./_components/Map";
 
 export default function Default() {
-  return <Map />;
+  return (
+    <Suspense>
+      <Map />
+    </Suspense>
+  );
 }
