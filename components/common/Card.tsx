@@ -102,7 +102,12 @@ export default function Card({
         </div>
         {isHorizontal && (
           <div className="typo-sub-title-m text-gray-800 mt-[6px]">
-            {crop} / {place}에서 {time} 거리
+            {crop}
+            {place && time && (
+              <span>
+                &nbsp;/ {place}에서 {time} 거리
+              </span>
+            )}
           </div>
         )}
       </div>

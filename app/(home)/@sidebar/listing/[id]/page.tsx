@@ -26,7 +26,7 @@ export default async function DetailPage({
 
   try {
     const data = await getListingDetail(id);
-    console.log(data[0]);
+    // console.log(data[0]);
     const {
       area,
       imgUrl,

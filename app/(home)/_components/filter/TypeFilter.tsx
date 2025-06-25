@@ -1,11 +1,9 @@
 import Button from "@/components/common/Button";
 import { TYPE_FILTER } from "@/constants/filterOptions";
 
-type TypeKey = keyof typeof TYPE_FILTER | null;
-
 interface TypeFilterProps {
-  tempType: TypeKey;
-  setTempType: (value: TypeKey) => void;
+  tempType: string | null;
+  setTempType: (value: string | null) => void;
 }
 export default function TypeFilter({ tempType, setTempType }: TypeFilterProps) {
   return (
@@ -14,7 +12,7 @@ export default function TypeFilter({ tempType, setTempType }: TypeFilterProps) {
         <Button
           key={key}
           text={label}
-          onClick={() => setTempType(key as TypeKey)}
+          onClick={() => setTempType(key)}
           isActive={tempType === key}
         />
       ))}

@@ -4,17 +4,15 @@ import UnCheckedIcon from "@/assets/images/check-off.svg";
 import CheckedIcon from "@/assets/images/check-on.svg";
 import { KIND_FILTER } from "@/constants/filterOptions";
 
-type KindKey = keyof typeof KIND_FILTER;
-
 interface TypeFilterProps {
-  tempKind: ("paddy" | "field" | "orchard")[];
-  setTempKind: (value: ("paddy" | "field" | "orchard")[]) => void;
+  tempKind: string[];
+  setTempKind: (value: string[]) => void;
 }
 
-const ALL_KINDS: KindKey[] = ["paddy", "field", "orchard"];
+const ALL_KINDS = ["답_답", "전_전", "과수원"];
 
 export default function KindFilter({ tempKind, setTempKind }: TypeFilterProps) {
-  const toggleKind = (kind: KindKey) => {
+  const toggleKind = (kind: string) => {
     if (tempKind.includes(kind)) {
       setTempKind(tempKind.filter((k) => k !== kind));
     } else {
@@ -39,8 +37,8 @@ export default function KindFilter({ tempKind, setTempKind }: TypeFilterProps) {
           <Button
             key={key}
             text={label}
-            onClick={() => toggleKind(key as KindKey)}
-            isActive={tempKind.includes(key as KindKey)}
+            onClick={() => toggleKind(key)}
+            isActive={tempKind.includes(key)}
           />
         ))}
       </div>

@@ -3,7 +3,6 @@ import {
   CROP_CHILD_FILTER,
   KIND_FILTER,
   PRICE_FILTER,
-  TYPE_FILTER,
 } from "@/constants/filterOptions";
 
 export const formatKoreanUnit = (value: number): string => {
@@ -49,10 +48,10 @@ export const getCropLabelString = (crop: { [parent: string]: string[] }) => {
 };
 
 interface FilterState {
-  type: "lease" | "sale" | null;
+  type: string | null;
   price: { min: number; max: number };
   area: { min: number; max: number };
-  kind: ("paddy" | "field" | "orchard")[];
+  kind: string[];
   crop: { [parent: string]: string[] };
   place: { id: number | null; name: string | null };
 }
@@ -65,7 +64,7 @@ export const formatDisplayFilterText = (
 
   switch (key) {
     case "type":
-      return type ? TYPE_FILTER[type] : "";
+      return type ?? "";
     case "price": {
       const isMinDefault = price.min === PRICE_FILTER[0].value;
       const isMaxDefault = price.max === PRICE_FILTER.at(-1)?.value;

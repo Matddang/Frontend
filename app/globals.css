@@ -268,7 +268,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* 농지유형별 selected 상태일 때 설정 */
-.custom-overlay.selected.kind-field {
+.custom-overlay.selected.kind-field,
+.custom-overlay.kind-field.selected {
   --bg-color: #339c43;
   --border-color: #2a7735;
   --text-color: white;
@@ -276,8 +277,8 @@ input[type="range"]::-webkit-slider-thumb {
   --kind-border-color: #2a7735;
   --kind-text-color: white;
 }
-
-.custom-overlay.selected.kind-paddy {
+.custom-overlay.selected.kind-paddy,
+.custom-overlay.kind-paddy.selected {
   --bg-color: #c4f568;
   --border-color: #9dda2b;
   --text-color: #505154;
@@ -285,8 +286,8 @@ input[type="range"]::-webkit-slider-thumb {
   --kind-border-color: #9dda2b;
   --kind-text-color: #505154;
 }
-
-.custom-overlay.selected.kind-orchard {
+.custom-overlay.selected.kind-orchard,
+.custom-overlay.kind-orchard.selected {
   --bg-color: #39b94c;
   --border-color: #339c43;
   --text-color: white;
@@ -327,6 +328,19 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 14px;
   font-weight: 700;
   line-height: 150%;
+}
+
+/* Map 지역 마커 오버레이 스타일 */
+.region-overlay {
+  padding: 12px 34px;
+  background-color: var(--color-gray-100);
+  border: 2px solid var(--color-primary);
+  border-radius: 119px;
+  text-align: center;
+}
+.region-overlay:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 input::-webkit-outer-spin-button,
