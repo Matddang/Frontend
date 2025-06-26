@@ -17,6 +17,7 @@ interface CardProps {
   crop?: string;
   place?: string;
   time?: string;
+  onClick: () => void;
 }
 
 export default function Card({
@@ -32,11 +33,14 @@ export default function Card({
   crop,
   place,
   time,
+  onClick,
 }: CardProps) {
   const [addWish, setAddWish] = useState(isWished); // 전역 상태 관리 필요
   const [showMessage, setShowMessage] = useState(false);
 
-  const handleWishClick = () => {
+  const handleWishClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
     const newValue = !addWish;
     setAddWish(newValue);
     onWishToggle?.(newValue);
@@ -50,9 +54,10 @@ export default function Card({
 
   return (
     <div
-      className={
+      className={`cursor-pointer ${
         isHorizontal ? "flex gap-[11px] py-4 border-b border-gray-300" : ""
-      }
+      }`}
+      onClick={onClick}
     >
       <div
         className={`relative aspect-square w-full h-full flex-1 ${

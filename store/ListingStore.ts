@@ -14,7 +14,7 @@ export interface ListingItem {
   area: number;
   mainCrop: string;
   profit: number;
-  imgUrl: string | null;
+  imgUrl: string;
 }
 
 interface ListingStore {
