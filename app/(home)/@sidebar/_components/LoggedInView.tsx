@@ -9,27 +9,45 @@ import { RANKLISTINGS } from "@/constants/sideBarOption";
 import ListingRankCard from "./ListingRankCard";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/UserStore";
+import { useQuery } from "@tanstack/react-query";
+import { getUserInfo } from "@/services/getUserInfo";
+import { useTokenStore } from "@/store/useTokenStore";
+import TypeTestBanner from "@/assets/images/type-quiz.svg";
 
 export default function LoggedInView() {
   const router = useRouter();
   const { name } = useUserStore();
+  const { token } = useTokenStore();
+
+  const { data } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: () => getUserInfo(),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!token,
+  });
 
   return (
     <div className="bg-gray-100">
-      <section className="bg-primary-light flex justify-between items-center px-4 py-[10px]">
-        <span>{`${name ?? ""}님은 '수익형' 농부입니다☺️`}</span>
-        <button
-          className="flex p-[10px] gap-[6px] items-center bg-primary rounded-[8px]"
-          style={{
-            background:
-              "linear-gradient(247deg, #D6FF95 -11.27%, #39B94C 44.64%)",
-          }}
-          onClick={() => alert("수익형")}
-        >
-          <span className="text-white">수익형</span>
-          <Image src={ChevroRightIcon} alt="오른쪽 화살표" />
-        </button>
-      </section>
+      {!data?.data?.typeTestComplete ? (
+        <section className="px-4 pt-[10px]">
+          <Image src={TypeTestBanner} alt="banner" />
+        </section>
+      ) : (
+        <section className="bg-primary-light flex justify-between items-center px-4 py-[10px]">
+          <span>{`${name ?? ""}님은 '수익형' 농부입니다☺️`}</span>
+          <button
+            className="flex p-[10px] gap-[6px] items-center bg-primary rounded-[8px]"
+            style={{
+              background:
+                "linear-gradient(247deg, #D6FF95 -11.27%, #39B94C 44.64%)",
+            }}
+            onClick={() => alert("수익형")}
+          >
+            <span className="text-white">수익형</span>
+            <Image src={ChevroRightIcon} alt="오른쪽 화살표" />
+          </button>
+        </section>
+      )}
 
       <section className="px-4 mt-4">
         <button
@@ -48,7 +66,9 @@ export default function LoggedInView() {
       </section>
 
       <section className="px-4 my-6 flex flex-col gap-[10px]">
-        <h2 className="typo-sub-head-sb">000님을 위한 추천 매물 랭킹</h2>
+        <h2 className="typo-sub-head-sb">
+          {name ?? ""}님을 위한 추천 매물 랭킹
+        </h2>
         <div className="flex flex-col gap-5">
           {RANKLISTINGS.map((item, index) => (
             <ListingRankCard

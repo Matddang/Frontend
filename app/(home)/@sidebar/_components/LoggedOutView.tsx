@@ -7,10 +7,14 @@ import AgriPolicyImg from "@/assets/images/agri-policy.svg";
 import LandListingImg from "@/assets/images/land-listing.svg";
 import Card from "@/components/common/Card";
 import CustomSwiper from "@/components/common/CustomSwiper";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Swiper as SwiperClass } from "swiper";
 import SwiperIndicator from "@/components/common/SwiperIndicatior";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { getProperties } from "@/services/getProperties";
+import { Property } from "@/types/property";
+import LoginModal from "@/components/login/LoginModal";
 
 export default function LoggedOutView() {
   const slides = Array.from({ length: 5 });
@@ -18,6 +22,20 @@ export default function LoggedOutView() {
   const swiperRef = useRef<SwiperClass | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
+  const [sales, setSales] = useState<Property[]>([]);
+  const [loginModal, setLoginModal] = useState(false);
+
+  const { data } = useQuery({
+    queryKey: ["salesRanking"],
+    queryFn: () => getProperties("liked"),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  useEffect(() => {
+    if (data?.data.content.length) {
+      setSales(data.data.content);
+    }
+  }, [data]);
 
   return (
     <div className="px-4 py-[14px]">
@@ -25,7 +43,7 @@ export default function LoggedOutView() {
         <button
           className="rounded-[8px] relative w-full"
           style={{ aspectRatio: "361 / 60" }}
-          onClick={() => alert("로그인 모달")}
+          onClick={() => setLoginModal(true)}
         >
           <Image
             src={TypeQuizImg}
@@ -44,15 +62,15 @@ export default function LoggedOutView() {
           setCurrentIndex={setCurrentIndex}
           swiperRef={swiperRef}
         >
-          {slides.map((_, i) => (
+          {sales.map((sale) => (
             <Card
-              key={i}
-              imageSrc={LandListingImg}
-              type="매매"
-              price={150000000}
-              area={351}
-              address="전라남도 여수시 청산면 12-1"
-              kind="과수원"
+              key={sale.saleId}
+              imageSrc={sale.imgUrl}
+              type={sale.saleCategory}
+              price={sale.price}
+              area={sale.area}
+              address={sale.saleAddr}
+              kind={sale.landType}
             />
           ))}
         </CustomSwiper>
@@ -106,6 +124,7 @@ export default function LoggedOutView() {
           />
         </button>
       </section>
+      {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
     </div>
   );
 }
