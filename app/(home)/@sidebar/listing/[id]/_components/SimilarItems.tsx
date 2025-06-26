@@ -4,6 +4,7 @@ import Card from "@/components/common/Card";
 import CustomSwiper from "@/components/common/CustomSwiper";
 import React from "react";
 import { KIND_FILTER } from "@/constants/filterOptions";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface SimilarItem {
   saleId: number;
@@ -18,6 +19,13 @@ interface SimilarItem {
 }
 
 export default function SimilarItems({ items }: { items: SimilarItem[] }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const moveToDetail = (id: number) => {
+    router.push(`/listing/${id}?${searchParams.toString()}`);
+  };
+
   return (
     <section className="px-4">
       <h3 className="typo-sub-head-bold mb-5">이 매물과 비슷한 조건의 매물</h3>
@@ -31,6 +39,7 @@ export default function SimilarItems({ items }: { items: SimilarItem[] }) {
             area={item.area}
             address={item.saleAddr}
             kind={KIND_FILTER[item.landCategory]}
+            onClick={() => moveToDetail(item.saleId)}
           />
         ))}
       </CustomSwiper>
