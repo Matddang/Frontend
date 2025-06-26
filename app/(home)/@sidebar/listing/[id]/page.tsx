@@ -26,7 +26,7 @@ export default async function DetailPage({
 
   try {
     const data = await getListingDetail(id);
-    // console.log(data[0]);
+    const { sale, similarSales } = data;
     const {
       area,
       imgUrl,
@@ -42,7 +42,8 @@ export default async function DetailPage({
       saleId,
       wgsX,
       wgsY,
-    } = data[0];
+    } = sale[0];
+    console.log(similarSales);
 
     const { landUse, restrictionArea } = getDeterministicLandUseInfo(id);
 
@@ -83,7 +84,7 @@ export default async function DetailPage({
             className="w-[390px] h-auto"
           />
           <CropRecommendation />
-          <SimilarItems />
+          <SimilarItems items={similarSales} />
         </aside>
         <Link
           href="https://jnfarm.jeonnam.go.kr/farm/property/propertyView.do?menuCd=farm005002&currentPageNo=1&nPageSize=10&category=002&searchCity=&searchArea=&searchType=&transactState=&type=&propertyId=0000001553"
