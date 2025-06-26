@@ -11,6 +11,7 @@ import { getListingDetail } from "@/services/getListingDetail";
 import { formatKoreanUnit } from "@/utils/format";
 import Link from "next/link";
 import { getDeterministicLandUseInfo } from "@/utils/getRandomInfo";
+import { KIND_FILTER } from "@/constants/filterOptions";
 
 export default async function DetailPage({
   params,
@@ -18,7 +19,6 @@ export default async function DetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  console.log(id);
 
   if (typeof id !== "string" || !/^\d+$/.test(id)) {
     return null;
@@ -31,33 +31,27 @@ export default async function DetailPage({
       area,
       imgUrl,
       landCategory,
-      landType,
-      mainCrop,
       officialPrice,
       price,
-      profit,
-      regDate,
       saleAddr,
       saleCategory,
-      saleId,
-      wgsX,
-      wgsY,
     } = sale[0];
-    console.log(similarSales);
 
     const { landUse, restrictionArea } = getDeterministicLandUseInfo(id);
 
     return (
       <main className="flex flex-col mb-[94px]">
         <DetailHeader
-          title={`${saleCategory} ${formatKoreanUnit(price)} ${landCategory}`}
+          title={`${saleCategory} ${formatKoreanUnit(price)} ${
+            KIND_FILTER[landCategory]
+          }`}
         />
 
         <article className="bg-white">
           <SummaryInfo
             imgUrl={imgUrl}
             area={area}
-            kind={landCategory}
+            kind={KIND_FILTER[landCategory]}
             price={price}
           />
           <hr className="h-[5px] bg-gray-300 border-none" />
