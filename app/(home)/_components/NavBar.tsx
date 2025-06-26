@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterButton from "./filter/FilterButton";
 import FilterModal from "./filter/FilterModal";
 import { useFilterStore } from "@/store/FilterStore";
@@ -15,10 +15,17 @@ import Image from "next/image";
 import CloseIcon from "@/assets/images/close.svg";
 import { formatKoreanUnit, getCropLabelString } from "@/utils/format";
 import { updateFilterQuery } from "@/utils/filterQuery";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Tooltip from "@/components/common/Tooltip";
+import {
+  isRankingPath,
+  RANKING_TOOLTIP,
+  RankingPath,
+} from "@/constants/ranking";
 
 export default function NavBar() {
   const router = useRouter();
+  const pathname = usePathname();
 
   const {
     type,
@@ -38,6 +45,8 @@ export default function NavBar() {
   const [openFilter, setOpenFilter] = useState<string | null>(null);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState(true); // 툴팁을 한 번만 보여줄지 여부
   const [isTooltipVisible, setIsTooltipVisible] = useState(false); // 툴팁이 현재 보여지고 있는지 여부
+  const [isRankingTooltipVisible, setIsRankingTooltipVisible] = useState(false); // 랭킹 툴팁 보여지고 있는지 여부
+  const [lastPath, setLastPath] = useState("");
 
   const isLoggedIn = true; // 임시
 
@@ -116,6 +125,15 @@ export default function NavBar() {
       router,
     );
   };
+
+  useEffect(() => {
+    const split = pathname.split("/").at(-1);
+    setLastPath(split || "");
+
+    if (isRankingPath(split || "")) {
+      setIsRankingTooltipVisible(true);
+    }
+  }, [pathname]);
 
   return (
     <div className="bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center pl-5 pr-[36px] py-4 gap-[12px]">
@@ -209,6 +227,15 @@ export default function NavBar() {
           />
         </svg>
       </button>
+
+      {isRankingPath(lastPath) && isRankingTooltipVisible && (
+        <Tooltip
+          left={404}
+          title={RANKING_TOOLTIP[lastPath as RankingPath].title}
+          content={RANKING_TOOLTIP[lastPath as RankingPath].content}
+          onClose={() => setIsRankingTooltipVisible(false)}
+        />
+      )}
     </div>
   );
 }

@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    domains: ["matddang.s3.ap-northeast-2.amazonaws.com"],
+  },
 };
 
 export default nextConfig;

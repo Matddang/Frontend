@@ -56,7 +56,7 @@ export default function LoggedInView() {
               image={item.image}
               alt={item.alt}
               label={item.label}
-              onClick={() => alert(item.type)}
+              onClick={() => router.push(`/ranking/${item.type}`)}
             />
           ))}
         </div>
