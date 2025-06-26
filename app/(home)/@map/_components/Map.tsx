@@ -26,7 +26,6 @@ import { useMapStore } from "@/store/MapStore";
 import { ListingItem, useListingStore } from "@/store/ListingStore";
 import { useQuery } from "@tanstack/react-query";
 import { getListing } from "@/services/getListing";
-import { rawListings } from "@/mock/listing";
 
 declare global {
   interface Window {
@@ -93,19 +92,13 @@ export default function Map() {
 
   useEffect(() => {
     if (data) {
-      console.log("데이터 정제!");
       const refineData = data.content.filter((item: ListingItem) =>
         ["전라남도", "전남"].some((prefix) => item.saleAddr.startsWith(prefix)),
       );
 
-      // setRegionMarkers(refineData);
       setListings(refineData);
     }
   }, [data, setListings]);
-
-  // const listings = rawListings.filter((item: ListingItem) =>
-  //   ["전라남도", "전남"].some((prefix) => item.saleAddr.startsWith(prefix)),
-  // );
 
   // 전라남도 구역으로 이동
   const moveToJeonnam = () => {
@@ -118,7 +111,6 @@ export default function Map() {
 
   // 오버레이 초기화 함수
   const clearAllOverlays = () => {
-    console.log("오버레이 초기화합니다.");
     if (overlays.current.myLocation) {
       overlays.current.myLocation.setMap(null);
       overlays.current.myLocation = null;
@@ -132,11 +124,6 @@ export default function Map() {
       overlays.current.selectedOverlayRef = null;
     }
   };
-  useEffect(() => {
-    if (pathname?.startsWith("/listing/")) {
-      isZoomedToMarkerRef.current = false;
-    }
-  }, [pathname]);
 
   // 마커 클릭 시 호출
   const handleMarkerClick = useCallback(
@@ -155,22 +142,14 @@ export default function Map() {
       kakaoMapRef: RefObject<any>;
       overlays: any;
     }) => {
-      const latLng = new window.kakao.maps.LatLng(lat, lng);
-      console.log("마커 클릭했다");
-
       clearAllOverlays();
 
-      // 지도 중심 이동 및 줌인
-      // kakaoMapRef.current.setLevel(1);
-      // kakaoMapRef.current.panTo(latLng);
+      const latLng = new window.kakao.maps.LatLng(lat, lng);
 
+      // 지도 중심 이동 및 줌인
       if (!isZoomedToMarkerRef.current) {
         kakaoMapRef.current.setLevel(1);
         kakaoMapRef.current.panTo(latLng);
-      }
-
-      if (overlays.current.selectedOverlayRef) {
-        overlays.current.selectedOverlayRef.classList.remove("selected");
       }
 
       content.classList.add("selected");
@@ -222,87 +201,46 @@ export default function Map() {
     });
   };
 
-  // 사이드바 열고 닫힐 때 지도가 잘 보이도록 재배치
-  useEffect(() => {
-    if (!kakaoMapRef.current) return;
-
-    const currentCenter = kakaoMapRef.current.getCenter();
-    kakaoMapRef.current.relayout();
-    kakaoMapRef.current.setCenter(currentCenter);
-  }, [isSidebarOpen]);
-
-  // --- 1. 초기 지도 생성 (한 번만 실행) ---
-  useEffect(() => {
-    if (typeof window === "undefined" || !window.kakao || !mapRef.current)
+  // 내 위치로 이동
+  const moveToMyLocation = () => {
+    if (!navigator.geolocation || !kakaoMapRef.current) {
+      alert("위치 정보를 사용할 수 없습니다.");
       return;
-
-    console.log("지도 생성?");
-    // 카카오 지도 API가 비동기로 로드되므로, load 완료 후 실행
-    const onLoad = () => {
-      const initialCenter =
-        mLat && mLng
-          ? new window.kakao.maps.LatLng(Number(mLat), Number(mLng))
-          : new window.kakao.maps.LatLng(
-              JEONNAM_CENTER.lat,
-              JEONNAM_CENTER.lng,
-            );
-
-      const map = new window.kakao.maps.Map(mapRef.current, {
-        center: initialCenter,
-        level: initialZoom,
-        mapTypeId: window.kakao.maps.MapTypeId.HYBRID,
-      });
-
-      kakaoMapRef.current = map;
-
-      const bounds = map.getBounds();
-      const sw = bounds.getSouthWest();
-      const ne = bounds.getNorthEast();
-
-      setBounds({
-        swLat: sw.getLat(),
-        swLng: sw.getLng(),
-        neLat: ne.getLat(),
-        neLng: ne.getLng(),
-      });
-      console.log("셋 바운드");
-
-      window.kakao.maps.event.addListener(map, "idle", () => {
-        const bounds = map.getBounds();
-        const sw = bounds.getSouthWest();
-        const ne = bounds.getNorthEast();
-        const center = map.getCenter();
-        const level = map.getLevel();
-        const isJeonnamVisible = isInJeonnam(center.getLat(), center.getLng());
-
-        setBounds({
-          swLat: sw.getLat(),
-          swLng: sw.getLng(),
-          neLat: ne.getLat(),
-          neLng: ne.getLng(),
-        });
-        console.log("셋 바운드");
-
-        if (level >= 12 || !isJeonnamVisible) {
-          setShowMoveToJeollaButton(true);
-        } else {
-          setShowMoveToJeollaButton(false);
-        }
-
-        updateUrlParams();
-      });
-    };
-
-    if (window.kakao.maps?.load) {
-      window.kakao.maps.load(() => {
-        onLoad();
-        console.log("레뒤1");
-      });
-    } else {
-      onLoad();
-      console.log("레뒤2");
     }
-  }, [setBounds]);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const loc = new window.kakao.maps.LatLng(latitude, longitude);
+
+        clearAllOverlays();
+
+        kakaoMapRef.current.setLevel(4);
+        kakaoMapRef.current.panTo(loc);
+      },
+      (error) => {
+        alert("위치 정보를 가져올 수 없습니다.");
+        console.error(error);
+      },
+    );
+  };
+
+  // 지도 zoom과 center 변경 시, 쿼리 파라미터 업데이트
+  const updateUrlParams = () => {
+    const map = kakaoMapRef.current;
+    if (!map) return;
+
+    const level = map.getLevel();
+    const center = map.getCenter();
+
+    const params = new URLSearchParams(window.location.search);
+    params.set("zoom", String(level));
+    params.set("m_lat", String(center.getLat()));
+    params.set("m_lng", String(center.getLng()));
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, "", newUrl);
+  };
 
   // 클러스터 및 지역 마커 초기화 함수
   const clearAllClusters = () => {
@@ -357,10 +295,6 @@ export default function Map() {
   // 지역명 마커 세팅
   const setupRegionMarkers = useCallback(() => {
     clearAllClusters();
-    // allMarkersRef.current.forEach((marker) => marker.setMap(null));
-    // allMarkersRef.current = [];
-
-    console.log("지역 마커 세팅", allMarkersRef.current);
 
     const grouped = listings.reduce((acc, item) => {
       const region = item.saleAddr.split(" ")[1];
@@ -380,7 +314,6 @@ export default function Map() {
       content.addEventListener("click", () => {
         kakaoMapRef.current.setLevel(8);
         kakaoMapRef.current.panTo(new window.kakao.maps.LatLng(avgLat, avgLng));
-        console.log(`Clicked region: ${region}`);
       });
 
       const regionOverlay = new window.kakao.maps.CustomOverlay({
@@ -395,13 +328,12 @@ export default function Map() {
     });
   }, [listings]);
 
+  // 숫자 클러스터러
   const setupNumberCluster = useCallback(() => {
     clearAllClusters();
 
     const map = kakaoMapRef.current;
     if (!map) return;
-
-    console.log("숫자 클러스터러 세팅");
 
     const bounds = map.getBounds();
     const sw = bounds.getSouthWest();
@@ -418,6 +350,7 @@ export default function Map() {
       );
     });
 
+    // 마커 생성
     const markers = visibleListings.map((item) => {
       const content = createOverlayContent(
         item.saleCategory,
@@ -428,16 +361,6 @@ export default function Map() {
       content.dataset.saleId = String(item.saleId);
 
       content.addEventListener("click", () => {
-        // handleMarkerClick({
-        //   content,
-        //   lat: item.wgsY,
-        //   lng: item.wgsX,
-        //   address: item.saleAddr,
-        //   kakaoMapRef,
-        //   overlays,
-        // });
-
-        console.log("마커클릭");
         const level = map.getLevel();
         const center = map.getCenter();
 
@@ -480,7 +403,7 @@ export default function Map() {
     );
   }, [listings, router]);
 
-  // 현재 보이는 매물 정보 및 URL 파라미터 업데이트 (idle 이벤트에 연결)
+  // 매물 변화에 따라 URL 파라미터 업데이트
   const showVisibleMarkers = useCallback(() => {
     const map = kakaoMapRef.current;
     if (!map) return;
@@ -488,22 +411,13 @@ export default function Map() {
     const center = map.getCenter();
     const level = map.getLevel();
 
-    if (level >= 2 && overlays.current.selectedOverlayRef) {
-      clearAllOverlays();
-    }
-
     const params = new URLSearchParams(window.location.search);
     params.set("zoom", String(level));
     params.set("m_lat", String(center.getLat()));
     params.set("m_lng", String(center.getLng()));
 
-    console.log("현재 화면에 보이는 매물 수:", listings.length);
-
     // 매물이 2개 이상이고 zoom 레벨이 7 미만이면 listing으로 이동
     if (level <= 7 && listings.length >= 2) {
-      console.log(overlays.current.selectedOverlayRef);
-      overlays.current.selectedOverlayRef?.classList.remove("selected");
-      overlays.current.selectedOverlayRef = null;
       router.replace(`/listing?${params.toString()}`);
     }
     // 현재 경로가 홈이 아니라면 이동
@@ -512,10 +426,95 @@ export default function Map() {
     }
   }, [listings, router]);
 
+  // 상세 페이지가 변할 때, zoom을 1로하는 세팅과 center로 이동하는 상태 false로 설정
+  useEffect(() => {
+    if (pathname?.startsWith("/listing/")) {
+      isZoomedToMarkerRef.current = false;
+    }
+  }, [pathname]);
+
+  // 사이드바 열고 닫힐 때 지도가 잘 보이도록 재배치
+  useEffect(() => {
+    if (!kakaoMapRef.current) return;
+
+    const currentCenter = kakaoMapRef.current.getCenter();
+    kakaoMapRef.current.relayout();
+    kakaoMapRef.current.setCenter(currentCenter);
+  }, [isSidebarOpen]);
+
+  // --- 1. 초기 지도 생성 (한 번만 실행) ---
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.kakao || !mapRef.current)
+      return;
+
+    // 카카오 지도 API가 비동기로 로드되므로, load 완료 후 실행
+    const onLoad = () => {
+      const initialCenter =
+        mLat && mLng
+          ? new window.kakao.maps.LatLng(Number(mLat), Number(mLng))
+          : new window.kakao.maps.LatLng(
+              JEONNAM_CENTER.lat,
+              JEONNAM_CENTER.lng,
+            );
+
+      const map = new window.kakao.maps.Map(mapRef.current, {
+        center: initialCenter,
+        level: initialZoom,
+        mapTypeId: window.kakao.maps.MapTypeId.HYBRID,
+      });
+
+      kakaoMapRef.current = map;
+
+      const bounds = map.getBounds();
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      // 처음 바운드 설정
+      setBounds({
+        swLat: sw.getLat(),
+        swLng: sw.getLng(),
+        neLat: ne.getLat(),
+        neLng: ne.getLng(),
+      });
+
+      window.kakao.maps.event.addListener(map, "idle", () => {
+        const bounds = map.getBounds();
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+        const center = map.getCenter();
+        const level = map.getLevel();
+        const isJeonnamVisible = isInJeonnam(center.getLat(), center.getLng());
+
+        // 지도가 움직일 때마다 바운드 설정
+        setBounds({
+          swLat: sw.getLat(),
+          swLng: sw.getLng(),
+          neLat: ne.getLat(),
+          neLng: ne.getLng(),
+        });
+
+        if (level >= 12 || !isJeonnamVisible) {
+          setShowMoveToJeollaButton(true);
+        } else {
+          setShowMoveToJeollaButton(false);
+        }
+
+        updateUrlParams();
+      });
+    };
+
+    if (window.kakao.maps?.load) {
+      window.kakao.maps.load(() => {
+        onLoad();
+      });
+    } else {
+      onLoad();
+    }
+  }, [setBounds]);
+
   // --- 2. listings 변경 시 마커 및 클러스터 업데이트 ---
   useEffect(() => {
     if (!kakaoMapRef.current || listings.length <= 0) return;
-    console.log("2. listings 변경 시 마커 및 클러스터 업데이트");
 
     // 기존 마커 제거
     allMarkersRef.current.forEach((overlay) => overlay.setMap(null));
@@ -525,17 +524,15 @@ export default function Map() {
 
     // 지도 현재 줌 레벨에 따라 클러스터 설정
     if (level <= 8) {
-      console.log("숫자 클러스터로 세팅한다잉");
       setupNumberCluster();
     } else {
-      console.log("지역 마커로 세팅한다잉");
       setupRegionMarkers();
     }
 
     showVisibleMarkers();
   }, [listings, setupNumberCluster, setupRegionMarkers, showVisibleMarkers]);
 
-  // 상세페이지 URL 파라미터로 마커 선택 상태 반영
+  // --- 3. 상세페이지 URL 파라미터로 마커 선택 상태 반영
   useEffect(() => {
     if (
       !kakaoMapRef.current ||
@@ -544,20 +541,13 @@ export default function Map() {
     ) {
       return;
     }
-    console.log("나는 상세 페이지 일때만");
 
     const target = listings.find(
       (pos) => String(pos.saleId) === String(params.id),
     );
-    console.log("타겟", target);
     if (!target) return;
 
     const { wgsY: lat, wgsX: lng, saleAddr: address } = target;
-
-    if (overlays.current.selectedOverlayRef) {
-      overlays.current.selectedOverlayRef.classList.remove("selected");
-      overlays.current.selectedOverlayRef = null;
-    }
 
     const targetOverlay = allMarkersRef.current.find((overlay) => {
       const content = overlay.getContent?.();
@@ -579,54 +569,16 @@ export default function Map() {
     isZoomedToMarkerRef.current = true;
   }, [handleMarkerClick, params?.id, pathname, listings]);
 
-  const updateUrlParams = () => {
-    const map = kakaoMapRef.current;
-    if (!map) return;
-
-    console.log("업데이트 파람");
-
-    const level = map.getLevel();
-    const center = map.getCenter();
-
-    const params = new URLSearchParams(window.location.search);
-    params.set("zoom", String(level));
-    params.set("m_lat", String(center.getLat()));
-    params.set("m_lng", String(center.getLng()));
-
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState(null, "", newUrl);
-  };
-
-  // useEffect(() => {
-  //   if (!kakaoMapRef.current) {
-  //     return;
-  //   }
-  //   showVisibleMarkers();
-  // }, [listings, showVisibleMarkers]);
-
-  // 내 위치로 이동
-  const moveToMyLocation = () => {
-    if (!navigator.geolocation || !kakaoMapRef.current) {
-      alert("위치 정보를 사용할 수 없습니다.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const loc = new window.kakao.maps.LatLng(latitude, longitude);
-
+  // 상세 페이지가 아니면 선택된 마커 오버레이 해제
+  useEffect(() => {
+    if (!pathname?.startsWith("/listing/")) {
+      // 상세페이지가 아니면 선택 해제
+      if (overlays.current.selectedOverlayRef) {
         clearAllOverlays();
-
-        kakaoMapRef.current.setLevel(4);
-        kakaoMapRef.current.panTo(loc);
-      },
-      (error) => {
-        alert("위치 정보를 가져올 수 없습니다.");
-        console.error(error);
-      },
-    );
-  };
+      }
+      isZoomedToMarkerRef.current = false;
+    }
+  }, [pathname]);
 
   return (
     <div className="relative w-full h-full">
