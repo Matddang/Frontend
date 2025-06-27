@@ -165,7 +165,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
         </div>
         {filter.key === "place" && (
           <Link
-            href={"#"}
+            href={"/mypage/location"}
             className="text-gray-700 border-b border-gray-700 typo-body-1-m h-5.5"
           >
             내 장소 편집
