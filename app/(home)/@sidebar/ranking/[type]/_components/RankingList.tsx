@@ -19,6 +19,7 @@ export default function RankingList() {
 
   const [sales, setSales] = useState<Property[]>([]);
   const [sortBy, setSortBy] = useState("");
+  const searchParams = useSearchParams();
 
   const moveToDetail = (id: number) => {
     router.push(`/listing/${id}?${searchParams.toString()}`);
@@ -37,6 +38,7 @@ export default function RankingList() {
   });
 
   useEffect(() => {
+    console.log(data);
     if (data?.data.content.length) {
       setListings(data.data.content);
       setSales(data.data.content);
@@ -52,6 +54,10 @@ export default function RankingList() {
       setSortBy("both");
     } else setSortBy("profit");
   }, [type]);
+
+  const moveToDetail = (id: number) => {
+    router.push(`/listing/${id}?${searchParams.toString()}`);
+  };
 
   return (
     <div className="relative">
