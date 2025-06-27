@@ -26,6 +26,8 @@ import { useMapStore } from "@/store/MapStore";
 import { ListingItem, useListingStore } from "@/store/ListingStore";
 import { useQuery } from "@tanstack/react-query";
 import { getListing } from "@/services/getListing";
+import { useFilterStore } from "@/store/FilterStore";
+import { buildListingBody } from "@/utils/request/buildListingBody";
 
 declare global {
   interface Window {
@@ -66,6 +68,7 @@ export default function Map() {
   const { isSidebarOpen } = useSidebarStore();
   const { bounds, setBounds } = useMapStore();
   const { listings, setListings } = useListingStore();
+  const { type, price, area, kind, crop, place } = useFilterStore();
 
   const [showMoveToJeollaButton, setShowMoveToJeollaButton] = useState(false);
   const [searchToggle, setSearchToggle] = useState<Record<string, boolean>>({});
@@ -77,25 +80,27 @@ export default function Map() {
     return lat >= 34 && lat <= 36 && lng >= 126 && lng <= 128;
   };
 
-  //  전체 매물 목록 가져오기
+  //  매물 목록 가져오기
   const { data } = useQuery({
-    queryKey: ["listing", keyword, bounds],
+    queryKey: ["listing", type, price, area, kind, crop, keyword, bounds],
     queryFn: () => {
-      const params: Record<string, any> = {};
-
-      if (keyword) {
-        params.keyword = keyword;
-      } else if (bounds) {
-        params.zoom = [bounds.swLat, bounds.swLng, bounds.neLat, bounds.neLng];
-      }
-
-      return getListing(params);
+      const body = buildListingBody({
+        keyword,
+        bounds,
+        type,
+        kind,
+        area,
+        price,
+        crop,
+      });
+      return getListing(body);
     },
     staleTime: Infinity,
   });
 
   useEffect(() => {
     if (data) {
+      console.log(data);
       const refineData = data.content.filter((item: ListingItem) =>
         ["전라남도", "전남"].some((prefix) => item.saleAddr.startsWith(prefix)),
       );
@@ -298,6 +303,11 @@ export default function Map() {
   // 지역명 마커 세팅
   const setupRegionMarkers = useCallback(() => {
     clearAllClusters();
+
+    if (listings.length <= 0) {
+      console.log("여기로 들어와야할걸");
+      return;
+    }
 
     const grouped = listings.reduce((acc, item) => {
       const region = item.saleAddr.split(" ")[1];
@@ -517,7 +527,10 @@ export default function Map() {
 
   // --- 2. listings 변경 시 마커 및 클러스터 업데이트 ---
   useEffect(() => {
-    if (!kakaoMapRef.current || listings.length <= 0) return;
+    if (!kakaoMapRef.current || listings.length <= 0) {
+      clearAllClusters();
+      return;
+    }
 
     // 기존 마커 제거
     allMarkersRef.current.forEach((overlay) => overlay.setMap(null));

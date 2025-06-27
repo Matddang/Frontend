@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface MapBounds {
+export interface MapBounds {
   swLat: number;
   swLng: number;
   neLat: number;
