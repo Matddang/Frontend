@@ -3,19 +3,19 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface FiltersState {
-  type: "lease" | "sale" | null;
+  type: string | null;
   price: { min: number; max: number };
   area: { min: number; max: number };
-  kind: ("paddy" | "field" | "orchard")[];
+  kind: string[];
   crop: { [parent: string]: string[] };
   place: { id: number | null; name: string | null };
 }
 
 interface FilterStore extends FiltersState {
-  setType: (type: "lease" | "sale" | null) => void;
+  setType: (type: string | null) => void;
   setPrice: (price: { min: number; max: number }) => void;
   setArea: (area: { min: number; max: number }) => void;
-  setKind: (kind: ("paddy" | "field" | "orchard")[]) => void;
+  setKind: (kind: string[]) => void;
   setCrop: (crop: { [parent: string]: string[] }) => void;
   setPlace: (place: { id: number | null; name: string | null }) => void;
 }

@@ -36,6 +36,7 @@ export default function page() {
             crop="포도"
             place="집"
             time="5분"
+            onClick={() => alert("이동")}
           />
         ))}
       </div>
