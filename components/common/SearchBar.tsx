@@ -3,15 +3,10 @@
 import clearIcon from "@/assets/images/clear.svg";
 import searchIcon from "@/assets/images/search.svg";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-interface SearchBarProps {
-  onSubmit: (value: string) => void;
-}
-
-export default function SearchBar({ onSubmit }: SearchBarProps) {
-  const searchParams = useSearchParams();
+export default function SearchBar() {
   const [input, setInput] = useState("");
   const [showClear, setShowClear] = useState(false);
 
@@ -31,10 +26,9 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim()) return;
-    onSubmit(input);
-    router.push(`/listing/region/${input}?${searchParams.toString()}`, {
-      scroll: false,
-    });
+    const params = new URLSearchParams(window.location.search);
+    params.set("keyword", input);
+    router.push(`${window.location.pathname}?${params.toString()}`);
   };
 
   return (

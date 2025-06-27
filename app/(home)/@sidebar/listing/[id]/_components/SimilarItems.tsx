@@ -2,25 +2,44 @@
 
 import Card from "@/components/common/Card";
 import CustomSwiper from "@/components/common/CustomSwiper";
-import LandListingImg from "@/assets/images/land-listing.svg";
 import React from "react";
+import { KIND_FILTER } from "@/constants/filterOptions";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SimilarItems() {
-  const slides = Array.from({ length: 5 });
+interface SimilarItem {
+  saleId: number;
+  saleCategory: string;
+  landType: string;
+  saleAddr: string;
+  landCategory: string;
+  price: number;
+  area: number;
+  mainCrop: string;
+  imgUrl: string;
+}
+
+export default function SimilarItems({ items }: { items: SimilarItem[] }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const moveToDetail = (id: number) => {
+    router.push(`/listing/${id}?${searchParams.toString()}`);
+  };
 
   return (
     <section className="px-4">
       <h3 className="typo-sub-head-bold mb-5">이 매물과 비슷한 조건의 매물</h3>
       <CustomSwiper slidesPerView={2.5} spaceBetween={16}>
-        {slides.map((_, i) => (
+        {items.map((item: SimilarItem) => (
           <Card
-            key={i}
-            imageSrc={LandListingImg}
-            type="매매"
-            price={150000000}
-            area={351}
-            address="전라남도 여수시 청산면 12-1"
-            kind="과수원"
+            key={item.saleId}
+            imageSrc={item.imgUrl}
+            type={item.saleCategory}
+            price={item.price}
+            area={item.area}
+            address={item.saleAddr}
+            kind={KIND_FILTER[item.landCategory]}
+            onClick={() => moveToDetail(item.saleId)}
           />
         ))}
       </CustomSwiper>

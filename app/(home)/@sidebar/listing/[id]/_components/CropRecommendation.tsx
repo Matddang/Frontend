@@ -37,7 +37,7 @@ const TEMP_CROP_DATA = [
 
 export default function CropRecommendation() {
   return (
-    <section className="px-4">
+    <section className="px-4 overflow-hidden">
       <h3 className="typo-sub-head-bold mb-5">
         해당 농지에 적합한 높은 수익성의 작물
       </h3>

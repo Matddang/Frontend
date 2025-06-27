@@ -8,9 +8,9 @@ export const FILTERS = [
 ];
 
 export const TYPE_FILTER = {
-  lease: "임대",
-  sale: "매매",
-} as const;
+  임대: "임대",
+  매매: "매매",
+};
 
 export const PRICE_FILTER = [
   { value: 0, label: "0" },
@@ -26,11 +26,11 @@ export const AREA_FILTER = [
   { value: 3000, label: "3000평 이상" },
 ];
 
-export const KIND_FILTER = {
-  paddy: "답(논)",
-  field: "전(밭)",
-  orchard: "과수원",
-} as const;
+export const KIND_FILTER: { [key: string]: string } = {
+  답_답: "답(논)",
+  전_전: "전(밭)",
+  과수원: "과수원",
+};
 
 export const CROP_PARENT_FILTER = {
   fruits: {

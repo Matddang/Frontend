@@ -1,5 +1,5 @@
 import Header from "@/components/common/Header";
-import NavBar from "./_components/NavBar";
+import NavBar from "./_components/navbar";
 
 export default function HomeLayout({
   sidebar,
