@@ -8,13 +8,20 @@ import { useQuery } from "@tanstack/react-query";
 import { getProperties } from "@/services/getProperties";
 import { Property } from "@/types/property";
 import { useEffect, useState } from "react";
+import { useListingStore } from "@/store/ListingStore";
 
 export default function RankingList() {
   const { type } = useParams();
   const router = useRouter();
-  const [sales, setSales] = useState<Property[]>([]);
-  const [sortBy, setSortBy] = useState("");
   const searchParams = useSearchParams();
+
+  const { listings, setListings } = useListingStore();
+
+  const [sortBy, setSortBy] = useState("");
+
+  const moveToDetail = (id: number) => {
+    router.push(`/listing/${id}?${searchParams.toString()}`);
+  };
 
   const title = {
     popular: "수익형에게 가장 인기 많은 매물",
@@ -31,9 +38,9 @@ export default function RankingList() {
   useEffect(() => {
     console.log(data);
     if (data?.data.content.length) {
-      setSales(data.data.content);
+      setListings(data.data.content);
     }
-  }, [data]);
+  }, [data, setListings]);
 
   useEffect(() => {
     if (type === "popular") {
@@ -42,10 +49,6 @@ export default function RankingList() {
       setSortBy("both");
     } else setSortBy("profit");
   }, [type]);
-
-  const moveToDetail = (id: number) => {
-    router.push(`/listing/${id}?${searchParams.toString()}`);
-  };
 
   return (
     <div className="relative">
@@ -62,7 +65,7 @@ export default function RankingList() {
         </span>
       </div>
       <div className="px-4">
-        {sales.map((sale: Property) => (
+        {listings.map((sale: Property) => (
           <Card
             key={sale.saleId}
             imageSrc={sale.imgUrl}
