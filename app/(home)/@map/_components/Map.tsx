@@ -44,6 +44,7 @@ export default function Map() {
 
   const mLat = searchParams.get("m_lat");
   const mLng = searchParams.get("m_lng");
+  const keyword = searchParams.get("keyword") ?? undefined;
 
   const mapRef = useRef<HTMLDivElement>(null); // 지도를 표시할 HTML DOM 요소
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스
@@ -78,14 +79,17 @@ export default function Map() {
 
   //  전체 매물 목록 가져오기
   const { data } = useQuery({
-    queryKey: ["listing-initial-load", bounds],
+    queryKey: ["listing", keyword, bounds],
     queryFn: () => {
-      if (!bounds) {
-        return getListing({});
+      const params: Record<string, any> = {};
+
+      if (keyword) {
+        params.keyword = keyword;
+      } else if (bounds) {
+        params.zoom = [bounds.swLat, bounds.swLng, bounds.neLat, bounds.neLng];
       }
-      return getListing({
-        zoom: [bounds.swLat, bounds.swLng, bounds.neLat, bounds.neLng],
-      });
+
+      return getListing(params);
     },
     staleTime: Infinity,
   });
@@ -95,7 +99,6 @@ export default function Map() {
       const refineData = data.content.filter((item: ListingItem) =>
         ["전라남도", "전남"].some((prefix) => item.saleAddr.startsWith(prefix)),
       );
-
       setListings(refineData);
     }
   }, [data, setListings]);
@@ -531,6 +534,41 @@ export default function Map() {
 
     showVisibleMarkers();
   }, [listings, setupNumberCluster, setupRegionMarkers, showVisibleMarkers]);
+
+  const hasHandledKeywordRef = useRef(false);
+
+  // 키워드 검색으로 리스팅 변경 시, 해당 지역으로 이동
+  useEffect(() => {
+    if (!keyword || !kakaoMapRef.current || hasHandledKeywordRef.current)
+      return;
+
+    // listings이 로드될 때까지 기다리기
+    if (listings.length === 0) return;
+
+    // 중심 좌표 계산
+    const avgLat =
+      listings.reduce((sum, cur) => sum + cur.wgsY, 0) / listings.length;
+    const avgLng =
+      listings.reduce((sum, cur) => sum + cur.wgsX, 0) / listings.length;
+
+    // 지도 이동
+    const center = new window.kakao.maps.LatLng(avgLat, avgLng);
+    kakaoMapRef.current.setLevel(10);
+    kakaoMapRef.current.panTo(center);
+
+    // keyword 파라미터 제거
+    const params = new URLSearchParams(window.location.search);
+    params.delete("keyword");
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, "", newUrl);
+
+    hasHandledKeywordRef.current = true;
+  }, [listings]);
+
+  // 검색 키워드가 변경되면 초기화
+  useEffect(() => {
+    hasHandledKeywordRef.current = false;
+  }, [keyword]);
 
   // --- 3. 상세페이지 URL 파라미터로 마커 선택 상태 반영
   useEffect(() => {
