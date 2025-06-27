@@ -15,9 +15,10 @@ import {
 } from "@/constants/ranking";
 import { usePathname } from "next/navigation";
 import Tooltip from "@/components/common/Tooltip";
+import { useUserStore } from "@/store/UserStore";
 
 export default function NavBar() {
-  const isLoggedIn = true; // 임시
+  const { isLogin } = useUserStore();
 
   const [openFilter, setOpenFilter] = useState<string | null>(null);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState(true); // 툴팁을 한 번만 보여줄지 여부
@@ -50,7 +51,7 @@ export default function NavBar() {
     <div className="bg-white w-full z-10 max-h-[65px] border-b border-[#F3F3F3] flex justify-between items-center pl-5 pr-[36px] py-4 gap-[12px]">
       <div className="flex gap-[12px] whitespace-nowrap">
         {FILTERS.map((filter) => {
-          if (filter.key === "place" && !isLoggedIn) return null;
+          if (filter.key === "place" && !isLogin) return null;
 
           const isActive = openFilter === filter.key;
           const hasValue = hasFilterValue(filter.key);
