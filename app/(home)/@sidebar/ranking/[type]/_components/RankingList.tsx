@@ -29,6 +29,7 @@ export default function RankingList() {
   });
 
   useEffect(() => {
+    console.log(data);
     if (data?.data.content.length) {
       setSales(data.data.content);
     }
