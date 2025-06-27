@@ -27,13 +27,13 @@ export default function MyPlace() {
 
   useEffect(() => {
     if (data) {
-      setLocations(data.data);
+      setLocations(data);
     }
   }, [data]);
 
   return (
     <div className="flex flex-col gap-[12px]">
-      {locations.length ? (
+      {locations?.length ? (
         locations.map((location, i) => (
           <LocationBar location={location} key={i} />
         ))

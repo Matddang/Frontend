@@ -54,7 +54,7 @@ export default function AddLocationModal({
         address: selectedLocation,
       }),
     onSuccess: (status) => {
-      if (status === 200) {
+      if (status === 201) {
         onClose();
         queryClient.invalidateQueries({ queryKey: ["myPlace"] });
       }

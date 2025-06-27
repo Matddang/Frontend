@@ -10,7 +10,7 @@ import CustomSwiper from "@/components/common/CustomSwiper";
 import { useEffect, useRef, useState } from "react";
 import type { Swiper as SwiperClass } from "swiper";
 import SwiperIndicator from "@/components/common/SwiperIndicatior";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getProperties } from "@/services/getProperties";
 import { Property } from "@/types/property";
@@ -25,6 +25,8 @@ export default function LoggedOutView() {
   const [sales, setSales] = useState<Property[]>([]);
   const [loginModal, setLoginModal] = useState(false);
 
+  const searchParams = useSearchParams();
+
   const { data } = useQuery({
     queryKey: ["salesRanking"],
     queryFn: () => getProperties("liked"),
@@ -36,6 +38,10 @@ export default function LoggedOutView() {
       setSales(data.data.content);
     }
   }, [data]);
+
+  const moveToDetail = (id: number) => {
+    router.push(`/listing/${id}?${searchParams.toString()}`);
+  };
 
   return (
     <div className="px-4 py-[14px]">
@@ -71,6 +77,7 @@ export default function LoggedOutView() {
               area={sale.area}
               address={sale.saleAddr}
               kind={sale.landType}
+              onClick={() => moveToDetail(sale.saleId)}
             />
           ))}
         </CustomSwiper>

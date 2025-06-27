@@ -11,11 +11,14 @@ import { useUserStore } from "@/store/UserStore";
 import ChevronDown from "@/assets/images/chevron-down.svg";
 import { useLoginModalStore } from "@/store/useLoginModalStore";
 import { useTokenStore } from "@/store/useTokenStore";
+import AddLocationModal from "../location/AddLocationModal";
+import { useAddLocationModal } from "@/store/useAddLocationModal";
 
 export default function Header() {
   const { isLogin, name, clearUser } = useUserStore();
   const { clearToken } = useTokenStore();
   const { isOpen } = useLoginModalStore();
+  const { isOpen: modalOpen, title, modalClose } = useAddLocationModal();
   const [loginModal, setLoginModal] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
@@ -122,6 +125,8 @@ export default function Header() {
         {(loginModal || isOpen) && (
           <LoginModal onClose={() => setLoginModal(false)} />
         )}
+
+        {modalOpen && <AddLocationModal title={title} onClose={modalClose} />}
       </div>
     </div>
   );

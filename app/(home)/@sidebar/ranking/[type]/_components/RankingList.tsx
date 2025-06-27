@@ -3,7 +3,7 @@
 import Card from "@/components/common/Card";
 import Image from "next/image";
 import ArrowLeft from "@/assets/images/arrow-left.svg";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getProperties } from "@/services/getProperties";
 import { Property } from "@/types/property";
@@ -14,6 +14,7 @@ export default function RankingList() {
   const router = useRouter();
   const [sales, setSales] = useState<Property[]>([]);
   const [sortBy, setSortBy] = useState("");
+  const searchParams = useSearchParams();
 
   const title = {
     popular: "수익형에게 가장 인기 많은 매물",
@@ -40,6 +41,10 @@ export default function RankingList() {
       setSortBy("both");
     } else setSortBy("profit");
   }, [type]);
+
+  const moveToDetail = (id: number) => {
+    router.push(`/listing/${id}?${searchParams.toString()}`);
+  };
 
   return (
     <div className="relative">
@@ -69,6 +74,7 @@ export default function RankingList() {
             crop={sale.mainCrop}
             place="집"
             time="5분"
+            onClick={() => moveToDetail(sale.saleId)}
           />
         ))}
       </div>
