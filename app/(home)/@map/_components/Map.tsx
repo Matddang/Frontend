@@ -93,7 +93,6 @@ export default function Map() {
         price,
         crop,
       });
-      console.log(body);
       return getListing(body);
     },
     staleTime: Infinity,
@@ -101,7 +100,6 @@ export default function Map() {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       const refineData = data.content.filter((item: ListingItem) =>
         ["전라남도", "전남"].some((prefix) => item.saleAddr.startsWith(prefix)),
       );
@@ -154,7 +152,6 @@ export default function Map() {
       clearAllOverlays();
 
       const latLng = new window.kakao.maps.LatLng(lat, lng);
-      console.log(isZoomedToMarkerRef.current);
 
       // 지도 중심 이동 및 줌인
       if (!isZoomedToMarkerRef.current) {
@@ -307,7 +304,6 @@ export default function Map() {
     clearAllClusters();
 
     if (listings.length <= 0) {
-      console.log("여기로 들어와야할걸");
       return;
     }
 
@@ -350,22 +346,6 @@ export default function Map() {
     const map = kakaoMapRef.current;
     if (!map) return;
 
-    const bounds = map.getBounds();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
-
-    // const visibleListings = listings.filter((item) => {
-    //   const lat = item.wgsY;
-    //   const lng = item.wgsX;
-    //   return (
-    //     lat >= sw.getLat() &&
-    //     lat <= ne.getLat() &&
-    //     lng >= sw.getLng() &&
-    //     lng <= ne.getLng()
-    //   );
-    // });
-
-    console.log("마커 생성");
     // 마커 생성
     const markers = listings.map((item) => {
       const content = createOverlayContent(
@@ -400,8 +380,6 @@ export default function Map() {
     });
 
     allMarkersRef.current = markers;
-
-    console.log("마커 생성후", allMarkersRef.current);
 
     numberClustererRef.current = new window.kakao.maps.MarkerClusterer({
       map,
@@ -614,7 +592,6 @@ export default function Map() {
     if (!target) return;
 
     const { wgsY: lat, wgsX: lng, saleAddr: address } = target;
-    console.log(allMarkersRef.current);
 
     const targetOverlay = allMarkersRef.current.find((overlay) => {
       const content = overlay.getContent?.();
