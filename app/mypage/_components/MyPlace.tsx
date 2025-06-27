@@ -27,7 +27,7 @@ export default function MyPlace() {
 
   useEffect(() => {
     if (data) {
-      setLocations(data);
+      setLocations(data.data);
     }
   }, [data]);
 
