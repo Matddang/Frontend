@@ -13,6 +13,7 @@ export async function compareProperty(saleId1: number, saleId2: number) {
         },
       },
     );
+
     return response.status;
   } catch (error) {
     console.error("Error:", error);

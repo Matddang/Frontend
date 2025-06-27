@@ -1,8 +1,10 @@
 import ArrowRight from "@/assets/images/arrow-right-white.svg";
 import { getCompareHistory } from "@/services/getCompareHistory";
 import { useTokenStore } from "@/store/useTokenStore";
+import { Property } from "@/types/property";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function CompareHistory() {
   const history_list = [
@@ -77,6 +79,7 @@ export default function CompareHistory() {
   ];
 
   const { token } = useTokenStore();
+  const [history, setHistory] = useState<Property[]>([]);
 
   const { data } = useQuery({
     queryKey: ["compareHistory"],
@@ -84,6 +87,14 @@ export default function CompareHistory() {
     staleTime: 1000 * 60 * 5,
     enabled: !!token,
   });
+
+  console.log(data);
+
+  useEffect(() => {
+    // if (data?.data) {
+    //   setHistory(data.data);
+    // }
+  }, [data]);
 
   return (
     <div className="grid grid-cols-2 gap-[30px]">
@@ -94,9 +105,9 @@ export default function CompareHistory() {
             <Image src={ArrowRight} alt="right" className="cursor-pointer" />
           </div>
           <div className="flex gap-[12px] items-center bg-gray-200 py-[16px] px-[14px] rounded-b-[8px]">
-            <Property data={history.data[0]} />
+            <PropertyItem data={history.data[0]} />
             <span className="text-[16px] font-bold text-primary">VS</span>
-            <Property data={history.data[1]} />
+            <PropertyItem data={history.data[1]} />
           </div>
         </div>
       ))}
@@ -104,7 +115,7 @@ export default function CompareHistory() {
   );
 }
 
-function Property({
+function PropertyItem({
   data,
 }: {
   data: {

@@ -1,21 +1,13 @@
 import ArrowRight from "@/assets/images/arrow-right-black.svg";
 import Image from "next/image";
 import InfoIcon from "@/assets/images/info.svg";
+import { Property } from "@/types/property";
 
-type property = {
-  id: number;
-  price: number;
-  type: string;
-  area: number;
-  address: string;
-  distance: string;
-};
-
-export default function CompareResult({ selected }: { selected: property[] }) {
+export default function CompareResult({ selected }: { selected: Property[] }) {
   return (
     <div className="flex justify-between">
       {selected.map((value) => (
-        <ResultItem key={value.id} />
+        <ResultItem key={value.saleId} />
       ))}
     </div>
   );

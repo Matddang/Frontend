@@ -2,36 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import PropertyItem from "./PropertyItem";
 import { getLikedProperty } from "@/services/getLikedProperty";
 import { useTokenStore } from "@/store/useTokenStore";
+import { Property } from "@/types/property";
+import { useEffect, useState } from "react";
 
 export default function LikedProperty() {
-  const property_list = [
-    {
-      id: 1,
-      price: 1.5,
-      type: "ORCHARD",
-      area: 351,
-      address: "전라남도 완도군 청산면 12-1",
-      distance: "포도 / 집에서 5분 거리",
-    },
-    {
-      id: 2,
-      price: 1.5,
-      type: "ORCHARD",
-      area: 351,
-      address: "전라남도 완도군 청산면 12-1",
-      distance: "포도 / 집에서 5분 거리",
-    },
-    {
-      id: 3,
-      price: 1.5,
-      type: "ORCHARD",
-      area: 351,
-      address: "전라남도 완도군 청산면 12-1",
-      distance: "포도 / 집에서 5분 거리",
-    },
-  ];
-
   const { token } = useTokenStore();
+  const [sales, setSales] = useState<Property[]>([]);
 
   const { data } = useQuery({
     queryKey: ["likedProperty"],
@@ -40,10 +16,16 @@ export default function LikedProperty() {
     enabled: !!token,
   });
 
+  useEffect(() => {
+    if (data?.data) {
+      setSales(data.data);
+    }
+  }, [data]);
+
   return (
     <div className="flex flex-col gap-[16px]">
-      {property_list.map((property, i) => (
-        <PropertyItem key={i} property={property} />
+      {sales.map((sale: Property) => (
+        <PropertyItem key={sale.saleId} property={sale} />
       ))}
     </div>
   );

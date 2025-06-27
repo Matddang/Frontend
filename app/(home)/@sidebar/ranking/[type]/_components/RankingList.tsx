@@ -13,8 +13,7 @@ export default function RankingList() {
   const { type } = useParams();
   const router = useRouter();
   const [sales, setSales] = useState<Property[]>([]);
-  const sortBy =
-    type === "popular" ? "liked" : type === "distribution" ? "both" : "profit";
+  const [sortBy, setSortBy] = useState("");
 
   const title = {
     popular: "수익형에게 가장 인기 많은 매물",
@@ -23,7 +22,7 @@ export default function RankingList() {
   };
 
   const { data } = useQuery({
-    queryKey: ["salesRanking", type],
+    queryKey: ["salesRanking", sortBy],
     queryFn: () => getProperties(sortBy),
     staleTime: 1000 * 60 * 5,
   });
@@ -33,6 +32,14 @@ export default function RankingList() {
       setSales(data.data.content);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (type === "popular") {
+      setSortBy("liked");
+    } else if (type === "distribution") {
+      setSortBy("both");
+    } else setSortBy("profit");
+  }, [type]);
 
   return (
     <div className="relative">

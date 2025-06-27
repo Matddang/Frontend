@@ -1,24 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropertyItem from "../../_components/PropertyItem";
 import CompareResult from "./CompareResult";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getLikedProperty } from "@/services/getLikedProperty";
 import { useTokenStore } from "@/store/useTokenStore";
-
-type property = {
-  id: number;
-  price: number;
-  type: string;
-  area: number;
-  address: string;
-  distance: string;
-};
+import { Property } from "@/types/property";
+import { compareProperty } from "@/services/compareProperty";
 
 export default function PropertyList() {
-  const [selected, setSelected] = useState<property[]>([]);
+  const [selected, setSelected] = useState<Property[]>([]);
   const [isCompared, setIsCompared] = useState(false);
+  const [sales, setSales] = useState<Property[]>([]);
   const { token } = useTokenStore();
 
   const { data } = useQuery({
@@ -28,41 +22,36 @@ export default function PropertyList() {
     enabled: !!token,
   });
 
-  const handleClick = (value: property) => {
-    if (selected.some((v) => v.id === value.id)) {
-      setSelected(() => [...selected].filter((v) => v.id !== value.id));
+  const mutation = useMutation({
+    mutationFn: () => compareProperty(selected[0].saleId, selected[1].saleId),
+    onSuccess: (status) => {
+      if (status === 200) {
+        setIsCompared(true);
+      }
+    },
+    onError: () => {
+      console.error("매물 비교 실패");
+    },
+  });
+
+  const handleClick = (value: Property) => {
+    if (selected.some((v) => v.saleId === value.saleId)) {
+      setSelected(() => [...selected].filter((v) => v.saleId !== value.saleId));
     } else {
       if (selected.length === 2) return;
       setSelected((prev) => [...prev, value]);
     }
   };
 
-  const property_list = [
-    {
-      id: 1,
-      price: 1.5,
-      type: "ORCHARD",
-      area: 351,
-      address: "전라남도 완도군 청산면 12-1",
-      distance: "포도 / 집에서 5분 거리",
-    },
-    {
-      id: 2,
-      price: 1.5,
-      type: "ORCHARD",
-      area: 351,
-      address: "전라남도 완도군 청산면 12-1",
-      distance: "포도 / 집에서 5분 거리",
-    },
-    {
-      id: 3,
-      price: 1.5,
-      type: "ORCHARD",
-      area: 351,
-      address: "전라남도 완도군 청산면 12-1",
-      distance: "포도 / 집에서 5분 거리",
-    },
-  ];
+  const handleCompare = () => {
+    mutation.mutate();
+  };
+
+  useEffect(() => {
+    if (data?.data) {
+      setSales(data.data);
+    }
+  }, [data]);
 
   return (
     <div
@@ -89,12 +78,12 @@ export default function PropertyList() {
       ) : (
         <div className="flex flex-col gap-[44px]">
           <div className="flex flex-col gap-[16px]">
-            {property_list.map((property, i) => (
+            {sales.map((sale) => (
               <PropertyItem
-                key={i}
-                property={property}
+                key={sale.saleId}
+                property={sale}
                 compare
-                selected={selected.some((v) => v.id === property.id)}
+                selected={selected.some((v) => v.saleId === sale.saleId)}
                 handleClick={handleClick}
               />
             ))}
@@ -103,7 +92,7 @@ export default function PropertyList() {
             className="typo-sub-head-sb text-white bg-primary py-[12px] rounded-[8px] cursor-pointer disabled:bg-gray-500 disabled:cursor-auto"
             style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
             disabled={selected.length < 2}
-            onClick={() => setIsCompared(true)}
+            onClick={handleCompare}
           >
             비교하기
           </button>
