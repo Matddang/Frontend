@@ -1,7 +1,7 @@
 "use client";
 
 import SearchBar from "@/components/common/SearchBar";
-import { ReactNode, Suspense } from "react";
+import { ReactNode } from "react";
 import ChevronLeftIcon from "@/assets/images/chevron-left.svg";
 import Image from "next/image";
 import { useSidebarStore } from "@/store/useSidebarStore";
@@ -20,9 +20,7 @@ export default function SideBar({ children }: { children: ReactNode }) {
         }}
       >
         <div className="px-4 py-[13px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] max-h-[65px] flex items-center">
-          <Suspense>
-            <SearchBar onSubmit={(value) => alert("검색어: " + value)} />
-          </Suspense>
+          <SearchBar onSubmit={(value) => alert("검색어: " + value)} />
         </div>
         <div className="flex-1 overflow-y-auto">{children}</div>
 
