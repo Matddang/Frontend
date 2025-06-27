@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SideBar from "./_components/SideBar";
 
 export default function SidebarLayout({
@@ -5,5 +6,9 @@ export default function SidebarLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <SideBar>{children}</SideBar>;
+  return (
+    <Suspense>
+      <SideBar>{children}</SideBar>
+    </Suspense>
+  );
 }
