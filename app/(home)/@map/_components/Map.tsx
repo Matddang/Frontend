@@ -3,14 +3,7 @@
 "use client";
 import { clusterStyle } from "@/styles/mapClusterStyle";
 import { createOverlayContent, createRegionOverlay } from "@/utils/mapOverlay";
-import {
-  RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSidebarStore } from "@/store/useSidebarStore";
 import {
   useParams,
@@ -54,6 +47,7 @@ export default function Map() {
   const numberClustererRef = useRef<any>(null); // 숫자 클러스터러
   const allMarkersRef = useRef<any[]>([]); // 현재 지도에 보이는 마커들
   const placesMarkersRef = useRef<Record<string, any[]>>({}); // 인프라 마커
+  const selectedMarkerRef = useRef<any>(null);
   const overlays = useRef<{
     myLocation: any | null;
     infoOverlay: any | null;
@@ -116,6 +110,13 @@ export default function Map() {
     );
   };
 
+  const clearSelectedMarker = () => {
+    if (selectedMarkerRef.current) {
+      selectedMarkerRef.current.setMap(null);
+      selectedMarkerRef.current = null;
+    }
+  };
+
   // 오버레이 초기화 함수
   const clearAllOverlays = () => {
     if (overlays.current.myLocation) {
@@ -135,34 +136,46 @@ export default function Map() {
   // 마커 클릭 시 호출
   const handleMarkerClick = useCallback(
     ({
-      content,
+      saleId,
       lat,
       lng,
       address,
-      kakaoMapRef,
-      overlays,
     }: {
-      content: HTMLElement;
+      saleId: number;
       lat: number;
       lng: number;
       address: string;
-      kakaoMapRef: RefObject<any>;
-      overlays: any;
     }) => {
-      clearAllOverlays();
-
       const latLng = new window.kakao.maps.LatLng(lat, lng);
-
       // 지도 중심 이동 및 줌인
       if (!isZoomedToMarkerRef.current) {
         kakaoMapRef.current.setLevel(1);
         kakaoMapRef.current.panTo(latLng);
       }
 
+      const content = createOverlayContent(
+        listings[0].saleCategory,
+        listings[0].price,
+        listings[0].area,
+        listings[0].landCategory,
+      );
+
+      content.dataset.saleId = String(saleId);
       content.classList.add("selected");
+
+      const marker = new window.kakao.maps.CustomOverlay({
+        position: latLng,
+        content: content,
+        xAnchor: 0.5,
+        yAnchor: 0.5,
+      });
+
+      selectedMarkerRef.current = marker;
+      selectedMarkerRef.current.setMap(kakaoMapRef.current);
+
       overlays.current.selectedOverlayRef = content;
 
-      // 정보 오버레이 생성
+      // 오버레이 생성
       const infoContent = document.createElement("div");
       infoContent.style.position = "relative";
       infoContent.style.padding = "8px 12px";
@@ -192,7 +205,7 @@ export default function Map() {
 
       overlays.current.infoOverlay = infoOverlay;
     },
-    [],
+    [listings],
   );
 
   const handleKeywordSearch = (keyword: string) => {
@@ -302,6 +315,7 @@ export default function Map() {
   // 지역명 마커 세팅
   const setupRegionMarkers = useCallback(() => {
     clearAllClusters();
+    clearSelectedMarker();
 
     if (listings.length <= 0) {
       return;
@@ -404,23 +418,25 @@ export default function Map() {
     const map = kakaoMapRef.current;
     if (!map) return;
 
-    const center = map.getCenter();
     const level = map.getLevel();
-
     const params = new URLSearchParams(window.location.search);
-    params.set("zoom", String(level));
-    params.set("m_lat", String(center.getLat()));
-    params.set("m_lng", String(center.getLng()));
 
     // 매물이 2개 이상이고 zoom 레벨이 7 미만이면 listing으로 이동
     if (
-      (level <= 7 && level >= 2 && listings.length >= 2) ||
+      (window.location.pathname === "/" &&
+        level <= 7 &&
+        level >= 2 &&
+        listings.length >= 2) ||
+      (window.location.pathname.startsWith("/listing/") &&
+        level <= 7 &&
+        level >= 2 &&
+        listings.length >= 2) ||
       listings.length === 0
     ) {
       router.replace(`/listing?${params.toString()}`);
     }
     // 현재 경로가 홈이 아니라면 이동
-    else if (window.location.pathname !== "/" && level > 7) {
+    else if (window.location.pathname.startsWith("/listing") && level > 7) {
       router.replace(`/?${params.toString()}`);
     }
   }, [listings, router]);
@@ -580,38 +596,18 @@ export default function Map() {
       return;
     }
 
+    clearSelectedMarker();
     clearAllOverlays();
-
-    if (listings.length <= 0) {
-      router.replace(`/listing?${searchParams.toString()}`);
-    }
 
     const target = listings.find(
       (pos) => String(pos.saleId) === String(params.id),
     );
     if (!target) return;
+    const { saleId, wgsY: lat, wgsX: lng, saleAddr: address } = target;
 
-    const { wgsY: lat, wgsX: lng, saleAddr: address } = target;
-
-    const targetOverlay = allMarkersRef.current.find((overlay) => {
-      const content = overlay.getContent?.();
-      return content?.dataset?.saleId === params.id;
-    });
-    if (!targetOverlay) return;
-
-    const content = targetOverlay.getContent();
-
-    handleMarkerClick({
-      content,
-      lat,
-      lng,
-      address,
-      kakaoMapRef,
-      overlays,
-    });
-
+    handleMarkerClick({ saleId, lat, lng, address });
     isZoomedToMarkerRef.current = true;
-  }, [handleMarkerClick, params?.id, pathname, listings, router, searchParams]);
+  }, [params?.id, pathname, listings, handleMarkerClick]);
 
   // 상세 페이지가 아니면 선택된 마커 오버레이 해제
   useEffect(() => {

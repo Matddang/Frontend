@@ -3,17 +3,26 @@
 import Card from "@/components/common/Card";
 import Image from "next/image";
 import ArrowLeft from "@/assets/images/arrow-left.svg";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getProperties } from "@/services/getProperties";
 import { Property } from "@/types/property";
 import { useEffect, useState } from "react";
+import { useListingStore } from "@/store/ListingStore";
 
 export default function RankingList() {
   const { type } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const { listings, setListings } = useListingStore();
+
   const [sales, setSales] = useState<Property[]>([]);
   const [sortBy, setSortBy] = useState("");
+
+  const moveToDetail = (id: number) => {
+    router.push(`/listing/${id}?${searchParams.toString()}`);
+  };
 
   const title = {
     popular: "수익형에게 가장 인기 많은 매물",
@@ -29,9 +38,12 @@ export default function RankingList() {
 
   useEffect(() => {
     if (data?.data.content.length) {
+      setListings(data.data.content);
       setSales(data.data.content);
     }
-  }, [data]);
+  }, [data, setListings]);
+
+  console.log(listings);
 
   useEffect(() => {
     if (type === "popular") {
@@ -69,6 +81,7 @@ export default function RankingList() {
             crop={sale.mainCrop}
             place="집"
             time="5분"
+            onClick={() => moveToDetail(sale.saleId)}
           />
         ))}
       </div>
