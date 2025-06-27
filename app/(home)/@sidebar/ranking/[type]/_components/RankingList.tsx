@@ -17,9 +17,7 @@ export default function RankingList() {
 
   const { listings, setListings } = useListingStore();
 
-  const [sales, setSales] = useState<Property[]>([]);
   const [sortBy, setSortBy] = useState("");
-  const searchParams = useSearchParams();
 
   const moveToDetail = (id: number) => {
     router.push(`/listing/${id}?${searchParams.toString()}`);
@@ -41,11 +39,8 @@ export default function RankingList() {
     console.log(data);
     if (data?.data.content.length) {
       setListings(data.data.content);
-      setSales(data.data.content);
     }
   }, [data, setListings]);
-
-  console.log(listings);
 
   useEffect(() => {
     if (type === "popular") {
@@ -54,10 +49,6 @@ export default function RankingList() {
       setSortBy("both");
     } else setSortBy("profit");
   }, [type]);
-
-  const moveToDetail = (id: number) => {
-    router.push(`/listing/${id}?${searchParams.toString()}`);
-  };
 
   return (
     <div className="relative">
@@ -74,7 +65,7 @@ export default function RankingList() {
         </span>
       </div>
       <div className="px-4">
-        {sales.map((sale: Property) => (
+        {listings.map((sale: Property) => (
           <Card
             key={sale.saleId}
             imageSrc={sale.imgUrl}
