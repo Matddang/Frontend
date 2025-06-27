@@ -93,6 +93,7 @@ export default function Map() {
         price,
         crop,
       });
+      console.log(body);
       return getListing(body);
     },
     staleTime: Infinity,
@@ -153,6 +154,7 @@ export default function Map() {
       clearAllOverlays();
 
       const latLng = new window.kakao.maps.LatLng(lat, lng);
+      console.log(isZoomedToMarkerRef.current);
 
       // 지도 중심 이동 및 줌인
       if (!isZoomedToMarkerRef.current) {
@@ -352,19 +354,20 @@ export default function Map() {
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
 
-    const visibleListings = listings.filter((item) => {
-      const lat = item.wgsY;
-      const lng = item.wgsX;
-      return (
-        lat >= sw.getLat() &&
-        lat <= ne.getLat() &&
-        lng >= sw.getLng() &&
-        lng <= ne.getLng()
-      );
-    });
+    // const visibleListings = listings.filter((item) => {
+    //   const lat = item.wgsY;
+    //   const lng = item.wgsX;
+    //   return (
+    //     lat >= sw.getLat() &&
+    //     lat <= ne.getLat() &&
+    //     lng >= sw.getLng() &&
+    //     lng <= ne.getLng()
+    //   );
+    // });
 
+    console.log("마커 생성");
     // 마커 생성
-    const markers = visibleListings.map((item) => {
+    const markers = listings.map((item) => {
       const content = createOverlayContent(
         item.saleCategory,
         item.price,
@@ -398,6 +401,8 @@ export default function Map() {
 
     allMarkersRef.current = markers;
 
+    console.log("마커 생성후", allMarkersRef.current);
+
     numberClustererRef.current = new window.kakao.maps.MarkerClusterer({
       map,
       averageCenter: true,
@@ -430,7 +435,10 @@ export default function Map() {
     params.set("m_lng", String(center.getLng()));
 
     // 매물이 2개 이상이고 zoom 레벨이 7 미만이면 listing으로 이동
-    if ((level <= 7 && listings.length >= 2) || listings.length === 0) {
+    if (
+      (level <= 7 && level >= 2 && listings.length >= 2) ||
+      listings.length === 0
+    ) {
       router.replace(`/listing?${params.toString()}`);
     }
     // 현재 경로가 홈이 아니라면 이동
@@ -594,6 +602,8 @@ export default function Map() {
       return;
     }
 
+    clearAllOverlays();
+
     if (listings.length <= 0) {
       router.replace(`/listing?${searchParams.toString()}`);
     }
@@ -604,6 +614,7 @@ export default function Map() {
     if (!target) return;
 
     const { wgsY: lat, wgsX: lng, saleAddr: address } = target;
+    console.log(allMarkersRef.current);
 
     const targetOverlay = allMarkersRef.current.find((overlay) => {
       const content = overlay.getContent?.();
@@ -623,7 +634,7 @@ export default function Map() {
     });
 
     isZoomedToMarkerRef.current = true;
-  }, [handleMarkerClick, params?.id, pathname, listings]);
+  }, [handleMarkerClick, params?.id, pathname, listings, router, searchParams]);
 
   // 상세 페이지가 아니면 선택된 마커 오버레이 해제
   useEffect(() => {
