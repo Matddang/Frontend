@@ -33,6 +33,7 @@ export default function SimilarItems({ items }: { items: SimilarItem[] }) {
         {items.map((item: SimilarItem) => (
           <Card
             key={item.saleId}
+            saleId={item.saleId}
             imageSrc={item.imgUrl}
             type={item.saleCategory}
             price={item.price}

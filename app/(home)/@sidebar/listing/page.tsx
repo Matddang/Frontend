@@ -2,34 +2,14 @@
 
 import Card from "@/components/common/Card";
 import DropDown from "@/components/common/DropDown";
-import { getListing } from "@/services/getListing";
 import { ListingItem, useListingStore } from "@/store/ListingStore";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 
 export default function ListingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const keyword = searchParams.get("keyword") ?? undefined;
 
-  const { listings, setListings } = useListingStore();
-
-  // const { data } = useQuery({
-  //   queryKey: ["listing", keyword],
-  //   queryFn: () => getListing({ keyword }),
-  //   enabled: !!keyword,
-  // });
-
-  // useEffect(() => {
-  //   if (data) {
-  //     const refineData = data.content.filter((item: ListingItem) =>
-  //       ["전라남도", "전남"].some((prefix) => item.saleAddr.startsWith(prefix)),
-  //     );
-
-  //     setListings(refineData);
-  //   }
-  // }, [data, setListings]);
+  const { listings } = useListingStore();
 
   const options = ["수익형 추천순", "좋아요 많은순"];
   const handleOptionSelect = (value: string) => {
@@ -56,6 +36,7 @@ export default function ListingPage() {
         {listings.map((item: ListingItem) => (
           <Card
             key={item.saleId}
+            saleId={item.saleId}
             imageSrc={item.imgUrl}
             type={item.saleCategory}
             price={item.price}

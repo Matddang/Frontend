@@ -68,6 +68,7 @@ export default function RankingList() {
         {listings.map((sale: Property) => (
           <Card
             key={sale.saleId}
+            saleId={sale.saleId}
             imageSrc={sale.imgUrl}
             type={sale.saleCategory}
             price={sale.price}
