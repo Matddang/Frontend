@@ -39,7 +39,7 @@ export const buildListingBody = ({
   if (crop && typeof crop === "object") {
     const cropValues = Object.values(crop)
       .flat()
-      .map((v) => Number(v));
+      .map((v) => v);
     if (cropValues.length > 0) {
       body.cropIds = cropValues;
     }

@@ -430,7 +430,7 @@ export default function Map() {
     params.set("m_lng", String(center.getLng()));
 
     // 매물이 2개 이상이고 zoom 레벨이 7 미만이면 listing으로 이동
-    if (level <= 7 && listings.length >= 2) {
+    if ((level <= 7 && listings.length >= 2) || listings.length === 0) {
       router.replace(`/listing?${params.toString()}`);
     }
     // 현재 경로가 홈이 아니라면 이동
@@ -529,6 +529,7 @@ export default function Map() {
   useEffect(() => {
     if (!kakaoMapRef.current || listings.length <= 0) {
       clearAllClusters();
+      clearAllOverlays();
       return;
     }
 
@@ -591,6 +592,10 @@ export default function Map() {
       !params?.id
     ) {
       return;
+    }
+
+    if (listings.length <= 0) {
+      router.replace(`/listing?${searchParams.toString()}`);
     }
 
     const target = listings.find(
