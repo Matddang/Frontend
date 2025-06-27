@@ -13,7 +13,7 @@ interface PlaceIdFilterProps {
 
 interface MyPlace {
   placeId: number;
-  placeType: "residence" | "farmland";
+  placeType: "HOME" | "FARM";
   placeName: string;
   address: string;
 }
@@ -30,6 +30,8 @@ export default function PlaceFilter({
     staleTime: 5 * 60 * 1000,
     enabled: !!token,
   });
+
+  console.log(data);
 
   return (
     <div className="flex flex-col gap-6 mt-[6px]">
@@ -57,9 +59,7 @@ export default function PlaceFilter({
             }`}
           >
             <Image
-              src={
-                placeType === "residence" ? HomeActiveIcon : FarmlandActiveIcon
-              }
+              src={placeType === "HOME" ? HomeActiveIcon : FarmlandActiveIcon}
               alt="장소"
               width={34}
               height={34}
