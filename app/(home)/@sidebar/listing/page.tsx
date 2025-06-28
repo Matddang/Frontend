@@ -46,6 +46,7 @@ export default function ListingPage() {
             variant="horizontal"
             crop={item.mainCrop}
             onClick={() => moveToDetail(item.saleId)}
+            isLiked={item.isLiked}
           />
         ))}
       </div>

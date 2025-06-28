@@ -79,6 +79,7 @@ export default function RankingList() {
             place="집"
             time="5분"
             onClick={() => moveToDetail(sale.saleId)}
+            isLiked={sale.isLiked}
           />
         ))}
       </div>

@@ -1,23 +1,16 @@
-// export async function getListingDetail(id: string) {
-//   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/sale/${id}`, {
-//     method: "GET",
-//     next: { revalidate: 60 * 5 }, // 5분마다 ISR 재생성
-//   });
-
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch listing detail");
-//   }
-
-//   const json = await res.json();
-//   return json.data;
-// }
-
+import { useTokenStore } from "@/store/useTokenStore";
 import axios from "axios";
 
-export async function getListingDetail(id: string) {
+export async function getListingDetail(id: number) {
+  const { token } = useTokenStore.getState();
   try {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_BASE_URL}/sale/${id}`,
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      },
     );
     return response.data.data;
   } catch (error) {

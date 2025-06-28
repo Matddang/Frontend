@@ -14,11 +14,12 @@ interface CardProps {
   address: string;
   area: number;
   kind: string;
-  isWished?: boolean;
+  isLiked?: boolean;
   variant?: "vertical" | "horizontal";
   crop?: string;
   place?: string;
   time?: string;
+  isSwiper?: boolean;
   onClick: () => void;
 }
 
@@ -30,36 +31,32 @@ export default function Card({
   address,
   area,
   kind,
-  isWished = false,
+  isLiked,
   variant = "vertical",
   crop,
   place,
   time,
+  isSwiper = false,
   onClick,
 }: CardProps) {
-  const [like, setLike] = useState(isWished);
   const [showMessage, setShowMessage] = useState(false);
+  const [like, setLike] = useState(isLiked);
 
   const mutation = useMutation({
     mutationFn: () => likeProperty(saleId),
-    onSuccess: (status) => {
-      if (status === 200) {
-        setLike((prev) => !prev);
-      }
+    onSuccess: () => {
+      setLike((prev) => !prev);
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 2000);
     },
     onError: () => {
       console.error("매물 좋아요 실패");
     },
   });
 
-  const handleWishClick = (e: React.MouseEvent) => {
+  const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-
     mutation.mutate();
-
-    // 문구 보여주기
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 2000);
   };
 
   const isHorizontal = variant === "horizontal";
@@ -96,7 +93,7 @@ export default function Card({
               viewBox="0 0 22 20"
               fill="none"
               className="cursor-pointer"
-              onClick={handleWishClick}
+              onClick={handleLikeClick}
             >
               <path
                 fillRule="evenodd"
@@ -130,11 +127,11 @@ export default function Card({
       </div>
 
       {/* 찜 메시지 */}
-      {showMessage && (
+      {!isSwiper && showMessage ? (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#575757] opacity-80 text-white px-4 py-[10px] rounded-[3px] z-50">
           {like ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다."}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

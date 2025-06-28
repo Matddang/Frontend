@@ -20,8 +20,8 @@ import { useListingStore } from "@/store/ListingStore";
 import { useEffect } from "react";
 
 export default function DetailPage() {
-  const id = useParams().id as string;
-  const isValidId = typeof id === "string" && /^\d+$/.test(id);
+  const params = useParams();
+  const id = Number(params.id);
 
   const { setListings } = useListingStore();
 
@@ -30,7 +30,7 @@ export default function DetailPage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["listing-detail", id],
     queryFn: () => getListingDetail(id),
-    enabled: isValidId,
+    enabled: !!id,
   });
 
   useEffect(() => {
@@ -39,12 +39,12 @@ export default function DetailPage() {
     }
   }, [data?.sale, setListings]);
 
-  if (!isValidId) return null;
   if (isLoading) return <div>로딩 중...</div>;
   if (isError || !data?.sale?.[0]) return <div>요청에 실패했습니다.</div>;
 
   const { sale, similarSales } = data;
   const {
+    saleId,
     area,
     imgUrl,
     landCategory,
@@ -54,6 +54,7 @@ export default function DetailPage() {
     saleCategory,
     wgsX,
     wgsY,
+    isLiked,
   } = sale[0];
 
   return (
@@ -62,6 +63,8 @@ export default function DetailPage() {
         title={`${saleCategory} ${formatKoreanUnit(price)} ${
           KIND_FILTER[landCategory]
         }`}
+        isLiked={isLiked}
+        saleId={saleId}
       />
 
       <article className="bg-white">
@@ -105,8 +108,4 @@ export default function DetailPage() {
       </Link>
     </main>
   );
-  // } catch (error) {
-  //   console.error(error);
-  //   return <div>요청에 실패했습니다.</div>;
-  // }
 }
