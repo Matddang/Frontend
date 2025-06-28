@@ -29,9 +29,9 @@ export default function AuthRouter({
     const likedProperty = await getLikedProperty();
 
     if (!likedProperty.data.length) {
-      await likeProperty(1);
-      await likeProperty(2);
-      await likeProperty(3);
+      await likeProperty(5);
+      await likeProperty(6);
+      await likeProperty(7);
     }
 
     if (userInfo?.data) {
