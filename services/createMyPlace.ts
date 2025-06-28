@@ -5,6 +5,8 @@ export default async function createMyPlace(place: {
   placeType: string;
   placeName: string;
   address: string;
+  latitude: number;
+  longitude: number;
 }) {
   const { token } = useTokenStore.getState();
 

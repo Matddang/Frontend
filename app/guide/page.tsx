@@ -38,7 +38,7 @@ export default function Page() {
         <div className="flex flex-col gap-[131px] items-center mb-[221px]">
           <div className="flex flex-col gap-[25px] items-center">
             <span className="font-bold text-[44px] text-guide-olive font-line-seed">
-              맞땅(MATTANG)이란?
+              맞땅(MATDDANG)이란?
             </span>
             <span className="text-[27.62px] text-[#484848] text-center leading-tight tracking-0">
               맞땅은 영농 계획, 자금 상황, 주거지 정보를 기반으로

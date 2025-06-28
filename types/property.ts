@@ -14,3 +14,13 @@ export type Property = {
   wgsX: number;
   wgsY: number;
 };
+
+export type CompareHistoryType = {
+  compareTime: string;
+  sale1: {
+    sale: Property[];
+  };
+  sale2: {
+    sale: Property[];
+  };
+};
