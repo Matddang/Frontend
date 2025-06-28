@@ -60,7 +60,7 @@ export default function Map() {
   const isZoomedToMarkerRef = useRef(false);
 
   const { isSidebarOpen } = useSidebarStore();
-  const { bounds, setBounds } = useMapStore();
+  const { mode, bounds, setBounds } = useMapStore();
   const { listings, setListings } = useListingStore();
   const { type, price, area, kind, crop, place } = useFilterStore();
 
@@ -102,15 +102,17 @@ export default function Map() {
     },
     staleTime: Infinity,
   });
+  console.log(listings);
 
   useEffect(() => {
+    if (mode == "ranking") return;
     if (data) {
       const refineData = data.content.filter((item: ListingItem) =>
         ["전라남도", "전남"].some((prefix) => item.saleAddr.startsWith(prefix)),
       );
       setListings(refineData);
     }
-  }, [data, setListings]);
+  }, [data, setListings, mode]);
 
   // console.log(listings.length);
 
