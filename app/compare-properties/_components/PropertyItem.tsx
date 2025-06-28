@@ -65,7 +65,7 @@ export default function PropertyItem({
           <div className="flex flex-col">
             <div className="flex justify-between">
               <span className="typo-body-1-b text-black">
-                매매 {formatKoreanUnit(property.price)}
+                {property.saleCategory} {formatKoreanUnit(property.price)}
               </span>
               {!compare && (
                 <Image
@@ -77,7 +77,7 @@ export default function PropertyItem({
               )}
             </div>
             <span className="typo-sub-title-m text-black">
-              {Math.round(property.area)}평 / {property.saleAddr}
+              {property.area}평 / {property.saleAddr}
             </span>
           </div>
 

@@ -11,6 +11,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import createMyPlace from "@/services/createMyPlace";
 import { queryClient } from "@/app/Providers";
 import updateMyPlace from "@/services/updateMyPlace";
+import { getCoordsFromAddress } from "@/utils/getCoordsFromAddress";
 
 interface AddLocationModalProps {
   title: string;
@@ -31,11 +32,12 @@ export default function AddLocationModal({
   const [type, setType] = useState(data?.placeType || "");
   const [count, setCount] = useState(0);
   const [name, setName] = useState(data?.placeName || "");
-  const [location, setLoction] = useState(data?.address || "");
+  const [location, setLocation] = useState(data?.address || "");
   const debouncedValue = useDebounce(location, 1000);
   const [addressResult, setAddressResult] = useState([]);
   const [selectedLocation, setSelectedLoctaion] = useState("");
   const [shouldSearch, setShouldSearch] = useState(true);
+  const [coords, setCoords] = useState({ lat: 0, lng: 0 });
 
   const isEdit = title === "내 장소 수정하기";
 
@@ -52,6 +54,8 @@ export default function AddLocationModal({
         placeType: type,
         placeName: name,
         address: selectedLocation,
+        latitude: coords.lat,
+        longitude: coords.lng,
       }),
     onSuccess: (status) => {
       if (status === 201) {
@@ -70,6 +74,8 @@ export default function AddLocationModal({
         placeType: type,
         placeName: name,
         address: selectedLocation || data!.address,
+        latitude: coords.lat,
+        longitude: coords.lng,
       }),
     onSuccess: (status) => {
       if (status === 200) {
@@ -94,6 +100,21 @@ export default function AddLocationModal({
       setSelectedLoctaion("");
     }
   }, [region]);
+
+  useEffect(() => {
+    const getCoordinate = async () => {
+      try {
+        const data = await getCoordsFromAddress(selectedLocation);
+
+        if (data) setCoords(data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    if (selectedLocation) {
+      getCoordinate();
+    }
+  }, [selectedLocation]);
 
   const handleRegister = () => {
     if (isEdit) updateMutation.mutate();
@@ -173,7 +194,7 @@ export default function AddLocationModal({
                   className="w-full rounded-[8px] border-[1px] border-gray-400 py-[12px] pl-[14px] pr-[52px] bg-gray-100 focus:outline-none focus:border-primary typo-body-1-m text-black placeholder:text-gray-600"
                   placeholder="지번으로 검색 ex) 광양시 OO구 OO동 1-1"
                   onChange={(e) => {
-                    setLoction(e.target.value);
+                    setLocation(e.target.value);
                     setShouldSearch(true);
                   }}
                   value={location}
@@ -206,7 +227,7 @@ export default function AddLocationModal({
                       onClick={() => {
                         setSelectedLoctaion(addr);
                         setShouldSearch(false);
-                        setLoction(addr);
+                        setLocation(addr);
                       }}
                     >
                       {addr}
@@ -218,7 +239,7 @@ export default function AddLocationModal({
           </div>
 
           <button
-            className="typo-sub-head-sb text-white py-[12px] rounded-[8px] cursor-pointer bg-primary disabled:bg-gray-500 disabled:cursor-auto"
+            className="typo-sub-head-sb text-white py-[12px] rounded-[8px] cursor-pointer bg-primary disabled:bg-gray-500 disabled:cursor-auto mb-[30px]"
             style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08" }}
             disabled={!isEdit && (selectedLocation === "" || !name)}
             onClick={handleRegister}

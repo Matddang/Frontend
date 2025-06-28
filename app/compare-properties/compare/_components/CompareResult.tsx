@@ -2,43 +2,44 @@ import ArrowRight from "@/assets/images/arrow-right-black.svg";
 import Image from "next/image";
 import InfoIcon from "@/assets/images/info.svg";
 import { Property } from "@/types/property";
+import { formatKoreanUnit } from "@/utils/format";
 
 export default function CompareResult({ selected }: { selected: Property[] }) {
   return (
     <div className="flex justify-between">
       {selected.map((value) => (
-        <ResultItem key={value.saleId} />
+        <ResultItem key={value.saleId} data={value} />
       ))}
     </div>
   );
 }
 
-function ResultItem() {
+function ResultItem({ data }: { data: Property }) {
   const details = [
     {
-      key: "type",
+      key: "landType",
       title: "농지 유형",
-      value: "과수원",
+      value: data.landType,
     },
     {
       key: "price",
       title: "금액",
-      value: "4억 3천",
+      value: formatKoreanUnit(data.price),
     },
     {
       key: "price_of_area",
       title: "평당 가격",
-      value: "3천 8백",
+      value: formatKoreanUnit(data.price / data.area),
     },
     {
       key: "area",
       title: "면적",
-      value: 123,
+      value: data.area,
     },
     {
-      key: "revenue",
+      key: "profit",
       title: "예상 수익",
-      value: 34000,
+      value: data.profit,
     },
     {
       key: "infra",
@@ -51,9 +52,9 @@ function ResultItem() {
       ],
     },
     {
-      key: "crops",
+      key: "mainCrop",
       title: "적합 농산물",
-      value: ["포도", "복숭아", "사과"],
+      value: data.mainCrop,
     },
   ];
 
@@ -66,14 +67,10 @@ function ResultItem() {
         return `매매 ${value}`;
       case "area":
         return `${value}평`;
-      case "revenue":
-        return `최대 ${value.toLocaleString()}만원`;
       case "infra":
         return Array.isArray(value)
           ? value.map((v, i) => <div key={i}>{v}</div>)
           : "";
-      case "crops":
-        return (value as string[]).join(", ");
       default:
         return value;
     }
@@ -83,12 +80,22 @@ function ResultItem() {
     <div className="w-[348px] flex flex-col gap-[24px]">
       <div className="flex flex-col gap-[8px]">
         <div className="flex flex-col">
-          <span className="typo-head-3 text-black">매매 4억 3천</span>
+          <span className="typo-head-3 text-black">
+            {data.saleCategory} {formatKoreanUnit(data.price)}
+          </span>
           <span className="typo-sub-title-m text-gray-900">
-            전라남도 완도군 청산면 12-1
+            {data.saleAddr}
           </span>
         </div>
-        <div className="w-full h-[214px] rounded-[9px] bg-gray-200 flex justify-center items-center" />
+        <div className="w-full h-[214px] rounded-[9px] bg-gray-200 flex justify-center items-center overflow-hidden">
+          <Image
+            src={data.imgUrl}
+            alt="img"
+            width={348}
+            height={214}
+            className="w-full h-full object-cover"
+          />
+        </div>
         <button
           className="flex items-center justify-center gap-[8px] typo-sub-head-sb text-gray-1100 bg-gray-200 border-[1px] border-gray-400 cursor-pointer py-[12px] rounded-[8px]"
           style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)" }}
@@ -102,9 +109,9 @@ function ResultItem() {
           <div key={detail.key} className="flex flex-col">
             <div className="typo-14-r text-gray-700 flex gap-[4px] items-center">
               {detail.title}
-              {(detail.key === "revenue" ||
+              {(detail.key === "profit" ||
                 detail.key === "infra" ||
-                detail.key === "crops") && (
+                detail.key === "mainCrop") && (
                 <Image src={InfoIcon} alt="info" width={15} height={15} />
               )}
             </div>

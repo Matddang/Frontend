@@ -52,6 +52,8 @@ export default function DetailPage() {
     price,
     saleAddr,
     saleCategory,
+    wgsX,
+    wgsY,
   } = sale[0];
 
   return (
@@ -82,7 +84,7 @@ export default function DetailPage() {
       </article>
 
       <aside className="mt-6 space-y-[34px] bg-white" aria-label="추가 정보">
-        <DistanceInfo />
+        <DistanceInfo coordinate={[wgsX, wgsY]} />
         <hr className="h-[5px] bg-gray-300 border-none" />
         <InfraInfo />
         <Image

@@ -50,7 +50,7 @@ export default function MyPageLink({
       </Link>
       {openModal && (
         <Modal width={410} onClose={() => setOpenModal(false)}>
-          <div className="flex flex-col gap-[56px] items-center pt-[59px] pb-[19px]">
+          <div className="flex flex-col gap-[56px] items-center pt-[59px] pb-[49px]">
             <div className="flex flex-col gap-[20px]">
               <span className="typo-head-3 text-gray-1100">
                 정말 탈퇴하시겠습니까?
