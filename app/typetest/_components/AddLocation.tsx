@@ -14,6 +14,8 @@ interface Place {
   address: string;
   placeType: string;
   placeName: string;
+  latitude: string;
+  longitude: string;
 }
 
 export default function AddLoaction({ nextStep, prevStep }: StepProps) {

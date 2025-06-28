@@ -65,7 +65,7 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
       bgColor={isLogin ? `bg-primary-light` : ""}
     >
       {!isLogin ? (
-        <div className="flex flex-col gap-[24px] pt-[59px] pb-[12px]">
+        <div className="flex flex-col gap-[24px] pt-[59px] pb-[42px]">
           <div className="flex flex-col gap-[22px] items-center">
             <div className="flex flex-col gap-[10px]">
               <span className="typo-head-3 text-gray-1100 text-center">

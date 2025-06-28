@@ -40,7 +40,7 @@ export default function Modal({
     >
       <div className="flex items-center justify-center min-h-[100vh] px-[20px] py-[40px] w-full">
         <div
-          className={`rounded-[20px] pt-[31px] pb-[30px] px-[20px] relative ${
+          className={`rounded-[20px] pt-[31px] px-[20px] relative ${
             bgColor || "bg-white"
           }`}
           style={{
@@ -49,12 +49,16 @@ export default function Modal({
             boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.08)",
           }}
         >
-          <Image
-            src={XIcon}
-            alt="close"
-            className="absolute top-[20px] right-[20px] cursor-pointer"
-            onClick={onClose}
-          />
+          <button className="w-[24px] h-[24px]" onClick={onClose}>
+            <Image
+              src={XIcon}
+              alt="close"
+              className="absolute top-[20px] right-[20px] cursor-pointer"
+              width={24}
+              height={24}
+            />
+          </button>
+
           {children}
         </div>
       </div>
