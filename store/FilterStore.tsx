@@ -8,7 +8,12 @@ interface FiltersState {
   area: { min: number; max: number };
   kind: string[];
   crop: { [parent: string]: string[] };
-  place: { id: number | null; name: string | null };
+  place: {
+    id: number | null;
+    name: string | null;
+    lat: number | null;
+    lng: number | null;
+  };
 }
 
 interface FilterStore extends FiltersState {
@@ -17,7 +22,12 @@ interface FilterStore extends FiltersState {
   setArea: (area: { min: number; max: number }) => void;
   setKind: (kind: string[]) => void;
   setCrop: (crop: { [parent: string]: string[] }) => void;
-  setPlace: (place: { id: number | null; name: string | null }) => void;
+  setPlace: (place: {
+    id: number | null;
+    name: string | null;
+    lat: number | null;
+    lng: number | null;
+  }) => void;
 }
 
 export const useFilterStore = create(
@@ -34,7 +44,7 @@ export const useFilterStore = create(
       },
       kind: [],
       crop: {},
-      place: { id: null, name: null },
+      place: { id: null, name: null, lat: null, lng: null },
 
       setType: (type) => set({ type }),
       setPrice: (price) => set({ price }),

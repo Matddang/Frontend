@@ -88,7 +88,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
       case "place":
         setTempFilters((prev) => ({
           ...prev,
-          place: { id: null, name: null },
+          place: { id: null, name: null, lat: null, lng: null },
         }));
         break;
       default:
