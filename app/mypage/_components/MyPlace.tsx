@@ -4,21 +4,11 @@ import AddLoctaionButton from "@/components/location/AddLocationButton";
 import LocationBar from "@/components/location/LocationBar";
 import { getMyPlace } from "@/services/getMyPlace";
 import { useTokenStore } from "@/store/useTokenStore";
+import { Place } from "@/types/myPlace";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-
-interface Place {
-  placeId: number;
-  address: string;
-  placeType: string;
-  placeName: string;
-  latitude: string;
-  longitude: string;
-}
 
 export default function MyPlace() {
   const { token } = useTokenStore();
-  const [locations, setLocations] = useState<Place[]>([]);
 
   const { data } = useQuery({
     queryKey: ["myPlace"],
@@ -27,18 +17,12 @@ export default function MyPlace() {
     enabled: !!token,
   });
 
-  useEffect(() => {
-    if (data) {
-      setLocations(data.data);
-    }
-  }, [data]);
+  const places: Place[] = data?.data || [];
 
   return (
     <div className="flex flex-col gap-[12px]">
-      {locations?.length ? (
-        locations.map((location, i) => (
-          <LocationBar location={location} key={i} />
-        ))
+      {places?.length ? (
+        places.map((place, i) => <LocationBar location={place} key={i} />)
       ) : (
         <div className="flex flex-col gap-[2px] mt-[68px]">
           <span className="typo-sub-head-sb text-black">

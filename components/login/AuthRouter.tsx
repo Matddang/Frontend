@@ -1,6 +1,8 @@
 "use client";
 
+import { getLikedProperty } from "@/services/getLikedProperty";
 import { getUserInfo } from "@/services/getUserInfo";
+import { likeProperty } from "@/services/likeProperty";
 import { googleLogin, kakaoLogin } from "@/services/login";
 import { useLoginModalStore } from "@/store/useLoginModalStore";
 import { useUserStore } from "@/store/UserStore";
@@ -22,6 +24,24 @@ export default function AuthRouter({
   const { addToken } = useTokenStore.getState();
   const { modalOpen } = useLoginModalStore.getState();
 
+  const prevLogin = async (token: string) => {
+    const userInfo = await getUserInfo(token);
+    const likedProperty = await getLikedProperty();
+
+    if (!likedProperty.data.length) {
+      await likeProperty(1);
+      await likeProperty(2);
+      await likeProperty(3);
+    }
+
+    if (userInfo?.data) {
+      if (!userInfo.data.typeTestComplete) {
+        modalOpen();
+      }
+      router.replace("/");
+    }
+  };
+
   useEffect(() => {
     const handleTokens = async () => {
       if (type === "kakao") {
@@ -31,14 +51,7 @@ export default function AuthRouter({
           addUser(res.data.data);
           addToken(res.token);
 
-          const userInfo = await getUserInfo(res.token);
-
-          if (userInfo?.data) {
-            if (!userInfo.data.typeTestComplete) {
-              modalOpen();
-            }
-            router.replace("/");
-          }
+          prevLogin(res.token);
         }
       } else {
         const res = await googleLogin(code, idToken!);
@@ -47,14 +60,7 @@ export default function AuthRouter({
           addUser(res.data.data);
           addToken(res.token);
 
-          const userInfo = await getUserInfo(res.token);
-
-          if (userInfo?.data) {
-            if (!userInfo.data.typeTestComplete) {
-              modalOpen();
-            }
-            router.replace("/");
-          }
+          prevLogin(res.token);
         }
       }
     };
