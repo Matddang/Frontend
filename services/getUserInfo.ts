@@ -1,7 +1,7 @@
 import { useTokenStore } from "@/store/useTokenStore";
 import axios from "axios";
 
-export async function getUserInfo() {
+export async function getUserInfo(accessToken?: string) {
   const { token } = useTokenStore.getState();
 
   try {
@@ -9,7 +9,7 @@ export async function getUserInfo() {
       `${process.env.NEXT_PUBLIC_BASE_URL}/user/v1/me`,
       {
         headers: {
-          Authorization: `${token}`,
+          Authorization: accessToken || token,
         },
       },
     );

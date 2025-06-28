@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserInfo } from "@/services/getUserInfo";
 import { googleLogin, kakaoLogin } from "@/services/login";
 import { useLoginModalStore } from "@/store/useLoginModalStore";
 import { useUserStore } from "@/store/UserStore";
@@ -29,9 +30,15 @@ export default function AuthRouter({
         if (res.data.status === 200) {
           addUser(res.data.data);
           addToken(res.token);
-          modalOpen();
 
-          router.replace("/");
+          const userInfo = await getUserInfo(res.token);
+
+          if (userInfo?.data) {
+            if (!userInfo.data.typeTestComplete) {
+              modalOpen();
+            }
+            router.replace("/");
+          }
         }
       } else {
         const res = await googleLogin(code, idToken!);
@@ -39,9 +46,15 @@ export default function AuthRouter({
         if (res.data.status === 200) {
           addUser(res.data.data);
           addToken(res.token);
-          modalOpen();
 
-          router.replace("/");
+          const userInfo = await getUserInfo(res.token);
+
+          if (userInfo?.data) {
+            if (!userInfo.data.typeTestComplete) {
+              modalOpen();
+            }
+            router.replace("/");
+          }
         }
       }
     };
