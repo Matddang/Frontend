@@ -11,7 +11,12 @@ interface Filters {
   area?: { min: number; max: number };
   kind?: string[];
   crop?: { [parent: string]: string[] };
-  place?: { id: number | null; name: string | null };
+  place?: {
+    id: number | null;
+    name: string | null;
+    lat: number | null;
+    lng: number | null;
+  };
 }
 
 export const buildListingBody = ({
@@ -22,11 +27,13 @@ export const buildListingBody = ({
   area,
   price,
   crop,
+  place,
 }: Filters) => {
   const body: Record<string, any> = {};
 
   if (type) body.saleCategoryList = [type];
-  if (kind) body.landCategoryList = kind;
+
+  if (kind && kind.length > 0) body.landCategoryList = kind;
 
   if (area?.min) body.minArea = area.min;
   if (area?.max !== AREA_FILTER[AREA_FILTER.length - 1].value)
@@ -44,6 +51,8 @@ export const buildListingBody = ({
       body.cropIds = cropValues;
     }
   }
+
+  if (place && place.id !== null) body.location = [place.lat, place.lng];
 
   if (keyword) {
     body.keyword = keyword;

@@ -76,7 +76,17 @@ export default function Map() {
 
   //  매물 목록 가져오기
   const { data } = useQuery({
-    queryKey: ["listing", type, price, area, kind, crop, keyword, bounds],
+    queryKey: [
+      "listing",
+      type,
+      price,
+      area,
+      kind,
+      crop,
+      place,
+      keyword,
+      bounds,
+    ],
     queryFn: () => {
       const body = buildListingBody({
         keyword,
@@ -86,6 +96,7 @@ export default function Map() {
         area,
         price,
         crop,
+        place,
       });
       return getListing(body);
     },
@@ -100,6 +111,8 @@ export default function Map() {
       setListings(refineData);
     }
   }, [data, setListings]);
+
+  // console.log(listings.length);
 
   // 전라남도 구역으로 이동
   const moveToJeonnam = () => {
