@@ -12,16 +12,12 @@ import createMyPlace from "@/services/createMyPlace";
 import { queryClient } from "@/app/Providers";
 import updateMyPlace from "@/services/updateMyPlace";
 import { getCoordsFromAddress } from "@/utils/getCoordsFromAddress";
+import { Place } from "@/types/myPlace";
 
 interface AddLocationModalProps {
   title: string;
   onClose: () => void;
-  data?: {
-    placeId: number;
-    address: string;
-    placeType: string;
-    placeName: string;
-  };
+  data?: Place;
 }
 
 export default function AddLocationModal({
@@ -37,7 +33,10 @@ export default function AddLocationModal({
   const [addressResult, setAddressResult] = useState([]);
   const [selectedLocation, setSelectedLoctaion] = useState("");
   const [shouldSearch, setShouldSearch] = useState(true);
-  const [coords, setCoords] = useState({ lat: 0, lng: 0 });
+  const [coords, setCoords] = useState({
+    lat: Number(data?.latitude) || 0,
+    lng: Number(data?.longitude) || 0,
+  });
 
   const isEdit = title === "내 장소 수정하기";
 

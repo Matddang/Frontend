@@ -27,7 +27,7 @@ function ResultItem({ data }: { data: Property }) {
 
   const { data: saleData } = useQuery({
     queryKey: ["listingDetail", data],
-    queryFn: () => getListingDetail(data.saleId.toString()),
+    queryFn: () => getListingDetail(data.saleId),
     staleTime: 1000 * 60 * 5,
     enabled: !!token,
   });

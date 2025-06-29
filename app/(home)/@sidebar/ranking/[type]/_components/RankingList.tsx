@@ -47,8 +47,6 @@ export default function RankingList() {
     };
   }, [data, setListings, setMode]);
 
-  console.log(data);
-
   useEffect(() => {
     if (type === "popular") {
       setSortBy("liked");
@@ -84,8 +82,6 @@ export default function RankingList() {
             kind={sale.landType}
             variant="horizontal"
             crop={sale.mainCrop}
-            place="집"
-            time="5분"
             onClick={() => moveToDetail(sale.saleId)}
             isLiked={sale.isLiked}
           />

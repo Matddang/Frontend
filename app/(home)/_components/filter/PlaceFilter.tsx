@@ -90,8 +90,12 @@ export default function PlaceFilter({
                 height={34}
               />
               <div className="flex flex-col gap-[2px]">
-                <div className="typo-sub-head-sb text-left">{placeName}</div>
-                <div className="typo-body-2-m">{address}</div>
+                <div className="typo-sub-head-sb text-left w-[260px] truncate">
+                  {placeName}
+                </div>
+                <div className="typo-body-2-m text-left w-[260px] truncate">
+                  {address}
+                </div>
               </div>
             </button>
           ),

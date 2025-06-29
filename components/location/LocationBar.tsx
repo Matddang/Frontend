@@ -6,17 +6,9 @@ import PlantIcon from "@/assets/images/plant.svg";
 import EditIcon from "@/assets/images/edit.svg";
 import { useState } from "react";
 import AddLocationModal from "./AddLocationModal";
+import { Place } from "@/types/myPlace";
 
-interface LocationBarType {
-  location: {
-    placeId: number;
-    address: string;
-    placeType: string;
-    placeName: string;
-  };
-}
-
-export default function LocationBar({ location }: LocationBarType) {
+export default function LocationBar({ location }: { location: Place }) {
   const [openModal, setOpenModal] = useState(false);
 
   return (
