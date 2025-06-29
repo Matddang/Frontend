@@ -114,8 +114,6 @@ export default function Map() {
     }
   }, [data, setListings, mode]);
 
-  // console.log(listings.length);
-
   // 전라남도 구역으로 이동
   const moveToJeonnam = () => {
     if (!kakaoMapRef.current) return;
@@ -155,24 +153,38 @@ export default function Map() {
       lat,
       lng,
       address,
+      saleCategory,
+      price,
+      area,
+      landCategory,
     }: {
       saleId: number;
       lat: number;
       lng: number;
       address: string;
+      saleCategory: string;
+      price: number;
+      area: number;
+      landCategory: string;
     }) => {
       const latLng = new window.kakao.maps.LatLng(lat, lng);
+
       // 지도 중심 이동 및 줌인
       if (!isZoomedToMarkerRef.current) {
-        kakaoMapRef.current.setLevel(1);
-        kakaoMapRef.current.panTo(latLng);
+        const queryParams = new URLSearchParams(window.location.search);
+        queryParams.set("zoom", "1");
+        queryParams.set("m_lat", String(lat));
+        queryParams.set("m_lng", String(lng));
+
+        const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
+        window.history.replaceState(null, "", newUrl);
       }
 
       const content = createOverlayContent(
-        listings[0].saleCategory,
-        listings[0].price,
-        listings[0].area,
-        listings[0].landCategory,
+        saleCategory,
+        price,
+        area,
+        landCategory,
       );
 
       content.dataset.saleId = String(saleId);
@@ -220,7 +232,7 @@ export default function Map() {
 
       overlays.current.infoOverlay = infoOverlay;
     },
-    [listings],
+    [],
   );
 
   const handleKeywordSearch = (keyword: string) => {
@@ -371,6 +383,7 @@ export default function Map() {
   // 숫자 클러스터러
   const setupNumberCluster = useCallback(() => {
     clearAllClusters();
+    clearSelectedMarker();
 
     const map = kakaoMapRef.current;
     if (!map) return;
@@ -463,26 +476,6 @@ export default function Map() {
     }
   }, [pathname]);
 
-  // 현재 URL 경로에 따른 지도 업데이트
-  useEffect(() => {
-    const zoom = searchParams.get("zoom");
-    const mLat = searchParams.get("m_lat");
-    const mLng = searchParams.get("m_lng");
-
-    if (!kakaoMapRef.current) return;
-
-    // 쿼리 파라미터가 있을 경우, 해당 좌표와 줌 레벨로 이동
-    if (zoom && mLat && mLng) {
-      const center = new window.kakao.maps.LatLng(Number(mLat), Number(mLng));
-      const level = Number(zoom);
-
-      kakaoMapRef.current.setLevel(level);
-      kakaoMapRef.current.setCenter(center);
-    } else {
-      kakaoMapRef.current.setLevel(10);
-    }
-  }, [searchParams]);
-
   // 사이드바 열고 닫힐 때 지도가 잘 보이도록 재배치
   useEffect(() => {
     if (!kakaoMapRef.current) return;
@@ -562,6 +555,33 @@ export default function Map() {
     }
   }, [setBounds]);
 
+  // 현재 URL 경로에 따른 지도 업데이트
+  useEffect(() => {
+    const zoom = searchParams.get("zoom");
+    const mLat = searchParams.get("m_lat");
+    const mLng = searchParams.get("m_lng");
+
+    if (!kakaoMapRef.current) return;
+
+    // 쿼리 파라미터가 있을 경우, 해당 좌표와 줌 레벨로 이동
+    if (zoom && mLat && mLng) {
+      const center = new window.kakao.maps.LatLng(Number(mLat), Number(mLng));
+      const level = Number(zoom);
+
+      kakaoMapRef.current.setLevel(level);
+      kakaoMapRef.current.setCenter(center);
+    } else if (window.location.pathname === "/") {
+      const defaultCenter = new window.kakao.maps.LatLng(
+        JEONNAM_CENTER.lat,
+        JEONNAM_CENTER.lng,
+      );
+      kakaoMapRef.current.setLevel(10);
+      kakaoMapRef.current.setCenter(defaultCenter);
+    } else {
+      kakaoMapRef.current.setLevel(10);
+    }
+  }, [searchParams, JEONNAM_CENTER]);
+
   // --- 2. listings 변경 시 마커 및 클러스터 업데이트 ---
   useEffect(() => {
     if (!kakaoMapRef.current || listings.length <= 0) {
@@ -638,9 +658,27 @@ export default function Map() {
       (pos) => String(pos.saleId) === String(params.id),
     );
     if (!target) return;
-    const { saleId, wgsY: lat, wgsX: lng, saleAddr: address } = target;
+    const {
+      saleId,
+      wgsY: lat,
+      wgsX: lng,
+      saleAddr: address,
+      saleCategory,
+      price,
+      area,
+      landCategory,
+    } = target;
 
-    handleMarkerClick({ saleId, lat, lng, address });
+    handleMarkerClick({
+      saleId,
+      lat,
+      lng,
+      address,
+      saleCategory,
+      price,
+      area,
+      landCategory,
+    });
     isZoomedToMarkerRef.current = true;
   }, [params?.id, pathname, listings, handleMarkerClick]);
 
