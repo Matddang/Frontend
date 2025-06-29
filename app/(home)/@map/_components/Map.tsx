@@ -98,11 +98,11 @@ export default function Map() {
         crop,
         place,
       });
+
       return getListing(body);
     },
     staleTime: Infinity,
   });
-  // console.log(listings);
 
   useEffect(() => {
     if (mode == "ranking") return;
@@ -643,13 +643,30 @@ export default function Map() {
     kakaoMapRef.current.setLevel(10);
     kakaoMapRef.current.panTo(center);
 
-    // keyword 파라미터 제거
-    const params = new URLSearchParams(window.location.search);
-    params.delete("keyword");
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState(null, "", newUrl);
+    const map = kakaoMapRef.current;
 
-    hasHandledKeywordRef.current = true;
+    let shouldRemoveKeyword = false;
+
+    const handleIdle = () => {
+      if (!shouldRemoveKeyword) {
+        // 첫 idle(검색으로 이동한 후)에는 플래그만 설정
+        shouldRemoveKeyword = true;
+        return;
+      }
+      // 이동 후 keyword 파라미터 제거
+      const params = new URLSearchParams(window.location.search);
+      params.delete("keyword");
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState(null, "", newUrl);
+
+      hasHandledKeywordRef.current = true;
+
+      // 리스너 제거
+      window.kakao.maps.event.removeListener(map, "idle", handleIdle);
+    };
+
+    // 지도 이동 완료 후(이동 후 idle 발생) keyword 제거
+    window.kakao.maps.event.addListener(map, "idle", handleIdle);
   }, [listings]);
 
   // 검색 키워드가 변경되면 초기화
