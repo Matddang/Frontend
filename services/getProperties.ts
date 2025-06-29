@@ -13,7 +13,7 @@ export async function getProperties(sortBy: string) {
       },
       {
         headers: {
-          Authorization: token,
+          Authorization: `${token}`,
         },
       },
     );
