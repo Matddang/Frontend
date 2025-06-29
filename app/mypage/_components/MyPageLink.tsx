@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserInfo } from "@/services/getUserInfo";
 import { useTokenStore } from "@/store/useTokenStore";
 import { deleteUser } from "@/services/deleteUser";
+import { useUserStore } from "@/store/UserStore";
 
 export default function MyPageLink({
   tab,
@@ -20,6 +21,8 @@ export default function MyPageLink({
 }) {
   const [openModal, setOpenModal] = useState(false);
   const { token } = useTokenStore();
+  const { isLogin } = useUserStore();
+
   const { data } = useQuery({
     queryKey: ["userInfo"],
     queryFn: () => getUserInfo(),
@@ -48,7 +51,7 @@ export default function MyPageLink({
           <Image src={ArrowBlackIcon} alt="right" />
         </div>
       </Link>
-      {openModal && (
+      {openModal && isLogin && (
         <Modal width={410} onClose={() => setOpenModal(false)}>
           <div className="flex flex-col gap-[56px] items-center pt-[59px] pb-[49px]">
             <div className="flex flex-col gap-[20px]">
