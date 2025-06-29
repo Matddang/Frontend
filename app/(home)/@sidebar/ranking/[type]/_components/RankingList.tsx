@@ -47,8 +47,6 @@ export default function RankingList() {
     };
   }, [data, setListings, setMode]);
 
-  console.log(data);
-
   useEffect(() => {
     if (type === "popular") {
       setSortBy("liked");

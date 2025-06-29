@@ -102,7 +102,7 @@ export default function Map() {
     },
     staleTime: Infinity,
   });
-  console.log(listings);
+  // console.log(listings);
 
   useEffect(() => {
     if (mode == "ranking") return;
@@ -394,7 +394,7 @@ export default function Map() {
         params.set("m_lat", String(center.getLat()));
         params.set("m_lng", String(center.getLng()));
 
-        router.replace(`/listing/${item.saleId}?${params.toString()}`);
+        router.push(`/listing/${item.saleId}?${params.toString()}`);
       });
 
       const marker = new window.kakao.maps.CustomOverlay({
@@ -448,11 +448,11 @@ export default function Map() {
         listings.length >= 2) ||
       listings.length === 0
     ) {
-      router.replace(`/listing?${params.toString()}`);
+      router.push(`/listing?${params.toString()}`);
     }
     // 현재 경로가 홈이 아니라면 이동
     else if (window.location.pathname.startsWith("/listing") && level > 7) {
-      router.replace(`/?${params.toString()}`);
+      router.push(`/?${params.toString()}`);
     }
   }, [listings, router]);
 
@@ -462,6 +462,26 @@ export default function Map() {
       isZoomedToMarkerRef.current = false;
     }
   }, [pathname]);
+
+  // 현재 URL 경로에 따른 지도 업데이트
+  useEffect(() => {
+    const zoom = searchParams.get("zoom");
+    const mLat = searchParams.get("m_lat");
+    const mLng = searchParams.get("m_lng");
+
+    if (!kakaoMapRef.current) return;
+
+    // 쿼리 파라미터가 있을 경우, 해당 좌표와 줌 레벨로 이동
+    if (zoom && mLat && mLng) {
+      const center = new window.kakao.maps.LatLng(Number(mLat), Number(mLng));
+      const level = Number(zoom);
+
+      kakaoMapRef.current.setLevel(level);
+      kakaoMapRef.current.setCenter(center);
+    } else {
+      kakaoMapRef.current.setLevel(10);
+    }
+  }, [searchParams]);
 
   // 사이드바 열고 닫힐 때 지도가 잘 보이도록 재배치
   useEffect(() => {
