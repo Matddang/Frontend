@@ -13,6 +13,7 @@ export type Property = {
   saleId: number;
   wgsX: number;
   wgsY: number;
+  isLiked: boolean;
 };
 
 export type CompareHistoryType = {

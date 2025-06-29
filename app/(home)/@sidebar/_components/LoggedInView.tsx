@@ -29,7 +29,10 @@ export default function LoggedInView() {
   return (
     <div className="bg-gray-100">
       {!data?.data?.typeTestComplete ? (
-        <section className="px-4 pt-[10px]">
+        <section
+          className="px-4 pt-[10px] cursor-pointer"
+          onClick={() => router.push("/typetest")}
+        >
           <Image src={TypeTestBanner} alt="banner" />
         </section>
       ) : (

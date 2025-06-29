@@ -71,6 +71,7 @@ export default function LoggedOutView() {
           {sales.map((sale) => (
             <Card
               key={sale.saleId}
+              saleId={sale.saleId}
               imageSrc={sale.imgUrl}
               type={sale.saleCategory}
               price={sale.price}

@@ -1,53 +1,62 @@
 "use client";
 
+import { likeProperty } from "@/services/likeProperty";
 import { formatKoreanUnit } from "@/utils/format";
+import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useState } from "react";
 
 interface CardProps {
+  saleId: number;
   imageSrc: string;
   type: string;
   price: number;
   address: string;
   area: number;
   kind: string;
-  isWished?: boolean;
-  onWishToggle?: (newValue: boolean) => void;
+  isLiked?: boolean;
   variant?: "vertical" | "horizontal";
   crop?: string;
   place?: string;
   time?: string;
+  isSwiper?: boolean;
   onClick: () => void;
 }
 
 export default function Card({
+  saleId,
   imageSrc,
   type,
   price,
   address,
   area,
   kind,
-  isWished = false,
-  onWishToggle,
+  isLiked,
   variant = "vertical",
   crop,
   place,
   time,
+  isSwiper = false,
   onClick,
 }: CardProps) {
-  const [addWish, setAddWish] = useState(isWished); // 전역 상태 관리 필요
   const [showMessage, setShowMessage] = useState(false);
+  const [like, setLike] = useState(isLiked);
 
-  const handleWishClick = (e: React.MouseEvent) => {
+  const mutation = useMutation({
+    mutationFn: () => likeProperty(saleId),
+    onSuccess: () => {
+      setLike((prev) => !prev);
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 2000);
+    },
+    onError: () => {
+      console.error("매물 좋아요 실패");
+    },
+  });
+
+  const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-
-    const newValue = !addWish;
-    setAddWish(newValue);
-    onWishToggle?.(newValue);
-
-    // 문구 보여주기
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 2000);
+    mutation.mutate();
   };
 
   const isHorizontal = variant === "horizontal";
@@ -84,14 +93,14 @@ export default function Card({
               viewBox="0 0 22 20"
               fill="none"
               className="cursor-pointer"
-              onClick={handleWishClick}
+              onClick={handleLikeClick}
             >
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
                 d="M10.9932 3.21882C8.9938 0.881408 5.65975 0.25265 3.15469 2.39302C0.649644 4.53339 0.296968 8.11198 2.2642 10.6434C3.89982 12.7481 8.84977 17.1871 10.4721 18.6238C10.6536 18.7846 10.7444 18.8649 10.8502 18.8965C10.9426 18.9241 11.0437 18.9241 11.1361 18.8965C11.2419 18.8649 11.3327 18.7846 11.5142 18.6238C13.1365 17.1871 18.0865 12.7481 19.7221 10.6434C21.6893 8.11198 21.3797 4.51088 18.8316 2.39302C16.2835 0.275165 12.9925 0.881408 10.9932 3.21882Z"
-                fill={addWish ? "#39B94C" : ""}
-                stroke={addWish ? "" : "#505154"}
+                fill={like ? "#39B94C" : ""}
+                stroke={like ? "" : "#505154"}
                 strokeWidth="1.6"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -118,13 +127,11 @@ export default function Card({
       </div>
 
       {/* 찜 메시지 */}
-      {showMessage && (
+      {!isSwiper && showMessage ? (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#575757] opacity-80 text-white px-4 py-[10px] rounded-[3px] z-50">
-          {addWish
-            ? "찜 목록에 추가되었습니다."
-            : "찜 목록에서 제거되었습니다."}
+          {like ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다."}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

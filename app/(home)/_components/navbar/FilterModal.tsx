@@ -88,7 +88,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
       case "place":
         setTempFilters((prev) => ({
           ...prev,
-          place: { id: null, name: null },
+          place: { id: null, name: null, lat: null, lng: null },
         }));
         break;
       default:
@@ -157,7 +157,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     }
   };
   return (
-    <div className="bg-white rounded-[20px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)] p-5 min-w-[380px]">
+    <div className="bg-white rounded-[20px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)] p-5 min-w-[380px] max-h-[562px] overflow-y-auto">
       <div className="flex justify-between">
         <div className="flex items-center gap-[5px]">
           <h2 className="text-lg font-extrabold">{filter.label}</h2>
@@ -165,7 +165,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
         </div>
         {filter.key === "place" && (
           <Link
-            href={"#"}
+            href={"/mypage/location"}
             className="text-gray-700 border-b border-gray-700 typo-body-1-m h-5.5"
           >
             내 장소 편집

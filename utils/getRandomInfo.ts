@@ -16,8 +16,8 @@ const seededRandom = (seed: number): number => {
 };
 
 // id에 따라 고정된 랜덤 데이터를 리턴하는 함수
-export const getDeterministicLandUseInfo = (id: string) => {
-  const seed = hashStringToNumber(id);
+export const getDeterministicLandUseInfo = (id: number) => {
+  const seed = hashStringToNumber(id.toString());
   const rand = seededRandom(seed);
 
   const landUse = landUses[Math.floor(rand * landUses.length)];

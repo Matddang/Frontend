@@ -9,6 +9,7 @@ import { getProperties } from "@/services/getProperties";
 import { Property } from "@/types/property";
 import { useEffect, useState } from "react";
 import { useListingStore } from "@/store/ListingStore";
+import { useMapStore } from "@/store/MapStore";
 
 export default function RankingList() {
   const { type } = useParams();
@@ -16,6 +17,7 @@ export default function RankingList() {
   const searchParams = useSearchParams();
 
   const { listings, setListings } = useListingStore();
+  const { setMode } = useMapStore();
 
   const [sortBy, setSortBy] = useState("");
 
@@ -38,8 +40,14 @@ export default function RankingList() {
   useEffect(() => {
     if (data?.data.content.length) {
       setListings(data.data.content);
+      setMode("ranking");
     }
-  }, [data, setListings]);
+    return () => {
+      setMode("map");
+    };
+  }, [data, setListings, setMode]);
+
+  console.log(data);
 
   useEffect(() => {
     if (type === "popular") {
@@ -67,6 +75,7 @@ export default function RankingList() {
         {listings.map((sale: Property) => (
           <Card
             key={sale.saleId}
+            saleId={sale.saleId}
             imageSrc={sale.imgUrl}
             type={sale.saleCategory}
             price={sale.price}
@@ -78,6 +87,7 @@ export default function RankingList() {
             place="집"
             time="5분"
             onClick={() => moveToDetail(sale.saleId)}
+            isLiked={sale.isLiked}
           />
         ))}
       </div>

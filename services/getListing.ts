@@ -1,3 +1,4 @@
+import { useTokenStore } from "@/store/useTokenStore";
 import axios from "axios";
 
 export interface GetListingRequest {
@@ -17,10 +18,17 @@ export interface GetListingRequest {
 }
 
 export async function getListing(requestData: GetListingRequest) {
+  const { token } = useTokenStore.getState();
+
   try {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/sale`,
       requestData,
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      },
     );
     return response.data.data;
   } catch (error) {

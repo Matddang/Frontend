@@ -16,6 +16,7 @@ interface SimilarItem {
   area: number;
   mainCrop: string;
   imgUrl: string;
+  isLiked: boolean;
 }
 
 export default function SimilarItems({ items }: { items: SimilarItem[] }) {
@@ -33,6 +34,7 @@ export default function SimilarItems({ items }: { items: SimilarItem[] }) {
         {items.map((item: SimilarItem) => (
           <Card
             key={item.saleId}
+            saleId={item.saleId}
             imageSrc={item.imgUrl}
             type={item.saleCategory}
             price={item.price}
@@ -40,6 +42,8 @@ export default function SimilarItems({ items }: { items: SimilarItem[] }) {
             address={item.saleAddr}
             kind={KIND_FILTER[item.landCategory]}
             onClick={() => moveToDetail(item.saleId)}
+            isLiked={item.isLiked}
+            isSwiper={true}
           />
         ))}
       </CustomSwiper>

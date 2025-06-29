@@ -15,6 +15,7 @@ export interface ListingItem {
   mainCrop: string;
   profit: number;
   imgUrl: string;
+  isLiked: boolean;
 }
 
 interface ListingStore {
