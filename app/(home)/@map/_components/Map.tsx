@@ -273,7 +273,7 @@ export default function Map() {
   };
 
   // 지도 zoom과 center 변경 시, 쿼리 파라미터 업데이트
-  const updateUrlParams = () => {
+  const syncMapQuery = () => {
     const map = kakaoMapRef.current;
     if (!map) return;
 
@@ -385,6 +385,7 @@ export default function Map() {
     clearAllClusters();
     clearSelectedMarker();
 
+    console.log("숫자 클러스터");
     const map = kakaoMapRef.current;
     if (!map) return;
 
@@ -442,7 +443,7 @@ export default function Map() {
   }, [listings, router]);
 
   // 매물 변화에 따라 URL 파라미터 업데이트
-  const showVisibleMarkers = useCallback(() => {
+  const syncUrlOnListings = useCallback(() => {
     const map = kakaoMapRef.current;
     if (!map) return;
 
@@ -542,7 +543,7 @@ export default function Map() {
           setShowMoveToJeollaButton(false);
         }
 
-        updateUrlParams();
+        syncMapQuery();
       });
     };
 
@@ -603,8 +604,8 @@ export default function Map() {
       setupRegionMarkers();
     }
 
-    showVisibleMarkers();
-  }, [listings, setupNumberCluster, setupRegionMarkers, showVisibleMarkers]);
+    syncUrlOnListings();
+  }, [listings, setupNumberCluster, setupRegionMarkers, syncUrlOnListings]);
 
   const hasHandledKeywordRef = useRef(false);
 
