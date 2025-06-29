@@ -94,6 +94,7 @@ export default function LoggedOutView() {
           <button
             className="relative flex-grow min-w-[100px]"
             style={{ aspectRatio: "171 / 182" }}
+            onClick={() => router.push("/info/policy")}
           >
             <Image
               src={AgriPolicyImg}
@@ -105,6 +106,7 @@ export default function LoggedOutView() {
           <button
             className="relative flex-grow min-w-[100px]"
             style={{ aspectRatio: "171 / 182" }}
+            onClick={() => router.push("/info/city-property")}
           >
             <Image
               src={LandListingImg}

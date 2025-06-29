@@ -1,0 +1,27 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="32" cy="32" r="32" fill="url(#paint0_linear_1196_20737)"/>
+<mask id="mask0_1196_20737" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
+<circle cx="32" cy="32" r="32" fill="url(#paint1_linear_1196_20737)"/>
+</mask>
+<g mask="url(#mask0_1196_20737)">
+<path d="M22.0878 14.7607L30.2459 20.8335L29.1955 22.6074L20.4862 17.4824L22.0878 14.7607Z" fill="#856A45"/>
+<path d="M28.3677 20.5176L37.6029 16.1129L38.6663 19.0864L29.1511 22.4892L28.3677 20.5176Z" fill="#856A45"/>
+<rect x="30.7612" y="21.0916" width="7.63284" height="3.15791" transform="rotate(81.4564 30.7612 21.0916)" fill="#856A45"/>
+<circle cx="20.4737" cy="32.6319" r="6.47372" fill="#B78BFF"/>
+<circle cx="29.3159" cy="31.3687" r="6.47372" fill="#B78BFF"/>
+<circle cx="28.0528" cy="39.8946" r="6.47372" fill="#B78BFF"/>
+<circle cx="39.7369" cy="29.1578" r="6.47372" fill="#B78BFF"/>
+<circle cx="38.4738" cy="37.6844" r="6.47372" fill="#B78BFF"/>
+<circle cx="35.9475" cy="46.5262" r="6.47372" fill="#B78BFF"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_1196_20737" x1="32" y1="0" x2="32" y2="64" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F0FFD7"/>
+<stop offset="1" stop-color="#D7EFAE"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1196_20737" x1="32" y1="0" x2="32" y2="64" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F0FFD7"/>
+<stop offset="1" stop-color="#D7EFAE"/>
+</linearGradient>
+</defs>
+</svg>

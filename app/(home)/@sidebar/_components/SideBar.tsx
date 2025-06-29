@@ -5,9 +5,15 @@ import { ReactNode } from "react";
 import ChevronLeftIcon from "@/assets/images/chevron-left.svg";
 import Image from "next/image";
 import { useSidebarStore } from "@/store/useSidebarStore";
+import { usePathname } from "next/navigation";
+import InfoHeader from "../info/_components/InfoHeader";
 
 export default function SideBar({ children }: { children: ReactNode }) {
   const { isSidebarOpen, closeSidebar, openSidebar } = useSidebarStore();
+  const pathname = usePathname();
+
+  const infoPage = ["/info/policy", "/info/margin", "/info/city-property"];
+  const isInfoPage = infoPage.includes(pathname);
 
   return (
     <>
@@ -19,9 +25,13 @@ export default function SideBar({ children }: { children: ReactNode }) {
           opacity: isSidebarOpen ? 1 : 0,
         }}
       >
-        <div className="px-4 py-[13px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] max-h-[65px] flex items-center">
-          <SearchBar />
-        </div>
+        {!isInfoPage ? (
+          <div className="px-4 py-[13px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] max-h-[65px] flex items-center">
+            <SearchBar />
+          </div>
+        ) : (
+          <InfoHeader />
+        )}
         <div className="flex-1 overflow-y-auto">{children}</div>
 
         {/* 닫기 버튼 */}
