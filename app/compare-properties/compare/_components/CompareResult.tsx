@@ -3,6 +3,13 @@ import Image from "next/image";
 import InfoIcon from "@/assets/images/info.svg";
 import { Property } from "@/types/property";
 import { formatKoreanUnit } from "@/utils/format";
+import { useQuery } from "@tanstack/react-query";
+import { getMyPlace } from "@/services/getMyPlace";
+import { useTokenStore } from "@/store/useTokenStore";
+import { useEffect, useState } from "react";
+import { getDurationTime } from "@/utils/getDurationTime";
+import { Place } from "@/types/myPlace";
+import { getListingDetail } from "@/services/getListingDetail";
 
 export default function CompareResult({ selected }: { selected: Property[] }) {
   return (
@@ -15,6 +22,44 @@ export default function CompareResult({ selected }: { selected: Property[] }) {
 }
 
 function ResultItem({ data }: { data: Property }) {
+  const { token } = useTokenStore();
+  const [infra, setInfra] = useState<string[]>([]);
+
+  const { data: saleData } = useQuery({
+    queryKey: ["listingDetail", data],
+    queryFn: () => getListingDetail(data.saleId.toString()),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token,
+  });
+
+  const { data: places } = useQuery({
+    queryKey: ["myPlace"],
+    queryFn: () => getMyPlace(),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token,
+  });
+
+  useEffect(() => {
+    const getDistance = async (place: Place) => {
+      const durationTime = await getDurationTime(place, [
+        saleData.sale[0].wgsX,
+        saleData.sale[0].wgsY,
+      ]);
+      return `${place.placeName} : ${durationTime || "-"}`;
+    };
+
+    const loadInfra = async () => {
+      if (places?.data && saleData?.sale) {
+        const infraList = await Promise.all(
+          places.data.map((place: Place) => getDistance(place)),
+        );
+        setInfra(infraList);
+      }
+    };
+
+    loadInfra();
+  }, [places, data, saleData]);
+
   const details = [
     {
       key: "landType",
@@ -44,12 +89,7 @@ function ResultItem({ data }: { data: Property }) {
     {
       key: "infra",
       title: "인프라",
-      value: [
-        "거주지1 : 도보 30분",
-        "거주지2: 도보 2시간 20분",
-        "농지1: 도보 24분",
-        "농지1: 도보 24분",
-      ],
+      value: infra,
     },
     {
       key: "mainCrop",

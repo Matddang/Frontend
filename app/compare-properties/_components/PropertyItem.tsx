@@ -3,11 +3,16 @@ import HeartActiveIcon from "@/assets/images/heart-primary.svg";
 import HeartIcon from "@/assets/images/heart-white.svg";
 import CheckDefaultIcon from "@/assets/images/check-gray.svg";
 import CheckIcon from "@/assets/images/check-primary.svg";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { likeProperty } from "@/services/likeProperty";
 import { Property } from "@/types/property";
 import { formatKoreanUnit } from "@/utils/format";
+import { Place } from "@/types/myPlace";
+import { useTokenStore } from "@/store/useTokenStore";
+import { getMyPlace } from "@/services/getMyPlace";
+import { getDurationTime } from "@/utils/getDurationTime";
+import { getListingDetail } from "@/services/getListingDetail";
 
 interface PropertyItemProps {
   property: Property;
@@ -23,6 +28,62 @@ export default function PropertyItem({
   handleClick,
 }: PropertyItemProps) {
   const [like, setLike] = useState(true);
+  const [location, setLocation] = useState<Place>();
+  const [distance, setDistance] = useState("");
+
+  const { token } = useTokenStore();
+
+  const { data } = useQuery({
+    queryKey: ["myPlace"],
+    queryFn: () => getMyPlace(),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token,
+  });
+
+  const { data: saleData } = useQuery({
+    queryKey: ["listingDetail", property],
+    queryFn: () => getListingDetail(property.saleId.toString()),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token,
+  });
+
+  const { data: durationTime } = useQuery({
+    queryKey: ["durationTime", property],
+    queryFn: () =>
+      getDurationTime(location!, [
+        saleData.sale[0].wgsX,
+        saleData.sale[0].wgsY,
+      ]),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!token && !!location && !!saleData,
+  });
+
+  useEffect(() => {
+    if (data) {
+      const homes = data.data.filter(
+        (v: Place) => v.placeType === "HOME" && v.latitude && v.longitude,
+      );
+      const farms = data.data.filter((v: Place) => v.latitude && v.longitude);
+
+      if (homes.length) {
+        setLocation(homes[0]);
+      } else {
+        setLocation(farms[0]);
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const getDistance = async () => {
+      if (!location) return;
+      else {
+        if (durationTime) setDistance(durationTime);
+        else setDistance("");
+      }
+    };
+
+    getDistance();
+  }, [location, durationTime]);
 
   const mutation = useMutation({
     mutationFn: () => likeProperty(property.saleId),
@@ -89,7 +150,11 @@ export default function PropertyItem({
               {property.landType}
             </div>
             <span className="typo-sub-title-m text-gray-800">
-              {/* {property.distance} */}
+              {location
+                ? `${property.mainCrop} / ${
+                    location.placeType === "HOME" ? "집" : "농지"
+                  }에서 ${distance} 거리`
+                : property.mainCrop}
             </span>
           </div>
         </div>
