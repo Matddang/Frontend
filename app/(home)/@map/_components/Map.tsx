@@ -172,7 +172,6 @@ export default function Map() {
       // 지도 중심 이동 및 줌인
       if (!isZoomedToMarkerRef.current) {
         const queryParams = new URLSearchParams(window.location.search);
-        console.log("상세 줌 인");
         queryParams.set("zoom", "1");
         queryParams.set("m_lat", String(lat));
         queryParams.set("m_lng", String(lng));
@@ -386,7 +385,6 @@ export default function Map() {
     clearAllClusters();
     clearSelectedMarker();
 
-    console.log("숫자 클러스터");
     const map = kakaoMapRef.current;
     if (!map) return;
 
@@ -451,7 +449,6 @@ export default function Map() {
     const level = map.getLevel();
     const queryParams = new URLSearchParams(window.location.search);
 
-    console.log(mode);
     if (mode === "ranking") {
       return;
     }
@@ -472,7 +469,7 @@ export default function Map() {
     else if (pathname.startsWith("/listing") && level >= 8) {
       router.push(`/?${queryParams.toString()}`);
     }
-  }, [listings]);
+  }, [listings, mode, pathname, router, setMode]);
 
   // 상세 페이지가 변할 때, zoom을 1로하는 세팅과 center로 이동하는 상태 false로 설정
   useEffect(() => {
@@ -560,6 +557,18 @@ export default function Map() {
     }
   }, [setBounds]);
 
+  useEffect(() => {
+    const map = kakaoMapRef.current;
+    if (!map) return;
+
+    const level = map.getLevel();
+    if (level <= 8) {
+      setupNumberCluster();
+    } else {
+      setupRegionMarkers();
+    }
+  }, [bounds, setupNumberCluster, setupRegionMarkers]);
+
   // 현재 URL 경로에 따른 지도 업데이트
   useEffect(() => {
     if (pathname === "/") setMode("map");
@@ -587,7 +596,7 @@ export default function Map() {
     } else {
       kakaoMapRef.current.setLevel(10);
     }
-  }, [searchParams, JEONNAM_CENTER]);
+  }, [searchParams, JEONNAM_CENTER, pathname, setMode]);
 
   // --- 2. listings 변경 시 마커 및 클러스터 업데이트 ---
   useEffect(() => {
