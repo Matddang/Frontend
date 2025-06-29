@@ -7,11 +7,16 @@ import { useTokenStore } from "@/store/useTokenStore";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import TypeTestBanner from "@/assets/images/type-quiz.svg";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import LoginModal from "@/components/login/LoginModal";
 
 export default function MyPageBanner() {
-  const { name } = useUserStore();
-
+  const { name, isLogin } = useUserStore();
   const { token } = useTokenStore();
+  const router = useRouter();
+  const [loginModal, setLoginModal] = useState(false);
+
   const { data } = useQuery({
     queryKey: ["userInfo"],
     queryFn: () => getUserInfo(),
@@ -19,8 +24,23 @@ export default function MyPageBanner() {
     enabled: !!token,
   });
 
+  const handleClick = () => {
+    if (isLogin) router.push("/typetest");
+    else setLoginModal(true);
+  };
+
   if (!data?.data?.typeTestComplete)
-    return <Image src={TypeTestBanner} alt="banner" />;
+    return (
+      <>
+        <Image
+          src={TypeTestBanner}
+          alt="banner"
+          onClick={handleClick}
+          className="cursor-pointer"
+        />
+        {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
+      </>
+    );
   else
     return (
       <div className="bg-primary-light flex justify-between items-center py-[14px] px-[6px]">

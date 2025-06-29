@@ -8,15 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMyPlace } from "@/services/getMyPlace";
 import { useTokenStore } from "@/store/useTokenStore";
 import { useEffect, useState } from "react";
-
-interface Place {
-  placeId: number;
-  address: string;
-  placeType: string;
-  placeName: string;
-  latitude: string;
-  longitude: string;
-}
+import { Place } from "@/types/myPlace";
 
 export default function AddLoaction({ nextStep, prevStep }: StepProps) {
   const title = {

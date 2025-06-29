@@ -11,15 +11,8 @@ import { useEffect, useState } from "react";
 import { useTokenStore } from "@/store/useTokenStore";
 import { useQuery } from "@tanstack/react-query";
 import { getMyPlace } from "@/services/getMyPlace";
-
-interface Place {
-  placeId: number;
-  address: string;
-  placeType: string;
-  placeName: string;
-  latitude: string;
-  longitude: string;
-}
+import { Place } from "@/types/myPlace";
+import { getDurationTime } from "@/utils/getDurationTime";
 
 export default function DistanceInfo({ coordinate }: { coordinate: number[] }) {
   const [selected, setSelected] = useState<Place>();
@@ -43,25 +36,12 @@ export default function DistanceInfo({ coordinate }: { coordinate: number[] }) {
 
   useEffect(() => {
     const getDistance = async () => {
-      if (!places || !selected?.latitude || !selected?.longitude)
+      if (!places || !selected?.latitude || !selected?.longitude) {
         setDistance("-");
-      else {
-        await fetch(
-          `/api/distance?origin=${selected.latitude},${selected.longitude}&destination=${coordinate[1]},${coordinate[0]}`,
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.rows) {
-              const value = data.rows[0].elements[0].duration.text;
-              const [hours, mins] = value
-                .split(" ")
-                .filter((v: string) => Number(v));
-
-              if (hours && mins) setDistance(`${hours}시간 ${mins}분`);
-              else if (!mins) setDistance(`${hours}시간`);
-              else setDistance(`${mins}분`);
-            }
-          });
+      } else {
+        const time = await getDurationTime(selected, coordinate);
+        if (time) setDistance(time);
+        else setDistance("-");
       }
     };
 

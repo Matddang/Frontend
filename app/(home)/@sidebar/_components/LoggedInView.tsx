@@ -91,6 +91,7 @@ export default function LoggedInView() {
           <button
             className="relative flex-grow min-w-[100px]"
             style={{ aspectRatio: "171 / 182" }}
+            onClick={() => router.push("/info/policy")}
           >
             <Image
               src={AgriPolicyLoggedInImg}
@@ -102,6 +103,7 @@ export default function LoggedInView() {
           <button
             className="relative flex-grow min-w-[100px]"
             style={{ aspectRatio: "171 / 182" }}
+            onClick={() => router.push("/info/margin")}
           >
             <Image
               src={MarginRateCropLoggedInImg}

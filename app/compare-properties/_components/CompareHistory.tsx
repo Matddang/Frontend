@@ -5,11 +5,9 @@ import { CompareHistoryType, Property } from "@/types/property";
 import { formatKoreanUnit } from "@/utils/format";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 export default function CompareHistory() {
   const { token } = useTokenStore();
-  const [history, setHistory] = useState<CompareHistoryType[]>([]);
 
   const { data } = useQuery({
     queryKey: ["compareHistory"],
@@ -18,11 +16,7 @@ export default function CompareHistory() {
     enabled: !!token,
   });
 
-  useEffect(() => {
-    if (data?.data) {
-      setHistory(data.data);
-    }
-  }, [data]);
+  const history: CompareHistoryType[] = data?.data || [];
 
   return (
     <div className="grid grid-cols-2 gap-[30px]">
