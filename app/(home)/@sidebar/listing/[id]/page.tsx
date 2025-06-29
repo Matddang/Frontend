@@ -97,7 +97,7 @@ export default function DetailPage() {
           height={390}
           className="w-[390px] h-auto"
         />
-        <CropRecommendation />
+        <CropRecommendation saleId={id} />
         <SimilarItems items={similarSales} />
       </aside>
       <Link
