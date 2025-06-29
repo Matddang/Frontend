@@ -47,7 +47,10 @@ export default function Map() {
   const numberClustererRef = useRef<any>(null); // 숫자 클러스터러
   const allMarkersRef = useRef<any[]>([]); // 현재 지도에 보이는 마커들
   const placesMarkersRef = useRef<Record<string, any[]>>({}); // 인프라 마커
-  const selectedMarkerRef = useRef<any>(null);
+  const selectedMarkerRef = useRef<any>(null); // 선택한 마커
+  const hasHandledKeywordRef = useRef(false); // 검색 여부
+  const isZoomedToMarkerRef = useRef(false); // 상세 매물 마커 줌 여부
+  // 정보 커스텀 오버레이들
   const overlays = useRef<{
     myLocation: any | null;
     infoOverlay: any | null;
@@ -57,7 +60,6 @@ export default function Map() {
     infoOverlay: null,
     selectedOverlayRef: null,
   });
-  const isZoomedToMarkerRef = useRef(false);
 
   const { isSidebarOpen } = useSidebarStore();
   const { mode, setMode, bounds, setBounds } = useMapStore();
@@ -621,8 +623,6 @@ export default function Map() {
 
     syncUrlOnListings();
   }, [listings, setupNumberCluster, setupRegionMarkers, syncUrlOnListings]);
-
-  const hasHandledKeywordRef = useRef(false);
 
   // 키워드 검색으로 리스팅 변경 시, 해당 지역으로 이동
   useEffect(() => {
