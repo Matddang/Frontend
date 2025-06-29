@@ -71,7 +71,7 @@ export default function Map() {
   const JEONNAM_CENTER = useMemo(() => ({ lat: 35.0675, lng: 126.994 }), []);
 
   const isInJeonnam = (lat: number, lng: number) => {
-    return lat >= 34 && lat <= 36 && lng >= 126 && lng <= 128;
+    return lat >= 34 && lat <= 35.4 && lng >= 126 && lng <= 128;
   };
 
   //  매물 목록 가져오기
