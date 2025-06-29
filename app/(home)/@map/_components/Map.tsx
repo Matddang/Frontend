@@ -60,7 +60,7 @@ export default function Map() {
   const isZoomedToMarkerRef = useRef(false);
 
   const { isSidebarOpen } = useSidebarStore();
-  const { mode, bounds, setBounds } = useMapStore();
+  const { mode, setMode, bounds, setBounds } = useMapStore();
   const { listings, setListings } = useListingStore();
   const { type, price, area, kind, crop, place } = useFilterStore();
 
@@ -172,6 +172,7 @@ export default function Map() {
       // 지도 중심 이동 및 줌인
       if (!isZoomedToMarkerRef.current) {
         const queryParams = new URLSearchParams(window.location.search);
+        console.log("상세 줌 인");
         queryParams.set("zoom", "1");
         queryParams.set("m_lat", String(lat));
         queryParams.set("m_lng", String(lng));
@@ -448,27 +449,30 @@ export default function Map() {
     if (!map) return;
 
     const level = map.getLevel();
-    const params = new URLSearchParams(window.location.search);
+    const queryParams = new URLSearchParams(window.location.search);
 
-    // 매물이 2개 이상이고 zoom 레벨이 7 미만이면 listing으로 이동
+    console.log(mode);
+    if (mode === "ranking") {
+      return;
+    }
+
+    // 매물이 2개 이상이고 zoom 레벨이 8 미만이면 listing으로 이동
     if (
-      (window.location.pathname === "/" &&
-        level <= 7 &&
-        level >= 2 &&
-        listings.length >= 2) ||
-      (window.location.pathname.startsWith("/listing/") &&
+      (pathname === "/" && level < 8 && level >= 2 && listings.length >= 2) ||
+      (pathname.startsWith("/listing/") &&
         level <= 7 &&
         level >= 2 &&
         listings.length >= 2) ||
       listings.length === 0
     ) {
-      router.push(`/listing?${params.toString()}`);
+      setMode("map");
+      router.push(`/listing?${queryParams.toString()}`);
     }
-    // 현재 경로가 홈이 아니라면 이동
-    else if (window.location.pathname.startsWith("/listing") && level > 7) {
-      router.push(`/?${params.toString()}`);
+    // 현재 경로가 listing으로 시작하고 zoom 레벨이 8 이상이면 홈으로 이동
+    else if (pathname.startsWith("/listing") && level >= 8) {
+      router.push(`/?${queryParams.toString()}`);
     }
-  }, [listings, router]);
+  }, [listings]);
 
   // 상세 페이지가 변할 때, zoom을 1로하는 세팅과 center로 이동하는 상태 false로 설정
   useEffect(() => {
@@ -558,6 +562,8 @@ export default function Map() {
 
   // 현재 URL 경로에 따른 지도 업데이트
   useEffect(() => {
+    if (pathname === "/") setMode("map");
+
     const zoom = searchParams.get("zoom");
     const mLat = searchParams.get("m_lat");
     const mLng = searchParams.get("m_lng");
