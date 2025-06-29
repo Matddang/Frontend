@@ -32,6 +32,7 @@ export default function AuthRouter({
       await likeProperty(5);
       await likeProperty(6);
       await likeProperty(7);
+      await likeProperty(8);
     }
 
     if (userInfo?.data) {

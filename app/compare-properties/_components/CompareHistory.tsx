@@ -1,4 +1,5 @@
 import ArrowRight from "@/assets/images/arrow-right-white.svg";
+import { TEMP_HISTORY } from "@/constants/compareHistory";
 import { getCompareHistory } from "@/services/getCompareHistory";
 import { useTokenStore } from "@/store/useTokenStore";
 import { CompareHistoryType, Property } from "@/types/property";
@@ -20,6 +21,23 @@ export default function CompareHistory() {
 
   return (
     <div className="grid grid-cols-2 gap-[30px]">
+      {TEMP_HISTORY.map((history, i) => (
+        <div key={i} className="flex flex-col">
+          <div className="h-[38px] bg-primary flex items-center justify-between rounded-t-[8px] py-[7px] px-[11px]">
+            <span className="typo-body-1-m text-white">
+              {history.compareTime}
+            </span>
+            <Image src={ArrowRight} alt="right" className="cursor-pointer" />
+          </div>
+          <div className="flex gap-[12px] items-start bg-gray-200 py-[16px] px-[14px] rounded-b-[8px]">
+            <PropertyItem data={history.sale1.sale[0]} />
+            <span className="text-[16px] h-full flex items-center font-bold text-primary">
+              VS
+            </span>
+            <PropertyItem data={history.sale2.sale[0]} />
+          </div>
+        </div>
+      ))}
       {history.length &&
         history.map((history, i) => (
           <div key={i} className="flex flex-col">
