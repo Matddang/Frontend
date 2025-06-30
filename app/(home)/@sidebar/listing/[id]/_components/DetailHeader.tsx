@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { likeProperty } from "@/services/likeProperty";
+import { useTokenStore } from "@/store/useTokenStore";
 
 interface DetailHeaderProps {
   title: string;
@@ -20,6 +21,8 @@ export default function DetailHeader({
   saleId,
 }: DetailHeaderProps) {
   const router = useRouter();
+
+  const { token } = useTokenStore();
 
   const [like, setLike] = useState(isLiked);
   const [showMessage, setShowMessage] = useState(false);
@@ -37,6 +40,8 @@ export default function DetailHeader({
   });
 
   const handleLikeClick = () => {
+    if (!token) return;
+
     mutation.mutate();
   };
 
