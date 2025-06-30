@@ -2,10 +2,12 @@
 
 import { likeProperty } from "@/services/likeProperty";
 import { useTokenStore } from "@/store/useTokenStore";
+import { Place } from "@/types/myPlace";
 import { formatKoreanUnit } from "@/utils/format";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useState } from "react";
+import DurationTime from "./DurationTime";
 
 interface CardProps {
   saleId: number;
@@ -35,8 +37,6 @@ export default function Card({
   isLiked,
   variant = "vertical",
   crop,
-  place,
-  time,
   isSwiper = false,
   onClick,
 }: CardProps) {
@@ -44,6 +44,8 @@ export default function Card({
 
   const [showMessage, setShowMessage] = useState(false);
   const [like, setLike] = useState(isLiked);
+  const [location, setLocation] = useState<Place | null>(null);
+  const [distance, setDistance] = useState("");
 
   const mutation = useMutation({
     mutationFn: () => likeProperty(saleId),
@@ -74,6 +76,12 @@ export default function Card({
       }`}
       onClick={onClick}
     >
+      <DurationTime
+        saleId={saleId}
+        location={location}
+        setLocation={setLocation}
+        setTime={setDistance}
+      />
       <div
         className={`relative aspect-square w-full h-full flex-1 ${
           isHorizontal ? "max-w-[115px]" : ""
@@ -123,9 +131,9 @@ export default function Card({
         {isHorizontal && (
           <div className="typo-sub-title-m text-gray-800 mt-[6px]">
             {crop}
-            {place && time && (
+            {location && distance && (
               <span>
-                &nbsp;/ {place}에서 {time} 거리
+                &nbsp;/ {location.placeName}에서 {distance} 거리
               </span>
             )}
           </div>
