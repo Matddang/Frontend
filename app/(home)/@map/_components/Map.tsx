@@ -51,6 +51,7 @@ export default function Map() {
   const selectedMarkerRef = useRef<any>(null); // 선택한 마커
   const hasHandledKeywordRef = useRef(false); // 검색 여부
   const isZoomedToMarkerRef = useRef(false); // 상세 매물 마커 줌 여부
+  const detailReadyRef = useRef(false);
   // 정보 커스텀 오버레이들
   const overlays = useRef<{
     myLocation: any | null;
@@ -173,6 +174,9 @@ export default function Map() {
       area: number;
       landCategory: string;
     }) => {
+      const map = kakaoMapRef.current;
+      if (!map) return;
+
       const latLng = new window.kakao.maps.LatLng(lat, lng);
 
       // 지도 중심 이동 및 줌인
@@ -181,6 +185,8 @@ export default function Map() {
         queryParams.set("zoom", "1");
         queryParams.set("m_lat", String(lat));
         queryParams.set("m_lng", String(lng));
+
+        detailReadyRef.current = true;
 
         const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
         window.history.replaceState(null, "", newUrl);
@@ -462,7 +468,12 @@ export default function Map() {
       router.push(`/listing?${queryParams.toString()}`);
     }
     // 현재 경로가 listing으로 시작하고 zoom 레벨이 8 이상이면 홈으로 이동
-    else if (pathname.startsWith("/listing") && level >= 8) {
+    else if (
+      pathname.startsWith("/listing") &&
+      detailReadyRef.current &&
+      level >= 8
+    ) {
+      console.log("홈으로");
       router.push(`/?${queryParams.toString()}`);
     }
   }, [listings, pathname, router]);
