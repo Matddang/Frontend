@@ -74,7 +74,7 @@ export default function Map() {
   const JEONNAM_CENTER = useMemo(() => ({ lat: 35.0675, lng: 126.994 }), []);
 
   const isInJeonnam = (lat: number, lng: number) => {
-    return lat >= 34 && lat <= 35.4 && lng >= 126 && lng <= 128;
+    return lat >= 34 && lat <= 35.6 && lng >= 126 && lng <= 128;
   };
 
   //  매물 목록 가져오기
@@ -107,6 +107,7 @@ export default function Map() {
       return getListing(body);
     },
     staleTime: Infinity,
+    enabled: mode !== "ranking",
   });
 
   useEffect(() => {
@@ -348,6 +349,7 @@ export default function Map() {
   const setupRegionMarkers = useCallback(() => {
     clearAllClusters();
     clearSelectedMarker();
+    clearAllOverlays();
 
     if (listings.length <= 0) {
       return;
@@ -454,28 +456,16 @@ export default function Map() {
     const level = map.getLevel();
     const queryParams = new URLSearchParams(window.location.search);
 
-    if (mode === "ranking") {
-      return;
-    }
-
-    // 매물이 2개 이상이고 zoom 레벨이 8 미만이면 listing으로 이동
-    if (
-      (pathname === "/" && level < 8 && level >= 2 && listings.length >= 2) ||
-      (pathname.startsWith("/listing/") &&
-        level <= 7 &&
-        level >= 2 &&
-        listings.length >= 2) ||
-      listings.length === 0
-    ) {
-      setMode("map");
+    // 매물이 2개 이상이고 zoom 레벨이 2 이상, 8 미만이면 listing으로 이동
+    if (level < 8 && level >= 2 && listings.length >= 2) {
+      // setMode("map");
       router.push(`/listing?${queryParams.toString()}`);
     }
     // 현재 경로가 listing으로 시작하고 zoom 레벨이 8 이상이면 홈으로 이동
     else if (pathname.startsWith("/listing") && level >= 8) {
-      queryParams.delete("sortBy");
       router.push(`/?${queryParams.toString()}`);
     }
-  }, [listings, mode, pathname, router, setMode]);
+  }, [listings, pathname, router]);
 
   // 상세 페이지가 변할 때, zoom을 1로하는 세팅과 center로 이동하는 상태 false로 설정
   useEffect(() => {
@@ -577,7 +567,12 @@ export default function Map() {
 
   // 현재 URL 경로에 따른 지도 업데이트
   useEffect(() => {
-    if (pathname === "/") setMode("map");
+    if (pathname === "/") {
+      setMode("map");
+      const queryParams = new URLSearchParams(searchParams.toString());
+      queryParams.delete("keyword");
+      queryParams.delete("sortBy");
+    }
 
     const zoom = searchParams.get("zoom");
     const mLat = searchParams.get("m_lat");
@@ -690,8 +685,6 @@ export default function Map() {
 
     clearSelectedMarker();
     clearAllOverlays();
-    const queryParams = new URLSearchParams(searchParams.toString());
-    queryParams.delete("sortBy");
 
     const target = listings.find(
       (pos) => String(pos.saleId) === String(params.id),
@@ -719,7 +712,7 @@ export default function Map() {
       landCategory,
     });
     isZoomedToMarkerRef.current = true;
-  }, [params?.id, pathname, listings, handleMarkerClick]);
+  }, [params?.id, pathname, listings, handleMarkerClick, bounds, mode]);
 
   // 상세 페이지가 아니면 선택된 마커 오버레이 해제
   useEffect(() => {
