@@ -24,7 +24,6 @@ export default function ListingPage() {
   const handleOptionSelect = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value) {
-      console.log(value);
       params.set("sortBy", value);
     } else {
       params.delete("sortBy");

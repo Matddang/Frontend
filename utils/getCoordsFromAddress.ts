@@ -14,7 +14,7 @@ export const getCoordsFromAddress = async (address: string) => {
     }
 
     const data = await res.json();
-    console.log(data);
+
     if (data.documents && data.documents.length > 0) {
       const { x, y } = data.documents[0];
       return { lat: parseFloat(y), lng: parseFloat(x) };
