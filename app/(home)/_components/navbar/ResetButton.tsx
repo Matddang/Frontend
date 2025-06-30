@@ -20,7 +20,7 @@ export default function ResetButton() {
     });
     setKind([]);
     setCrop({});
-    setPlace({ id: null, name: null });
+    setPlace({ id: null, name: null, lat: null, lng: null });
 
     updateFilterQuery(
       {
