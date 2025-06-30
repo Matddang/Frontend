@@ -21,8 +21,8 @@ export const searchPlaceByKeyword = ({
 }) => {
   const isActive = searchToggle[keyword];
 
-  // 활성화된 상태면 마커 제거
   if (isActive) {
+    // 이미 활성화된 경우 마커 제거 후 상태 변경
     if (placesMarkersRef.current[keyword]) {
       placesMarkersRef.current[keyword].forEach((marker) =>
         marker.setMap(null),
@@ -39,10 +39,14 @@ export const searchPlaceByKeyword = ({
   const imageSize = new window.kakao.maps.Size(30, 30);
   const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
 
-  ps.keywordSearch(keyword, (data: any, status: string) => {
-    if (status === window.kakao.maps.services.Status.OK) {
-      const newMarkers: any[] = [];
+  const rect = "126,34,128,35.4"; // 전라남도 반경
 
+  const allMarkers: any[] = [];
+  let pageCount = 0;
+  const maxPages = 5;
+
+  const callback = (data: any, status: string, pagination: any) => {
+    if (status === window.kakao.maps.services.Status.OK) {
       data.forEach((place: any) => {
         const markerPosition = new window.kakao.maps.LatLng(place.y, place.x);
         const marker = new window.kakao.maps.Marker({
@@ -51,13 +55,22 @@ export const searchPlaceByKeyword = ({
           title: place.place_name,
           image: markerImage,
         });
-        newMarkers.push(marker);
+        allMarkers.push(marker);
       });
 
-      placesMarkersRef.current[keyword] = newMarkers;
-      setSearchToggle((prev) => ({ ...prev, [keyword]: true }));
+      pageCount++;
+
+      if (pagination.hasNextPage && pageCount < maxPages) {
+        pagination.nextPage();
+      } else {
+        // 모든 페이지 로드 완료 후 마커 저장 및 상태 업데이트
+        placesMarkersRef.current[keyword] = allMarkers;
+        setSearchToggle((prev) => ({ ...prev, [keyword]: true }));
+      }
     } else {
       alert("검색 결과가 없습니다.");
     }
-  });
+  };
+
+  ps.keywordSearch(keyword, callback, { rect });
 };

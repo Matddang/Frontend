@@ -5,15 +5,30 @@ import DropDown from "@/components/common/DropDown";
 import { ListingItem, useListingStore } from "@/store/ListingStore";
 import { useRouter, useSearchParams } from "next/navigation";
 
+const options = [
+  { key: "", label: "수익형 추천순" },
+  { key: "liked", label: "좋아요 많은순" },
+];
+
 export default function ListingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const { listings } = useListingStore();
 
-  const options = ["수익형 추천순", "좋아요 많은순"];
+  const sortKey = searchParams.get("sortBy") || "";
+
+  const selectedOption =
+    options.find((option) => option.key === sortKey) || options[0];
+
   const handleOptionSelect = (value: string) => {
-    alert(value);
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set("sortBy", value);
+    } else {
+      params.delete("sortBy");
+    }
+    router.replace(`?${params.toString()}`);
   };
 
   const moveToDetail = (id: number) => {
@@ -29,7 +44,7 @@ export default function ListingPage() {
         <DropDown
           options={options}
           onSelect={handleOptionSelect}
-          defaultValue={options[0]}
+          defaultValue={selectedOption}
         />
       </div>
       <div>

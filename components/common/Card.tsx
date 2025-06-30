@@ -1,6 +1,7 @@
 "use client";
 
 import { likeProperty } from "@/services/likeProperty";
+import { useTokenStore } from "@/store/useTokenStore";
 import { Place } from "@/types/myPlace";
 import { formatKoreanUnit } from "@/utils/format";
 import { useMutation } from "@tanstack/react-query";
@@ -39,6 +40,8 @@ export default function Card({
   isSwiper = false,
   onClick,
 }: CardProps) {
+  const { token } = useTokenStore();
+
   const [showMessage, setShowMessage] = useState(false);
   const [like, setLike] = useState(isLiked);
   const [location, setLocation] = useState<Place | null>(null);
@@ -58,6 +61,9 @@ export default function Card({
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    if (!token) return;
+
     mutation.mutate();
   };
 

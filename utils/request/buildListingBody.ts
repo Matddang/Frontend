@@ -17,6 +17,7 @@ interface Filters {
     lat: number | null;
     lng: number | null;
   };
+  sortBy?: string;
 }
 
 export const buildListingBody = ({
@@ -28,6 +29,7 @@ export const buildListingBody = ({
   price,
   crop,
   place,
+  sortBy,
 }: Filters) => {
   const body: Record<string, any> = {};
 
@@ -59,6 +61,8 @@ export const buildListingBody = ({
   } else if (bounds) {
     body.zoom = [bounds.swLat, bounds.swLng, bounds.neLat, bounds.neLng];
   }
+
+  if (sortBy) body.sortBy = sortBy;
 
   return body;
 };

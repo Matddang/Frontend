@@ -44,7 +44,7 @@ export default function LoggedInView() {
               background:
                 "linear-gradient(247deg, #D6FF95 -11.27%, #39B94C 44.64%)",
             }}
-            onClick={() => alert("수익형")}
+            onClick={() => router.push("/typetest/result")}
           >
             <span className="text-white">수익형</span>
             <Image src={ChevroRightIcon} alt="오른쪽 화살표" />

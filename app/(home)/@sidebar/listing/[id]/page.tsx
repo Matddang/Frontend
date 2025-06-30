@@ -89,7 +89,7 @@ export default function DetailPage() {
       <aside className="mt-6 space-y-[34px] bg-white" aria-label="추가 정보">
         <DistanceInfo coordinate={[wgsX, wgsY]} />
         <hr className="h-[5px] bg-gray-300 border-none" />
-        <InfraInfo />
+        <InfraInfo lat={wgsY} lng={wgsX} />
         <Image
           src={ComparisonImage}
           alt="매물 비교"
