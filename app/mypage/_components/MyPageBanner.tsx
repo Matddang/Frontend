@@ -53,6 +53,7 @@ export default function MyPageBanner() {
             background:
               "linear-gradient(247deg, #D6FF95 -11.27%, #39B94C 44.64%)",
           }}
+          onClick={() => router.push("/typetest/result")}
         >
           <span className="text-white typo-body-1-b">수익형</span>
           <Image src={ArrowIcon} alt="right" />
