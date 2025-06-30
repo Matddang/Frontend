@@ -221,7 +221,7 @@ export default function Map() {
       // 오버레이 생성
       const infoContent = document.createElement("div");
       infoContent.style.position = "relative";
-      infoContent.style.padding = "8px 12px";
+      infoContent.style.padding = "8px 20px";
       infoContent.style.background = "#F6FFE8";
       infoContent.style.borderRadius = "40px";
       infoContent.innerHTML = `<h4 style="font-size:16px; font-weight:700;">${address}</h4>`;
