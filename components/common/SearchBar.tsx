@@ -29,6 +29,7 @@ export default function SearchBar() {
     const params = new URLSearchParams(window.location.search);
     params.set("keyword", input);
     router.push(`${window.location.pathname}?${params.toString()}`);
+    setInput("");
   };
 
   return (
