@@ -42,12 +42,7 @@ export default function RankingList() {
       setListings(data.data.content);
       setMode("ranking");
     }
-    return () => {
-      setMode("map");
-    };
   }, [data, setListings, setMode]);
-
-  console.log(data);
 
   useEffect(() => {
     if (type === "popular") {

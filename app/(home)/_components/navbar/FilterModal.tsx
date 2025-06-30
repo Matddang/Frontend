@@ -157,7 +157,7 @@ export default function FilterModal({ filter, onApply }: FilterModalProps) {
     }
   };
   return (
-    <div className="bg-white rounded-[20px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)] p-5 min-w-[380px] max-h-[562px] overflow-y-auto">
+    <div className="bg-white rounded-[20px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)] p-5 min-w-[380px] max-h-[600px] overflow-y-auto">
       <div className="flex justify-between">
         <div className="flex items-center gap-[5px]">
           <h2 className="text-lg font-extrabold">{filter.label}</h2>

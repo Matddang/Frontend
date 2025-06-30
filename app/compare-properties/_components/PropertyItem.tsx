@@ -42,7 +42,7 @@ export default function PropertyItem({
 
   const { data: saleData } = useQuery({
     queryKey: ["listingDetail", property],
-    queryFn: () => getListingDetail(property.saleId.toString()),
+    queryFn: () => getListingDetail(property.saleId),
     staleTime: 1000 * 60 * 5,
     enabled: !!token,
   });
