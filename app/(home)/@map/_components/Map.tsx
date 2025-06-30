@@ -114,6 +114,10 @@ export default function Map() {
   useEffect(() => {
     if (mode == "ranking") return;
     if (data) {
+      if (params.id) {
+        setListings(data.content);
+        return;
+      }
       const refineData = data.content.filter((item: ListingItem) =>
         ["전라남도", "전남"].some((prefix) => item.saleAddr.startsWith(prefix)),
       );
