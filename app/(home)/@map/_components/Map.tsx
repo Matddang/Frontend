@@ -40,6 +40,7 @@ export default function Map() {
   const mLat = searchParams.get("m_lat");
   const mLng = searchParams.get("m_lng");
   const keyword = searchParams.get("keyword") ?? undefined;
+  const sortBy = searchParams.get("sortBy") ?? undefined;
 
   const mapRef = useRef<HTMLDivElement>(null); // 지도를 표시할 HTML DOM 요소
   const kakaoMapRef = useRef<any>(null); // 카카오 지도 인스턴스
@@ -88,6 +89,7 @@ export default function Map() {
       place,
       keyword,
       bounds,
+      sortBy,
     ],
     queryFn: () => {
       const body = buildListingBody({
@@ -99,6 +101,7 @@ export default function Map() {
         price,
         crop,
         place,
+        sortBy,
       });
 
       return getListing(body);
@@ -469,6 +472,7 @@ export default function Map() {
     }
     // 현재 경로가 listing으로 시작하고 zoom 레벨이 8 이상이면 홈으로 이동
     else if (pathname.startsWith("/listing") && level >= 8) {
+      queryParams.delete("sortBy");
       router.push(`/?${queryParams.toString()}`);
     }
   }, [listings, mode, pathname, router, setMode]);
@@ -686,6 +690,8 @@ export default function Map() {
 
     clearSelectedMarker();
     clearAllOverlays();
+    const queryParams = new URLSearchParams(searchParams.toString());
+    queryParams.delete("sortBy");
 
     const target = listings.find(
       (pos) => String(pos.saleId) === String(params.id),

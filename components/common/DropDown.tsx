@@ -2,16 +2,21 @@
 
 import { useState, useRef, useEffect } from "react";
 
+interface DropdownOption {
+  key: string;
+  label: string;
+}
+
 interface DropdownProps {
-  options: string[];
+  options: DropdownOption[];
   onSelect: (value: string) => void;
-  defaultValue?: string;
+  defaultValue?: DropdownOption;
 }
 
 export default function Dropdown({
   options,
   onSelect,
-  defaultValue,
+  defaultValue = options[0],
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(defaultValue || options[0]);
@@ -33,9 +38,9 @@ export default function Dropdown({
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
-  const handleSelect = (value: string) => {
-    setSelected(value);
-    onSelect(value);
+  const handleSelect = (option: DropdownOption) => {
+    setSelected(option);
+    onSelect(option.key);
     setIsOpen(false);
   };
 
@@ -45,7 +50,7 @@ export default function Dropdown({
         onClick={toggleDropdown}
         className="flex items-center gap-1 text-gray-1000"
       >
-        {selected}
+        {selected.label}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="10"
@@ -65,13 +70,13 @@ export default function Dropdown({
         <ul className="min-w-[125px] absolute right-0 z-10 w-full bg-white rounded-[10px] mt-2 shadow-[0_0_20px_0_rgba(0,0,0,0.08)] overflow-hidden">
           {options.map((option, index) => (
             <li
-              key={option}
+              key={option.key}
               className={`px-[10px] py-4 hover:bg-gray-300 cursor-pointer text-center typo-sub-title-m ${
                 index !== options.length - 1 ? "border-b border-gray-400" : ""
               } ${option === selected ? "bg-gray-300" : ""}`}
               onClick={() => handleSelect(option)}
             >
-              {option}
+              {option.label}
             </li>
           ))}
         </ul>
